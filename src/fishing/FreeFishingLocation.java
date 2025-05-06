@@ -6,7 +6,7 @@ import core.world.*;
 import core.player.Player;
 
 public class FreeFishingLocation extends FishingLocation {
-    private FarmMap farmMap;
+    protected FarmMap farmMap;
 
     public FreeFishingLocation(String name, List<Fish> possibleFish, FarmMap farmMap) {
         super(name, possibleFish);
@@ -15,8 +15,10 @@ public class FreeFishingLocation extends FishingLocation {
 
     @Override
     public boolean canFishAt(Player player) {
-        if (player.getLocation().equals(this.name)) {
-            return true;
+        if (this.name.equals("Mountain Lake") || this.name.equals("Forest") || this.name.equals("River")) {
+            if (player.getLocation().equals(this.name)) {
+                return true;
+            }
         }
         return false;
     }

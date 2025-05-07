@@ -18,12 +18,19 @@ public class FarmMap { // masih placeholder ya klo mau ganti langsung ubah" aja
         spawnPlayer();
     }
 
-    private void initTiles() {
+    public void initTiles() {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
                 grid[i][j] = new Tile(i, j);
             }
         }
+    }
+
+    public Tile getTileAt(int x, int y) {
+        if (x < 0 || y < 0 || x >= SIZE || y >= SIZE) {
+            return null;
+        }
+        return grid[x][y];
     }
 
     private void placeHouseAndPond() {

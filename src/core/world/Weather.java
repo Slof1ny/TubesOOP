@@ -1,5 +1,5 @@
 package core.world;
 
-public class Weather {
-    
+public enum Weather {
+    SUNNY, RAINY;
 }

@@ -1,5 +1,5 @@
 package core.world;
 
-public class Season {
-    
+public enum Season {
+    SPRING, SUMMER, FALL, WINTER;
 }

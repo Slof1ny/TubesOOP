@@ -110,6 +110,13 @@ public class GameCalendar {
         scheduler.scheduleAtFixedRate(updateTime, 0, 1, TimeUnit.SECONDS);
     };
 
+    public void sleep(){
+        this.hour = 6;
+        this.minute = 0;
+        this.isNight = false;
+        nextDay();
+    }
+
 
     public int getDayInSeason(){
         return dayInSeason;
@@ -123,7 +130,7 @@ public class GameCalendar {
     public Weather getCurrentWeater(){
         return currentWeather;
     }
-    
+
     public int getHour(){
         return hour;
     }

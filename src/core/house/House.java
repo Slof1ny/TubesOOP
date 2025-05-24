@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import core.world.*;
+import core.player.Player;
 
 class House extends DeployedObject {
     private List<Furniture> furnitures;
@@ -19,5 +20,8 @@ class House extends DeployedObject {
 
     public List<Furniture> getFurnitures() {
         return furnitures;
+    }
+
+    public void interact(Player p, FarmMap map){
     }
 }

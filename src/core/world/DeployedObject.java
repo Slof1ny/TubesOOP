@@ -5,6 +5,7 @@ import core.player.*;
 public abstract class DeployedObject {
     protected int x, y;
     protected int width, height;
+    protected char symbol;
 
     public DeployedObject(int x, int y, int w, int h, char symbol) {
         this.x = x; 

@@ -12,12 +12,33 @@ public abstract class DeployedObject {
         this.y = y;
         this.width = w; 
         this.height = h;
+        this.symbol = symbol;
     }
 
     public boolean occupies(int tx, int ty) {
         return tx >= x && tx < x+width && ty >= y && ty < y+height;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public char getSymbol() {
+        return symbol;
+    }
+    
     public boolean isWalkable() {
         return false;
     }

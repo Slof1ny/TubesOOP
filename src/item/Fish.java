@@ -1,19 +1,20 @@
 package item;
 
 import java.util.List;
-import fishing.FishType;
+import fishing.*;
+import time.*;
 import core.world.*;
 
 public class Fish extends Item implements EdibleItem {
     private FishType type;
     protected List<Season> seasons;
-    protected List<Time> timeRange;
+    protected List<GameCalendar> timeRange;
     protected List<Weather> weathers;
-    protected List<Location> locations;
+    protected List<FishingLocation> locations;
     public static final int ENERGY_RESTORED = 1;
 
-    public Fish(String name, int price, FishType type, List<Season> seasons, List<Time> timeRange, List<Weather> weathers, List<Location> locations) {
-        super(name, price);
+    public Fish(String name, int buyPrice, int sellPrice, FishType type, List<Season> seasons, List<GameCalendar> timeRange, List<Weather> weathers, List<FishingLocation> locations) {
+        super(name, buyPrice, sellPrice);
         this.type = type;
         this.seasons = seasons;
         this.timeRange = timeRange;
@@ -24,11 +25,6 @@ public class Fish extends Item implements EdibleItem {
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public int getPrice() {
-        return price;
     }
 
     public FishType getType() {
@@ -44,7 +40,7 @@ public class Fish extends Item implements EdibleItem {
         return ENERGY_RESTORED;
     }
 
-    public boolean isCatchable(Season season, Time time, Weather weather, Location location) {
+    public boolean isCatchable(Season season, GameCalendar time, Weather weather, FishingLocation location) {
         return seasons.contains(season) && timeRange.contains(time) && weathers.contains(weather) && locations.contains(location);
     }
 }

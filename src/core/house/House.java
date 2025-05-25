@@ -6,11 +6,11 @@ import java.util.List;
 import core.world.*;
 import core.player.Player;
 
-class House extends DeployedObject {
+public class House extends DeployedObject {
     private List<Furniture> furnitures;
 
     public House(int x, int y, int w, int h, char symbol) {
-        super(x,y,6,6,'h');
+        super(x, y, 6, 6, 'h');
         this.furnitures = new ArrayList<>();
     }
 

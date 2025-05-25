@@ -15,7 +15,7 @@ class Farm {
         this.farmMap = new FarmMap(player);
         this.day = 1;
         this.season = Season.SPRING;
-        this.weather = Weather.SUNNY;;
+        this.weather = Weather.SUNNY;
     }
 
     public String getName() {
@@ -41,5 +41,4 @@ class Farm {
     public Weather getWeather() {
         return weather;
     }
-
 }

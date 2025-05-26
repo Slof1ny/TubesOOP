@@ -1,12 +1,17 @@
 package core.player;
 
 import core.world.Tile;
+import core.npc.NPC;
+import core.relationship.RelationshipStatus;
+import java.util.HashMap;
 
 public class Player {
     private static final int MAX_ENERGY = 100;
     private int x, y;
     private int energy = MAX_ENERGY;
     private Inventory inventory = new Inventory();
+    private NPC partner = null;
+    private HashMap<NPC, RelationshipStatus> relationships = new HashMap<>();
 
     public Player() {
         this.x = 0;
@@ -50,5 +55,33 @@ public class Player {
 
     public Inventory getInventory() {
         return inventory;
+    }
+
+    public NPC getPartner() {
+        return partner;
+    }
+
+    public void setPartner(NPC partner) {
+        this.partner = partner;
+    }
+
+    public RelationshipStatus getRelationshipStatus(NPC npc) {
+        return relationships.getOrDefault(npc, RelationshipStatus.SINGLE);
+    }
+
+    public void setRelationshipStatus(NPC npc, RelationshipStatus status) {
+        if (status == RelationshipStatus.FIANCE || status == RelationshipStatus.MARRIED) {
+            relationships.put(npc, status);
+        } else {
+            relationships.remove(npc);
+        }
+    }
+
+    public HashMap<NPC, RelationshipStatus> getAllRelationships() {
+        return relationships;
+    }
+    
+    public boolean isSingle() {
+     return getRelationshipStatus(partner) == RelationshipStatus.SINGLE;
     }
 }

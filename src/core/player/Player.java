@@ -12,7 +12,8 @@ public class Player {
     private Gold gold = new Gold(0);
     private int x, y;
     private int energy = MAX_ENERGY;
-    private Inventory inventory = new Inventory();
+    private Inventory inventory;
+    private PlayerStats playerStats;
     private NPC partner = null;
     private HashMap<NPC, RelationshipStatus> relationships = new HashMap<>();
 
@@ -21,6 +22,8 @@ public class Player {
         this.gender = gender;
         this.x = 0;
         this.y = 0;
+        this.playerStats = new PlayerStats();
+        this.inventory = new Inventory(this.playerStats);
     }
 
     

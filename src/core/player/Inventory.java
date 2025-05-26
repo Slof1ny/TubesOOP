@@ -9,9 +9,11 @@ import java.util.Map;
 
 public class Inventory {
     private Map<Item, Integer> items;
+    private PlayerStats playerStats;
 
-    public Inventory() {
+    public Inventory(PlayerStats playerStats) {
         items = new HashMap<>();
+        this.playerStats = playerStats;
         giveStartingItems();
     }
 
@@ -26,6 +28,9 @@ public class Inventory {
 
     public void addItem(Item item, int quantity){
         items.put(item, items.getOrDefault(item, 0) + quantity);
+        if (playerStats != null) {
+            playerStats.addItem(item.getName(), quantity);
+        }
     }
 
     public void addItem(Item item){

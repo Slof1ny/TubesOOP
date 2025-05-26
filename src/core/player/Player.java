@@ -32,8 +32,8 @@ public class Player {
         return gender;
     }
 
-    public int getGold(){
-        return gold.getAmount();
+    public Gold getGold(){
+        return gold;
     }
     
     public void setPosition(int x, int y) {

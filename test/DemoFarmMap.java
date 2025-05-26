@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class DemoFarmMap {
     public static void main(String[] args) {
-        Player player = new Player() {
+        Player player = new Player("budi", "MALE") {
             private int x, y;
 
             @Override public void setPosition(int x, int y) { 

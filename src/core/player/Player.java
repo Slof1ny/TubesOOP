@@ -1,12 +1,16 @@
 package core.player;
 
 import core.world.Tile;
-import core.npc.NPC;
+import npc.NPC;
 import core.relationship.RelationshipStatus;
 import java.util.HashMap;
 
 public class Player {
     private static final int MAX_ENERGY = 100;
+    private String name;
+    private String gender;
+    private String farmName;
+    private Gold gold;
     private int x, y;
     private int energy = MAX_ENERGY;
     private Inventory inventory = new Inventory();
@@ -14,10 +18,26 @@ public class Player {
     private HashMap<NPC, RelationshipStatus> relationships = new HashMap<>();
 
     public Player() {
+        this.name = name;
+        this.gender = gender;
+        this.farmName = farmName;
         this.x = 0;
         this.y = 0;
     }
 
+    
+    public String getName(){
+        return name;
+    }
+
+    public String getGender(){
+        return gender;
+    }
+
+    public String FarmName(){
+        return farmName;
+    }
+    
     public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;

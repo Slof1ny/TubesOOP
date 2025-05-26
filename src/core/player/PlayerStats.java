@@ -9,26 +9,74 @@ public class PlayerStats {
 
     public PlayerStats() {
         itemCount = new HashMap<>();
+        initializeAllItems();
     }
 
-    // Tambah item
+    private void initializeAllItems() {
+        // Seeds
+        String[] seeds = {
+            "Parsnip Seeds", "Cauliflower Seeds", "Potato Seeds", "Wheat Seeds",
+            "Blueberry Seeds", "Tomato Seeds", "Hot Pepper Seeds", "Melon Seeds",
+            "Cranberry Seeds", "Pumpkin Seeds", "Grape Seeds"
+        };
+
+        // Crops
+        String[] crops = {
+            "Parsnip", "Cauliflower", "Potato", "Wheat", "Blueberry", "Tomato",
+            "Hot Pepper", "Melon", "Cranberry", "Pumpkin", "Grape"
+        };
+
+        // Fish (common, regular, legendary)
+        String[] fish = {
+            "Bullhead", "Carp", "Chub",
+            "Largemouth Bass", "Rainbow Trout", "Sturgeon", "Midnight Carp",
+            "Flounder", "Halibut", "Octopus", "Pufferfish", "Sardine", "Super Cucumber",
+            "Catfish", "Salmon",
+            "Angler", "Crimsonfish", "Glacierfish", "Legend"
+        };
+
+        // Food
+        String[] food = {
+            "Fish n’ Chips", "Baguette", "Sashimi", "Fugu", "Wine",
+            "Pumpkin Pie", "Veggie Soup", "Fish Stew", "Spakbor Salad",
+            "Fish Sandwich", "The Legends of Spakbor", "Cooked Pig's Head"
+        };
+
+        // Equipment
+        String[] equipment = {
+            "Hoe", "Watering Can", "Pickaxe", "Fishing Rod"
+        };
+
+        // Misc
+        String[] misc = {
+            "Coal", "Firewood"
+        };
+
+        // Combine all
+        for (String item : combineArrays(seeds, crops, fish, food, equipment, misc)) {
+            itemCount.put(item, 0);
+        }
+    }
+
+    private String[] combineArrays(String[]... arrays) {
+        return java.util.Arrays.stream(arrays)
+                .flatMap(java.util.Arrays::stream)
+                .toArray(String[]::new);
+    }
+
     public void addItem(String itemName, int amount) {
         itemCount.put(itemName, itemCount.getOrDefault(itemName, 0) + amount);
     }
 
-    // Dapatkan jumlah item
     public int getItemCount(String itemName) {
         return itemCount.getOrDefault(itemName, 0);
     }
 
-    // Print semua item dan jumlahnya
     public void printStats() {
         for (Map.Entry<String, Integer> entry : itemCount.entrySet()) {
             System.out.println("Item: " + entry.getKey() + " | Jumlah: " + entry.getValue());
         }
     }
-
-
 
 public class Stats {
     private Map<String, PlayerStats> playerStats;

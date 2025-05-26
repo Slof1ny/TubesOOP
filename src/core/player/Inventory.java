@@ -1,7 +1,10 @@
 package core.player;
 
 import item.*;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Inventory {
@@ -39,6 +42,35 @@ public class Inventory {
 
     public int getItemCount(Item item) {
         return items.getOrDefault(item, 0);
+    }
+
+    public int getItemCount(String name) {
+        int total = 0;
+        for (var e : items.entrySet()) {
+            if (e.getKey().getName().equals(name)) {
+                total += e.getValue();
+            }
+        }
+        return total;
+    }
+
+    /** Remove up to `quantity` items matching `name`. Returns true if successful. */
+    public boolean removeByName(String name, int quantity) {
+        int need = quantity;
+        List<Item> toRemove = new ArrayList<>();
+        for (var e : items.entrySet()) {
+            if (need == 0) break;
+            Item it = e.getKey();
+            int cnt = e.getValue();
+            if (it.getName().equals(name)) {
+                int take = Math.min(cnt, need);
+                for (int i = 0; i < take; i++) toRemove.add(it);
+                need -= take;
+            }
+        }
+        if (need > 0) return false;
+        for (Item it : toRemove) removeItem(it, 1);
+        return true;
     }
 
     public void showInventory() {

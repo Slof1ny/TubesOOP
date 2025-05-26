@@ -9,4 +9,16 @@ public class Furniture {
         this.width = width;
         this.height = height;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
 }

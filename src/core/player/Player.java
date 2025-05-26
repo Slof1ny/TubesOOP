@@ -9,18 +9,16 @@ public class Player {
     private static final int MAX_ENERGY = 100;
     private String name;
     private String gender;
-    private String farmName;
-    private Gold gold;
+    private Gold gold = new Gold(0);
     private int x, y;
     private int energy = MAX_ENERGY;
     private Inventory inventory = new Inventory();
     private NPC partner = null;
     private HashMap<NPC, RelationshipStatus> relationships = new HashMap<>();
 
-    public Player() {
+    public Player(String name, String gender) {
         this.name = name;
         this.gender = gender;
-        this.farmName = farmName;
         this.x = 0;
         this.y = 0;
     }
@@ -34,8 +32,8 @@ public class Player {
         return gender;
     }
 
-    public String FarmName(){
-        return farmName;
+    public int getGold(){
+        return gold.getAmount();
     }
     
     public void setPosition(int x, int y) {

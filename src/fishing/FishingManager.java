@@ -1,12 +1,11 @@
 package fishing;
 
 import java.util.Random;
-import core.world.*;
 
 public class FishingManager {
-    protected FarmMap farm;
+    protected FishingLocation fishingLocation;
 
-    class FishingRNG {
+    public static class FishingRNG {
         private Random rng;
     
         public FishingRNG(long seed) {

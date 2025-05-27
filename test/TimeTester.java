@@ -110,7 +110,7 @@ public class TimeTester {
         System.out.println("  Day in Season: " + calendar.getDayInSeason());
         System.out.println("  Total Day: " + calendar.getTotalDay());
         System.out.println("  Current Season: " + calendar.getCurrentSeason());
-        System.out.println("  Current Weather: " + calendar.getCurrentWeater());
+        System.out.println("  Current Weather: " + calendar.getCurrentWeather());
     }
 
     /**
@@ -122,6 +122,6 @@ public class TimeTester {
         System.out.println("  Is Night: " + time.isNight());
         System.out.println("  Associated Calendar Day: " + calendar.getTotalDay());
         System.out.println("  Associated Calendar Season: " + calendar.getCurrentSeason());
-        System.out.println("  Associated Calendar Weather: " + calendar.getCurrentWeater());
+        System.out.println("  Associated Calendar Weather: " + calendar.getCurrentWeather());
     }
 }

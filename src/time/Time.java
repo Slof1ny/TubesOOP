@@ -124,8 +124,7 @@ public class Time {
         System.out.printf("Waktu di-skip ke %02d:%02d\n", hour, minute);
     }
 
-
-public void runTime2(){
+    public void runTime2(){
         Runnable updateTime = () -> {
             minute += 5;
 

@@ -1,7 +1,6 @@
 package cooking;
 
 import java.util.*;
-import core.player.Player;
 
 public class RecipeBook {
     private static final List<Recipe> all = List.of(
@@ -15,11 +14,11 @@ public class RecipeBook {
         ),
         new Recipe(Recipe.ID.SASHIMI, "Sashimi",
             Map.of("Salmon", 3), 1,
-            p -> p.getStats().getFishCaught() >= 10
+            p -> p.getStats().getTotalInCategory("Fish") >= 10
         ),
         new Recipe(Recipe.ID.FUGU, "Fugu",
             Map.of("Pufferfish", 1), 1,
-            p -> p.getInventory().getItemCount("Pufferfish") > 0
+            p -> p.getStats().getItemCount("Pufferfish") > 0
         ),
         new Recipe(Recipe.ID.WINE, "Wine",
             Map.of("Grape", 2), 1,
@@ -31,11 +30,14 @@ public class RecipeBook {
         ),
         new Recipe(Recipe.ID.VEGGIE_SOUP, "Veggie Soup",
             Map.of("Cauliflower", 1, "Parsnip", 1, "Potato", 1, "Tomato", 1), 1,
-            p -> p.getStats().hasHarvestedBefore()
+            p -> p.getStats().getItemCount("Cauliflower") > 0 || 
+                  p.getStats().getItemCount("Parsnip") > 0 || 
+                  p.getStats().getItemCount("Potato") > 0 || 
+                  p.getStats().getItemCount("Tomato") > 0
         ),
         new Recipe(Recipe.ID.FISH_STEW, "Fish Stew",
             Map.of("Fish", 2, "Hot Pepper", 1, "Cauliflower", 2), 1,
-            p -> p.getInventory().getItemCount("Hot Pepper") > 0
+            p -> p.getStats().getItemCount("Hot Pepper") > 0
         ),
         new Recipe(Recipe.ID.SALAD_SPAKBOR, "Spakbor Salad",
             Map.of("Melon", 1, "Cranberry", 1, "Blueberry", 1, "Tomato", 1), 1,
@@ -47,7 +49,7 @@ public class RecipeBook {
         ),
         new Recipe(Recipe.ID.LEGENDS_SPAKBOR, "The Legends of Spakbor",
             Map.of("Legend Fish", 1, "Potato", 2, "Parsnip", 1, "Tomato", 1, "Eggplant", 1), 1,
-            p -> p.getInventory().getItemCount("Legend Fish") > 0
+            p -> p.getStats().getItemCount("Legend Fish") > 0
         )
     );
 

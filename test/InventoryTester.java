@@ -1,6 +1,7 @@
 package test;
 
 import core.player.Inventory;
+import core.player.PlayerStats;
 import item.Equipment;
 import item.Food;
 import item.Item;
@@ -14,7 +15,7 @@ public class InventoryTester {
 
         // 1. Create an Inventory object
         System.out.println("\n1. Creating a new Inventory object (should have starting items).");
-        Inventory playerInventory = new Inventory();
+        Inventory playerInventory = new Inventory(new PlayerStats());
         playerInventory.showInventory();
 
         // 2. Test addItem() with different item types

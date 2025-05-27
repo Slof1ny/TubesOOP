@@ -4,6 +4,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import system.StatisticsManager;
+import core.player.Player;
+import core.world.ShippingBin;
 
 public class Time {
     private int hour;
@@ -12,6 +14,7 @@ public class Time {
     private final ScheduledExecutorService scheduler;
 
     private final GameCalendar calendar;
+    private Player player;
 
     public Time(GameCalendar calendar){
         this.hour = 6;
@@ -27,6 +30,24 @@ public class Time {
         this.isNight = (hour >= 18 || hour < 6);
         this.scheduler = Executors.newScheduledThreadPool(1);
         this.calendar = calendar;
+    }
+
+    public Time(GameCalendar calendar, Player player){ // Tambahkan Player ke constructor
+        this.hour = 6;
+        this.minute = 0;
+        this.isNight = false;
+        this.scheduler = Executors.newScheduledThreadPool(1);
+        this.calendar = calendar;
+        this.player = player; // Inisialisasi Player
+    }
+
+    public Time(GameCalendar calendar, StatisticsManager data, Player player){ // Tambahkan Player ke constructor
+        this.hour = data.savedHour;
+        this.minute = data.savedMinute;
+        this.isNight = (hour >= 18 || hour < 6);
+        this.scheduler = Executors.newScheduledThreadPool(1);
+        this.calendar = calendar;
+        this.player = player; // Inisialisasi Player
     }
 
     private void tickOneInterval() {
@@ -102,5 +123,47 @@ public class Time {
         this.isNight = (hour >= 18 || hour < 6);
         System.out.printf("Waktu di-skip ke %02d:%02d\n", hour, minute);
     }
-}
 
+
+public void runTime2(){
+        Runnable updateTime = () -> {
+            minute += 5;
+
+            if (minute >= 60){
+                minute = 0;
+                hour++;
+                if(hour == 18){
+                    isNight = true;
+                    System.out.println("===NIGHT MODE===");
+                } else if (hour == 6){
+                    isNight = false;
+                    System.out.println("===LIGHT MODE===");
+                }
+                
+                if(hour == 24){ // Hari baru dimulai
+                    hour = 0;
+                    calendar.nextDay();
+                    // Proses penjualan Shipping Bin di akhir hari
+                    if (player != null && player.getShippingBin() != null) {
+                        player.getShippingBin().processSales(player);
+                    }
+                }
+            }
+            System.out.printf("%02d : %02d\n", hour, minute);
+
+        };
+        scheduler.scheduleAtFixedRate(updateTime, 0, 1, TimeUnit.SECONDS);
+    };
+
+    public void sleep2(){
+        this.hour = 6;
+        this.minute = 0;
+        this.isNight = false;
+        calendar.nextDay();
+        // Proses penjualan Shipping Bin saat tidur
+        if (player != null && player.getShippingBin() != null) {
+            player.getShippingBin().processSales(player);
+        }
+    }
+
+}

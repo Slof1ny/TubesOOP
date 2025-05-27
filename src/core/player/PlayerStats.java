@@ -5,9 +5,11 @@ import java.util.*;
 public class PlayerStats {
     private Map<String, Integer> itemCount;
     private static final Map<String, List<String>> CATEGORY_MAP = new HashMap<>();
+    private int totalGoldEarned;
 
     public PlayerStats() {
         itemCount = new HashMap<>();
+        totalGoldEarned = 0;
         initializeAllItems();
         initializeCategories();
     }
@@ -76,9 +78,28 @@ public class PlayerStats {
     }
 
     public void printStats() {
+        System.out.println("--- Item Statistics ---");
+        // Filter untuk hanya menampilkan item dengan jumlah > 0
+        // Atau item yang memang ada di CATEGORY_MAP (untuk memastikan item penting tetap terlihat walau jumlahnya 0)
+        List<String> allDefinedItems = getAllItems();
         for (Map.Entry<String, Integer> entry : itemCount.entrySet()) {
-            System.out.println("Item: " + entry.getKey() + " | Jumlah: " + entry.getValue());
+            if (entry.getValue() > 0 || allDefinedItems.contains(entry.getKey())) {
+                System.out.println("Item: " + entry.getKey() + " | Jumlah: " + entry.getValue());
+            }
         }
+        System.out.println("Total Gold Earned: " + totalGoldEarned + "g");
+        System.out.println("-----------------------");
+    }
+
+    public void addGoldEarned(int amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Cannot add negative gold earned.");
+        }
+        this.totalGoldEarned += amount;
+    }
+
+    public int getTotalGoldEarned() {
+        return totalGoldEarned;
     }
 
 // public class Stats {

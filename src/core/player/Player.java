@@ -3,6 +3,8 @@ package core.player;
 import core.world.Tile;
 import npc.NPC;
 import java.util.HashMap;
+import core.world.ShippingBin;
+import core.world.FarmMap;
 
 public class Player {
     private static final int MAX_ENERGY = 100;
@@ -15,6 +17,7 @@ public class Player {
     private PlayerStats playerStats;
     private NPC partner = null;
     private HashMap<NPC, RelationshipStatus> relationships = new HashMap<>();
+    private ShippingBin shippingBin;
 
     public Player(String name, String gender) {
         this.name = name;
@@ -23,6 +26,7 @@ public class Player {
         this.y = 0;
         this.playerStats = new PlayerStats();
         this.inventory = new Inventory(this.playerStats);
+        this.shippingBin = null;
     }
 
     
@@ -107,5 +111,13 @@ public class Player {
     
     public boolean isSingle() {
      return getRelationshipStatus(partner) == RelationshipStatus.SINGLE;
+    }
+
+    public void setShippingBin(ShippingBin shippingBin) {
+        this.shippingBin = shippingBin;
+    }
+
+    public ShippingBin getShippingBin() {
+        return shippingBin;
     }
 }

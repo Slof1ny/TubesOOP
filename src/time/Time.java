@@ -29,31 +29,44 @@ public class Time {
         this.calendar = calendar;
     }
 
-    public void runTime(){
-        Runnable updateTime = () -> {
-            minute += 5;
-
-            if (minute >= 60){
-                minute = 0;
-                hour++;
-                if(hour == 18){
-                    isNight = true;
-                    System.out.println("===NIGHT MODE===");
-                } else if (hour == 6){
-                    isNight = false;
-                    System.out.println("===LIGHT MODE===");
-                }
-                
-                if(hour == 24){
-                    hour = 0;
-                    calendar.nextDay();
-                }
+    private void tickOneInterval() {
+        minute += 5;
+        if (minute >= 60) {
+            minute = 0;
+            hour++;
+            if (hour == 18) {
+                isNight = true;
+                System.out.println("===NIGHT MODE===");
+            } else if (hour == 6) {
+                isNight = false;
+                System.out.println("===LIGHT MODE===");
             }
-            System.out.printf("%02d : %02d\n", hour, minute);
+            if (hour == 24) {
+                hour = 0;
+                calendar.nextDay();
+            }
+        }
+        System.out.printf("%02d : %02d\n", hour, minute);
+    }
 
-        };
-        scheduler.scheduleAtFixedRate(updateTime, 0, 1, TimeUnit.SECONDS);
-    };
+    public void runTime() {
+        scheduler.scheduleAtFixedRate(this::tickOneInterval, 0, 1, TimeUnit.SECONDS);
+    }
+
+    public void pause() {
+        scheduler.shutdownNow();
+    }
+
+    public void resume() {
+        if (scheduler.isShutdown()) {
+            runTime();
+        }
+    }
+
+    public void advanceGameMinutes(int minutes) {
+        int steps = minutes / 5;
+        for (int i = 0; i < steps; i++) tickOneInterval();
+    }
 
     public void sleep(){
         this.hour = 6;

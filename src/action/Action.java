@@ -11,7 +11,6 @@ import java.util.Scanner;
 import java.util.concurrent.Future;
 
 public class Action {
-
     public static Future<?> fish(FarmMap farm, FishingLocation location, Player player, Time time, GameCalendar calendar, Scanner scanner) {
         return FishingManager.fish(farm, location, player, time, calendar, scanner);
     }

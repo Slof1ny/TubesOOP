@@ -25,6 +25,14 @@ public abstract class FishingLocation {
         }
         return catchableFish;
     }
+
+    public void setPossibleFish(List<Fish> fish) {
+        this.possibleFish = fish;
+    }
+
+    public void addFish(Fish f) {
+        this.possibleFish.add(f);
+    }
         
     public abstract boolean canFishAt(Player player);
 }

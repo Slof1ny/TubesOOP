@@ -45,6 +45,22 @@ public class Fish extends Item implements EdibleItem {
         return ENERGY_RESTORED;
     }
 
+    public List<Season> getSeasons() {
+        return seasons;
+    }
+
+    public List<TimeRange> getTimeRanges() {
+        return timeRanges;
+    }
+
+    public List<Weather> getWeathers() {
+        return weathers;
+    }
+
+    public List<FishingLocation> getLocations() {
+        return locations;
+    }
+
     public boolean isCatchable(Season season, Time time, Weather weather, FishingLocation location) {
         if (!seasons.contains(season))   return false;
         if (!weathers.contains(weather)) return false;

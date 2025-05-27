@@ -138,12 +138,14 @@ public class FishRegistry {
     }
 
     public static List<Fish> buildAll(Map<String,FishingLocation> locationsByName) {
-        List<Fish> out = new ArrayList<>(DEFINITIONS.size());
+        List<Fish> allCreatedFish = new ArrayList<>(DEFINITIONS.size());
         for (var d : DEFINITIONS) {
-            var locs = new ArrayList<FishingLocation>();
+            var associatedLocations = new ArrayList<FishingLocation>();
             for (var name : d.locations()) {
                 var fl = locationsByName.get(name);
-                if (fl != null) locs.add(fl);
+                if (fl != null) {
+                    associatedLocations.add(fl);
+                }
             }
 
             int totalHours = 0;
@@ -154,10 +156,15 @@ public class FishRegistry {
                                            d.weathers().size(), d.locations().size(),
                                            d.type());
 
-            out.add(new Fish(d.name(), 0, price, d.type(), d.seasons(), d.timeRanges(), d.weathers(), locs));
+            Fish newFish = new Fish(d.name(), 0, price, d.type(), d.seasons(), d.timeRanges(), d.weathers(), associatedLocations);
+            allCreatedFish.add(newFish);
+
+            for (FishingLocation loc : associatedLocations) {
+                loc.addFish(newFish);
+            }
         }
 
-        return out;
+        return allCreatedFish;
     }
 
     private static int calculateSellPrice(int seasons, int hours, int weathers, int locations, FishType type) {

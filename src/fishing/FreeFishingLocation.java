@@ -15,11 +15,6 @@ public class FreeFishingLocation extends FishingLocation {
 
     @Override
     public boolean canFishAt(Player player) {
-        if (this.name.equals("Mountain Lake") || this.name.equals("Forest") || this.name.equals("River")) {
-            if (player.getLocation().equals(this.name)) {
-                return true;
-            }
-        }
-        return false;
+        return player.getLocation().equals(this.name);
     }
 }

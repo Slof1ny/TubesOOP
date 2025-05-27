@@ -55,40 +55,52 @@ public class FishingManager {
         time.advanceGameMinutes(15);
 
         return executor.submit(() -> {
-            List<Fish> catchables = location.getPossibleFish(calendar.getCurrentSeason(), time, calendar.getCurrentWeather(), location);
-            if (catchables.isEmpty()) {
-                System.out.println("No fish are catchable now.");
-                return;
-            }
-
-            FishingRNG rng = new FishingRNG();
-            Fish chosen = catchables.get(rng.getRandomNumber(0, catchables.size() - 1));
-
-            int bound = switch (chosen.getType()) {
-                case COMMON    -> 10;
-                case REGULAR   -> 100;
-                case LEGENDARY -> 500;
-            };
-            int tries = chosen.getType() == FishType.LEGENDARY ? 7 : 10;
-            int secret = rng.getRandomNumber(1, bound);
-
-            System.out.printf("Guess 1-%d in %d tries\n", bound, tries);
-            boolean success = false;
-            for (int i = 0; i < tries && !success; i++) {
-                System.out.print("Your guess: ");
-                int g = sc.nextInt();
-                if (g == secret) {
-                    success = true;
-                } else {
-                    System.out.println(g < secret ? "Too low!" : "Too high!");
+            try {
+                List<Fish> catchables = location.getPossibleFish(calendar.getCurrentSeason(), time, calendar.getCurrentWeather(), location);
+                if (catchables.isEmpty()) {
+                    System.out.println("No fish are catchable now.");
+                    return;
                 }
-            }
 
-            if (success) {
-                player.getInventory().addItem(chosen, 1);
-                System.out.println("You caught: " + chosen.getName());
-            } else {
-                System.out.println("The fish got away...");
+                FishingRNG rng = new FishingRNG();
+                Fish chosen = catchables.get(rng.getRandomNumber(0, catchables.size() - 1));
+
+                int bound = switch (chosen.getType()) {
+                    case COMMON    -> 10;
+                    case REGULAR   -> 100;
+                    case LEGENDARY -> 500;
+                };
+                int tries = chosen.getType() == FishType.LEGENDARY ? 7 : 10;
+                int secret = rng.getRandomNumber(1, bound);
+
+                System.out.printf("Guess 1-%d in %d tries\n", bound, tries);
+                boolean success = false;
+                for (int i = 0; i < tries && !success; i++) {
+                    System.out.print("Your guess: ");
+                    
+                    String input = sc.nextLine().trim();
+                    try {
+                        int g = Integer.parseInt(input);
+                        if (g == secret) {
+                            success = true;
+                        } else {
+                            System.out.println(g < secret ? "Too low!" : "Too high!");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Please enter a valid number!");
+                        i--; 
+                    }
+                }
+
+                if (success) {
+                    player.getInventory().addItem(chosen, 1);
+                    System.out.println("You caught: " + chosen.getName());
+                } else {
+                    System.out.println("The fish got away...");
+                }
+            } catch (Exception e) {
+                System.out.println("Error during fishing: " + e.getMessage());
+                e.printStackTrace();
             }
         });
     }

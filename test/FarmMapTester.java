@@ -7,7 +7,7 @@ import java.util.Scanner;
 // javac -cp src -d out test/DemoFarmMap.java
 // java -cp out test.DemoFarmMap
 
-public class DemoFarmMap {
+public class FarmMapTester {
     public static void main(String[] args) {
         Player player = new Player("budi", "MALE") {
             private int x, y;

@@ -16,6 +16,7 @@ import time.Time;
 
 public class FishingManager {
     protected FishingLocation fishingLocation;
+
     private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     public static class FishingRNG {
@@ -54,7 +55,7 @@ public class FishingManager {
         time.advanceGameMinutes(15);
 
         return executor.submit(() -> {
-            List<Fish> catchables = location.getPossibleFish(calendar.getCurrentSeason(), time, calendar.getCurrentWeater(), location);
+            List<Fish> catchables = location.getPossibleFish(calendar.getCurrentSeason(), time, calendar.getCurrentWeather(), location);
             if (catchables.isEmpty()) {
                 System.out.println("No fish are catchable now.");
                 return;
@@ -73,14 +74,14 @@ public class FishingManager {
 
             System.out.printf("Guess 1-%d in %d tries\n", bound, tries);
             boolean success = false;
-            for (int i = 0; i < tries; i++) {
+            for (int i = 0; i < tries && !success; i++) {
                 System.out.print("Your guess: ");
                 int g = sc.nextInt();
                 if (g == secret) {
                     success = true;
-                    break;
+                } else {
+                    System.out.println(g < secret ? "Too low!" : "Too high!");
                 }
-                System.out.println(g < secret ? "Too low!" : "Too high!");
             }
 
             if (success) {

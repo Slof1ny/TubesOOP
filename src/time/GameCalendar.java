@@ -84,7 +84,6 @@ public class GameCalendar {
         currentWeather = generateWeather();
     }
 
-
     public int getDayInSeason(){
         return dayInSeason;
     }
@@ -94,8 +93,7 @@ public class GameCalendar {
     public Season getCurrentSeason(){
         return currentSeason;
     }
-    public Weather getCurrentWeater(){
+    public Weather getCurrentWeather(){
         return currentWeather;
     }
-    
 }

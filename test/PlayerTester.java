@@ -5,7 +5,7 @@ import core.player.Player;
 import core.player.Gold;
 import core.player.Inventory;
 import core.player.PlayerStats;
-import core.relationship.RelationshipStatus;
+import core.player.RelationshipStatus;
 import npc.NPC;
 import core.world.Tile; // Placeholder import
 

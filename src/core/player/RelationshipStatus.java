@@ -1,4 +1,4 @@
-package core.relationship;
+package core.player;
 
 public enum RelationshipStatus {
     SINGLE,

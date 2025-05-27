@@ -1,5 +1,5 @@
 package time;
-
+    
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -87,5 +87,20 @@ public class Time {
         return isNight;
     }
     
+    /**
+     * Skip waktu ke jam dan menit tertentu pada hari yang sama.
+     * Jika waktu mundur (lebih awal dari waktu sekarang), maka tetap di hari yang sama.
+     * @param hour jam tujuan (0-23)
+     * @param minute menit tujuan (0-59)
+     */
+    public void skipTo(int hour, int minute) {
+        if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+            throw new IllegalArgumentException("Jam atau menit tidak valid");
+        }
+        this.hour = hour;
+        this.minute = minute;
+        this.isNight = (hour >= 18 || hour < 6);
+        System.out.printf("Waktu di-skip ke %02d:%02d\n", hour, minute);
+    }
 }
 

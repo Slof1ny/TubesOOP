@@ -3,7 +3,7 @@ package fishing;
 import java.util.List;
 import java.util.ArrayList;
 import item.Fish;
-import time.GameCalendar;
+import time.*;
 import core.world.*;
 import core.player.Player;
 
@@ -16,7 +16,7 @@ public abstract class FishingLocation {
         this.possibleFish = possibleFish;
     }
 
-    public List<Fish> getPossibleFish(Season seasons, GameCalendar time, Weather weather, FishingLocation location) {
+    public List<Fish> getPossibleFish(Season seasons, Time time, Weather weather, FishingLocation location) {
         List<Fish> catchableFish = new ArrayList<>();
         for (Fish fish : possibleFish) {
             if (fish.isCatchable(seasons, time, weather, location)) {

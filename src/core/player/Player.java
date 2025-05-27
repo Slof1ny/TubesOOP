@@ -78,6 +78,10 @@ public class Player {
         return inventory;
     }
 
+    public PlayerStats getStats() {
+        return playerStats;
+    }
+
     public NPC getPartner() {
         return partner;
     }

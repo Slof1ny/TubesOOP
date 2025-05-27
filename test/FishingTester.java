@@ -384,17 +384,6 @@ public class FishingTester {
         return locations;
     }
     
-    // This method is no longer needed in this form. Fish are added directly via FishRegistry.buildAll
-    // private static void setupFishInLocations(Map<String,FishingLocation> locations, List<Fish> allFish, Time time, GameCalendar calendar) {
-    //    // Logic moved to FishRegistry.buildAll, or if direct manipulation is needed, it would be refined here.
-    // }
-    
-    // This helper method is also no longer needed, as FishRegistry handles location matching
-    // private static boolean fishLocationMatches(Fish fish, String locationName) {
-    //    // Logic moved to FishRegistry
-    //    return false;
-    // }
-    
     // Extended GameCalendar for testing purposes
     private static class TestGameCalendar extends GameCalendar {
         public TestGameCalendar() {

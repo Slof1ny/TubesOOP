@@ -20,4 +20,16 @@ public class StatisticsManager {
         this.savedSeason = season;
         this.savedWeather = weather;
     }
+
+    public void printSavedData() {
+        System.out.println("--- Saved Statistics ---");
+        System.out.println("Player Name: " + playerName);
+        System.out.println("Hour: " + savedHour);
+        System.out.println("Minute: " + savedMinute);
+        System.out.println("Day In Season: " + savedDayInSeason);
+        System.out.println("Total Day: " + savedTotalDay);
+        System.out.println("Season: " + savedSeason);
+        System.out.println("Weather: " + savedWeather);
+        System.out.println("------------------------");
+    }
 }

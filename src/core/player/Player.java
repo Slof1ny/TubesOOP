@@ -2,7 +2,6 @@ package core.player;
 
 import core.world.Tile;
 import npc.NPC;
-import core.relationship.RelationshipStatus;
 import java.util.HashMap;
 
 public class Player {

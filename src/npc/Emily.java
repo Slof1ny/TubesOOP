@@ -1,4 +1,3 @@
-
 package npc;
 
 import java.util.Set;
@@ -10,19 +9,22 @@ public class Emily extends NPC {
     public Emily() {
         super("Emily", "Store",
             null,
-            Set.of("FISH_CATFISH", "FISH_SALMON", "FISH_SARDINE"),
-            Set.of("ITEM_COAL", "ITEM_WOOD")
+            Set.of("Catfish", "Salmon", "Sardine"), 
+            Set.of("Coal", "Firewood") 
         );
     }
-
 
     @Override
     public String getReactionToItem(Item giftedItem) {
         if (giftedItem == null) return "neutral";
+
+        // Emily loves all items with category "Seed"
         String category = giftedItem.getCategory();
         if (category != null && category.equals("Seed")) {
             return "loved";
         }
+
+        // For other items, defer to the parent NPC's logic for liked/hated/neutral
         return super.getReactionToItem(giftedItem);
     }
 

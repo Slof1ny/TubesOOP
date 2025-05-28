@@ -1,4 +1,3 @@
-
 package npc;
 
 import java.util.Set;
@@ -7,9 +6,9 @@ import core.player.Player;
 public class Abigail extends NPC {
     public Abigail() {
         super("Abigail", "Abigail's Tent",
-            Set.of("CROP_BLUEBERRY", "CROP_MELON", "CROP_PUMPKIN", "CROP_GRAPE", "CROP_CRANBERRY"),
-            Set.of("FOOD_BAGUETTE", "FOOD_PUMPKIN_PIE", "FOOD_WINE"),
-            Set.of("CROP_HOT_PEPPER", "CROP_CAULIFLOWER", "CROP_PARSNIP", "CROP_WHEAT")
+            Set.of("Blueberry", "Melon", "Pumpkin", "Grape", "Cranberry"),
+            Set.of("Baguette", "Pumpkin Pie", "Wine"),
+            Set.of("Hot Pepper", "Cauliflower", "Parsnip", "Wheat")
         );
     }
     @Override

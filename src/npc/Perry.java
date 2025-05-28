@@ -7,9 +7,9 @@ import core.player.Player;
 public class Perry extends NPC {
     public Perry() {
         super("Perry", "Perry's Cabin",
-            Set.of("CROP_CRANBERRY", "CROP_BLUEBERRY"), // lovedItems
-            Set.of("FOOD_WINE"),                         // likedItems
-            null // Hated items (semua ikan) dihandle khusus
+            Set.of("Cranberry", "Blueberry"),
+            Set.of("Wine"),                     
+            null
         );
     }
 
@@ -18,10 +18,10 @@ public class Perry extends NPC {
         if (giftedItem == null) return "neutral";
         // Membenci semua item Fish
         String category = giftedItem.getCategory();
-        if (category != null && category.equals("Fish")) {
+        if (category != null && category.equals("Fish")) { 
             return "hated";
         }
-        return super.getReactionToItem(giftedItem); // Cek loved/liked/neutral standar
+        return super.getReactionToItem(giftedItem);
     }
 
     @Override

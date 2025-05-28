@@ -68,19 +68,40 @@ public class FarmMap {
 
     private void placeHouseAndPond() {
         int hx, hy;
+        // Place House randomly, ensuring it doesn't overlap with already existing objects (none yet)
         while (true) {
-            hx = rng.nextInt(SIZE - 6 + 1);
-            hy = rng.nextInt(SIZE - 6 + 1);
+            hx = rng.nextInt(SIZE - 6); // Max x position for house not to go out of bounds
+            hy = rng.nextInt(SIZE - 6); // Max y position for house not to go out of bounds
             if (areaFree(hx, hy, 6, 6)) break;
         }
         House house = new House(hx, hy, 6, 6, 'h');
         deployObject(house);
 
         int px, py;
+        // Place Pond. Let's try to place it near the bottom right or in a known clear spot.
+        // For demonstration, let's try to place it in a distinct area,
+        // avoiding direct overlap with the house and shipping bin.
+        // You might need to adjust these coordinates based on where your house spawns.
+
+        // Attempt to place the pond in the bottom-right quadrant for better visibility
+        // This makes it less likely to overlap with the house (usually top-left/middle)
+        // or the shipping bin (near house).
         while (true) {
-            px = rng.nextInt(SIZE - 4 + 1);
-            py = rng.nextInt(SIZE - 3 + 1);
+            px = rng.nextInt(SIZE / 2) + SIZE / 2 - 4; // Start randomizing from mid-map to SIZE-4
+            py = rng.nextInt(SIZE / 2) + SIZE / 2 - 3; // Start randomizing from mid-map to SIZE-3
+
+            // Ensure px, py are within bounds [0, SIZE-1]
+            px = Math.max(0, Math.min(px, SIZE - 4));
+            py = Math.max(0, Math.min(py, SIZE - 3));
+
             if (areaFree(px, py, 4, 3)) break;
+            // Fallback for extremely unlucky randoms, try a fixed spot after a few tries
+            // (You can remove this if random is sufficient)
+            if (System.currentTimeMillis() % 100 == 0) { // A crude way to sometimes pick a fixed spot for testing
+                 px = 25; // Example fixed x
+                 py = 25; // Example fixed y
+                 if (areaFree(px,py,4,3)) break;
+            }
         }
         Pond pond = new Pond(px, py, 4, 3, 'o');
         deployObject(pond);

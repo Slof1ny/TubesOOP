@@ -20,7 +20,7 @@ public class Inventory {
     }
 
     private void giveStartingItems(){
-        addItem(new Seed("Parsnips Seeds", 20, "Spring", 1), 15);
+        addItem(Seed.getSeedByName("Parsnip Seeds"), 15);
     }
 
     public void addItem(Item item, int quantity){

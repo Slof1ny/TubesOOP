@@ -44,17 +44,17 @@ public class Store {
      */
     private void initializeStoreInventory() {
         // Seeds (Name, BuyPrice, Season, DaysToHarvest)
-        itemsForSale.put("Parsnip Seeds", new Seed("Parsnip Seeds", 20, "Spring", 1));
-        itemsForSale.put("Cauliflower Seeds", new Seed("Cauliflower Seeds", 80, "Spring", 5));
-        itemsForSale.put("Potato Seeds", new Seed("Potato Seeds", 50, "Spring", 3));
-        itemsForSale.put("Wheat Seeds", new Seed("Wheat Seeds", 60, "Spring", 1));
-        itemsForSale.put("Blueberry Seeds", new Seed("Blueberry Seeds", 80, "Summer", 7));
-        itemsForSale.put("Tomato Seeds", new Seed("Tomato Seeds", 50, "Summer", 3));
-        itemsForSale.put("Hot Pepper Seeds", new Seed("Hot Pepper Seeds", 40, "Summer", 1));
-        itemsForSale.put("Melon Seeds", new Seed("Melon Seeds", 80, "Summer", 4));
-        itemsForSale.put("Cranberry Seeds", new Seed("Cranberry Seeds", 100, "Fall", 2));
-        itemsForSale.put("Pumpkin Seeds", new Seed("Pumpkin Seeds", 150, "Fall", 7));
-        itemsForSale.put("Grape Seeds", new Seed("Grape Seeds", 60, "Fall", 3));
+        itemsForSale.put("Parsnip Seeds", Seed.getSeedByName("Parsnip Seeds"));
+        itemsForSale.put("Cauliflower Seeds", Seed.getSeedByName("Cauliflower Seeds"));
+        itemsForSale.put("Potato Seeds", Seed.getSeedByName("Potato Seeds"));
+        itemsForSale.put("Wheat Seeds", Seed.getSeedByName("Wheat Seeds"));
+        itemsForSale.put("Blueberry Seeds", Seed.getSeedByName("Blueberry Seeds"));
+        itemsForSale.put("Tomato Seeds", Seed.getSeedByName("Tomato Seeds"));
+        itemsForSale.put("Hot Pepper Seeds", Seed.getSeedByName("Hot Pepper Seeds"));
+        itemsForSale.put("Melon Seeds", Seed.getSeedByName("Melon Seeds"));
+        itemsForSale.put("Cranberry Seeds", Seed.getSeedByName("Cranberry Seeds"));
+        itemsForSale.put("Pumpkin Seeds", Seed.getSeedByName("Pumpkin Seeds"));
+        itemsForSale.put("Grape Seeds", Seed.getSeedByName("Grape Seeds"));
 
         // Food (Name, BuyPrice, SellPrice, EnergyRestored)
         itemsForSale.put("Fish n' Chips", new Food("Fish n' Chips", 150, 135, 50));

@@ -1,3 +1,4 @@
+// TubesOOP/src/core/world/FarmMap.java
 package core.world;
 
 import java.util.ArrayList;
@@ -6,36 +7,15 @@ import java.util.Random;
 import core.house.*;
 import core.player.Player;
 
+// Import the new top-level Pond and ShippingBin classes
+// (They are in the same package, so technically not strictly needed, but good for clarity)
+// import core.world.Pond; // Not strictly needed if in same package, but good practice
+// import core.world.ShippingBin; // Not strictly needed if in same package, but good practice
+
+
 public class FarmMap {
-    class Pond extends DeployedObject {
-        public Pond(int x, int y, int w, int h, char symbol) { 
-            super(x, y, w, h, symbol); 
-        }
-
-        @Override 
-        public void interact(Player p, FarmMap map) {
-            if (adjacent(p, this)) {
-                // map.getFishingManager().openPond(p);
-            } else {
-                System.out.println("You need to be next to the pond to fish.");
-            }
-        }
-    }
-
-    class ShippingBin extends DeployedObject {
-        public ShippingBin(int x, int y, int w, int h, char symbol) { 
-            super(x, y, w, h, symbol); 
-        }
-
-        @Override 
-        public void interact(Player p, FarmMap map) {
-            if (adjacent(p, this)) {
-                // map.getShippingManager().openBin(p);
-            } else {
-                System.out.println("You need to be next to the shipping bin to use it.");
-            }
-        }
-    }
+    // REMOVED INNER CLASS: class Pond extends DeployedObject { ... }
+    // REMOVED INNER CLASS: class ShippingBin extends DeployedObject { ... }
 
     public static final int SIZE = 32;
     protected Tile[][] grid = new Tile[SIZE][SIZE];
@@ -68,41 +48,32 @@ public class FarmMap {
 
     private void placeHouseAndPond() {
         int hx, hy;
-        // Place House randomly, ensuring it doesn't overlap with already existing objects (none yet)
+        // Place House randomly
         while (true) {
-            hx = rng.nextInt(SIZE - 6); // Max x position for house not to go out of bounds
-            hy = rng.nextInt(SIZE - 6); // Max y position for house not to go out of bounds
+            hx = rng.nextInt(SIZE - 6);
+            hy = rng.nextInt(SIZE - 6);
             if (areaFree(hx, hy, 6, 6)) break;
         }
         House house = new House(hx, hy, 6, 6, 'h');
         deployObject(house);
 
         int px, py;
-        // Place Pond. Let's try to place it near the bottom right or in a known clear spot.
-        // For demonstration, let's try to place it in a distinct area,
-        // avoiding direct overlap with the house and shipping bin.
-        // You might need to adjust these coordinates based on where your house spawns.
-
-        // Attempt to place the pond in the bottom-right quadrant for better visibility
-        // This makes it less likely to overlap with the house (usually top-left/middle)
-        // or the shipping bin (near house).
+        // Place Pond. Try to place it in the bottom-right quadrant for better visibility.
         while (true) {
-            px = rng.nextInt(SIZE / 2) + SIZE / 2 - 4; // Start randomizing from mid-map to SIZE-4
-            py = rng.nextInt(SIZE / 2) + SIZE / 2 - 3; // Start randomizing from mid-map to SIZE-3
+            px = rng.nextInt(SIZE / 2) + SIZE / 2 - 4;
+            py = rng.nextInt(SIZE / 2) + SIZE / 2 - 3;
 
-            // Ensure px, py are within bounds [0, SIZE-1]
             px = Math.max(0, Math.min(px, SIZE - 4));
             py = Math.max(0, Math.min(py, SIZE - 3));
 
             if (areaFree(px, py, 4, 3)) break;
-            // Fallback for extremely unlucky randoms, try a fixed spot after a few tries
-            // (You can remove this if random is sufficient)
-            if (System.currentTimeMillis() % 100 == 0) { // A crude way to sometimes pick a fixed spot for testing
-                 px = 25; // Example fixed x
-                 py = 25; // Example fixed y
+            if (System.currentTimeMillis() % 100 == 0) { // Occasional fixed spot for testing
+                 px = 25;
+                 py = 25;
                  if (areaFree(px,py,4,3)) break;
             }
         }
+        // Instantiate the top-level Pond class
         Pond pond = new Pond(px, py, 4, 3, 'o');
         deployObject(pond);
     }
@@ -117,6 +88,7 @@ public class FarmMap {
         int by = house.getY();
 
         bx = Math.min(bx, SIZE - 3);
+        // Instantiate the top-level ShippingBin class
         ShippingBin bin = new ShippingBin(bx, by, 3, 2, 's');
         deployObject(bin);
     }
@@ -133,6 +105,10 @@ public class FarmMap {
     private boolean areaFree(int x, int y, int w, int h) {
         for (int dx = 0; dx < w; dx++) {
             for (int dy = 0; dy < h; dy++) {
+                // Ensure coordinates are within bounds before accessing grid
+                if (x + dx < 0 || x + dx >= SIZE || y + dy < 0 || y + dy >= SIZE) {
+                    return false; // Part of the area is out of bounds
+                }
                 if (!grid[x + dx][y + dy].isWalkable()) {
                     return false;
                 }
@@ -149,10 +125,10 @@ public class FarmMap {
                          .orElseThrow();
     int px = house.getX() + house.getWidth() / 2;
     int py = house.getY() + house.getHeight() + 1;
-    
+
     if (py >= SIZE) py = SIZE - 1;
     if (px >= SIZE) px = SIZE - 1;
-    
+
     while (!isWalkable(px, py) && py > 0) {
         py--;
     }
@@ -170,7 +146,7 @@ public class FarmMap {
             }
         }
     }
-    
+
     player.setPosition(px, py);
 }
 
@@ -190,6 +166,7 @@ public class FarmMap {
     }
 
     // /** True if the player stands adjacent (N/E/S/W) to object o */
+    // This method is now primarily used internally by FarmMap or by the GUI controller's adjacency check
     private boolean adjacent(Player p, DeployedObject o) {
         int px = p.getX(), py = p.getY();
         return px >= o.getX() - 1 && px <= o.getX() + o.getWidth()
@@ -201,7 +178,7 @@ public class FarmMap {
     public boolean movePlayer(int dx, int dy) {
         int newX = player.getX() + dx;
         int newY = player.getY() + dy;
-        
+
         if (isWalkable(newX, newY)) {
             player.setPosition(newX, newY);
             return true;
@@ -236,5 +213,9 @@ public class FarmMap {
             }
             System.out.println();
         }
+    }
+
+    public List<DeployedObject> getDeployedObjects() {
+        return objects; // 'objects' is your internal list of deployed objects
     }
 }

@@ -5,12 +5,13 @@ import javax.swing.*;
 import java.awt.*;
 import core.player.Player;
 import core.world.FarmMap;
-import core.world.ShippingBin; // Import ShippingBin
+import core.world.ShippingBin;
 import time.GameCalendar;
 import time.Time;
 import system.Store;
-import system.PriceList; // Import PriceList for loading prices
-import npc.Emily; // Emily is the store owner
+import system.PriceList;
+import npc.Emily;
+import core.player.Inventory; // Make sure this import is here
 
 public class GameView extends JFrame {
 
@@ -24,28 +25,25 @@ public class GameView extends JFrame {
 
     // --- View Components (Panels) ---
     private JPanel mainPanel; // Uses CardLayout to switch between different screens
-    public MainMenu mainMenuPanel; // Make public to allow GameView to set its reference
-    public FarmMapPanel farmMapPanel; // Make public to allow GameView to request focus
-    // Add other panels as you create them (e.g., PlayerInfoPanel, InventoryPanel)
+    public MainMenu mainMenuPanel;
+    public FarmMapPanel farmMapPanel;
+    public PlayerInfoPanel playerInfoPanel; // Declare PlayerInfoPanel
 
     public GameView() {
         // --- 1. Basic JFrame Setup ---
         setTitle("Spakbor Hills");
-        setSize(800, 600); // Set initial window size
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Close operation
-        setLocationRelativeTo(null); // Center the window on the screen
+        setSize(1000, 700); // Increased size to accommodate info panel
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
 
         // --- 2. Initialize Game Model Components ---
-        // These are your existing core game classes.
-        // Order matters for dependencies.
-        player = new Player("Dr. Asep Spakbor", "Male"); // Create the player
+        player = new Player("Dr. Asep Spakbor", "Male");
         shippingBin = new ShippingBin();
-        player.setShippingBin(shippingBin); // Link player to shipping bin
-        farmMap = new FarmMap(player); // FarmMap needs player to spawn
-        gameCalendar = new GameCalendar(); // GameCalendar
-        gameTime = new Time(gameCalendar, player); // Time needs GameCalendar and Player
+        player.setShippingBin(shippingBin);
+        farmMap = new FarmMap(player);
+        gameCalendar = new GameCalendar();
+        gameTime = new Time(gameCalendar, player);
 
-        // Load prices from CSV (adjust path if necessary)
         try {
             PriceList.loadPrices("resources/price_list.csv");
             System.out.println("PriceList loaded successfully.");
@@ -54,9 +52,16 @@ public class GameView extends JFrame {
             JOptionPane.showMessageDialog(this, "Failed to load game data (price_list.csv). Game may not function correctly.", "Error", JOptionPane.ERROR_MESSAGE);
         }
 
-        gameStore = new Store("Emily's Store", new Emily()); // Initialize the store with Emily as owner
+        gameStore = new Store("Emily's Store", new Emily());
 
-        // Give player starting equipment (already handled by Inventory constructor, but ensure they are equipped for actions)
+        // Ensure starting equipment is added to inventory, if not handled by Player constructor
+        // Your Player constructor already calls giveStartingEquipment().
+        // For testing purposes, let's ensure some items are present for inventory display.
+        player.getInventory().addItem(item.Seed.getSeedByName("Wheat Seeds"), 5);
+        player.getInventory().addItem(new item.Food("Fish n' Chips", 150, 135, 50), 2);
+        player.getInventory().addItem(new item.Misc("Coal", 30, 20), 10);
+
+        // Equip starting tools (done in Player constructor, but explicitly equipping here too for clarity)
         player.equipItem("Hoe");
         player.equipItem("Watering Can");
         player.equipItem("Pickaxe");
@@ -66,57 +71,61 @@ public class GameView extends JFrame {
 
         // --- 3. Initialize GUI View Components (Panels) ---
         mainPanel = new JPanel();
-        mainPanel.setLayout(new CardLayout()); // Use CardLayout to switch between different game screens
+        mainPanel.setLayout(new CardLayout());
 
-        // Create instances of your custom panels
         mainMenuPanel = new MainMenu();
-        mainMenuPanel.setGameView(this); // Pass reference of GameView to MainMenu
+        mainMenuPanel.setGameView(this);
 
-        farmMapPanel = new FarmMapPanel(farmMap, player);
-        // If FarmMapController needs GameTime/Calendar, pass them in the constructor
-        // farmMapPanel.addKeyListener(new FarmMapController(player, farmMap, farmMapPanel, gameTime, gameCalendar));
+        playerInfoPanel = new PlayerInfoPanel(player); // PlayerInfoPanel must be initialized before FarmMapPanel now
+
+        // Instantiate FarmMapPanel with the new required arguments
+        farmMapPanel = new FarmMapPanel(farmMap, player, gameTime, gameCalendar, playerInfoPanel);
+
+        // The KeyListener is added within FarmMapPanel's constructor now, so you can remove this line:
+        // farmMapPanel.addKeyListener(new FarmMapController(player, farmMap, farmMapPanel, gameTime, gameCalendar, playerInfoPanel));
 
 
-        // Add panels to the mainPanel with unique string identifiers
+        // Create a panel for the game screen which includes map and info panel
+        JPanel gameScreenPanel = new JPanel(new BorderLayout());
+        gameScreenPanel.add(farmMapPanel, BorderLayout.CENTER);
+        gameScreenPanel.add(playerInfoPanel, BorderLayout.EAST);
+        gameScreenPanel.setName("GameScreen");
+
+        // Add panels to the mainPanel
         mainPanel.add(mainMenuPanel, "MainMenu");
-        mainPanel.add(farmMapPanel, "FarmMap");
-        // Add other panels here as they are created
+        mainPanel.add(gameScreenPanel, "GameScreen");
+
 
         // Add the mainPanel to the JFrame
         add(mainPanel);
 
         // --- 4. Initial Screen Display ---
-        showScreen("MainMenu"); // Start the game by showing the main menu
+        showScreen("MainMenu");
 
-        // --- 5. Start Game Time (Optional, depending on game flow) ---
-        // You might want to start gameTime.runTime2() only after "New Game" is selected
-        // For demonstration, let's start it immediately after game view is set up.
-        // This runs in a separate thread.
-        gameTime.runTime2();
+        // --- 5. Start Game Time ---
+        // This will now update the model, and we need to link it to refresh the GUI.
+        // We'll need a way for Time to notify panels when a minute or day passes.
+        // For now, it runs, but GUI won't auto-update from it without more plumbing.
+        gameTime.runTime2(); // This is already running in a background thread
     }
 
-    /**
-     * Method to switch between different panels/screens in the main window.
-     * @param screenName The unique string identifier for the screen to show.
-     */
     public void showScreen(String screenName) {
         CardLayout cl = (CardLayout)(mainPanel.getLayout());
         cl.show(mainPanel, screenName);
+
         // Request focus for the newly shown panel if it needs keyboard input
-        if (screenName.equals("FarmMap")) {
+        if (screenName.equals("GameScreen")) { // Now we show 'GameScreen' which contains FarmMapPanel
             farmMapPanel.requestFocusInWindow();
         }
-        // You might need to call revalidate() and repaint() if components aren't updating visually
         revalidate();
         repaint();
     }
 
     // --- Main Method to Run the Application ---
     public static void main(String[] args) {
-        // Ensure that GUI creation and updates are done on the Event Dispatch Thread (EDT)
         SwingUtilities.invokeLater(() -> {
             GameView game = new GameView();
-            game.setVisible(true); // Make the JFrame visible
+            game.setVisible(true);
         });
     }
 }

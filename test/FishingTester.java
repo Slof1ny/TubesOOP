@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.concurrent.Future;
 
 // javac -cp src -d out test/FishingTester.java
-// java -cp out test.FishingTestDriver
+// java -cp out test.FishingTester
 
 public class FishingTester {
     public static void main(String[] args) {

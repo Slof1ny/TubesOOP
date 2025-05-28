@@ -1,6 +1,8 @@
 package core.player;
 
 import core.world.Tile;
+import item.Equipment;
+import item.EquipmentManager;
 import npc.NPC;
 import java.util.HashMap;
 import core.world.ShippingBin;
@@ -14,6 +16,7 @@ public class Player {
     private int x, y;
     private int energy = MAX_ENERGY;
     private Inventory inventory;
+    private EquipmentManager equipmentManager;
     private PlayerStats playerStats;
     private NPC partner = null;
     private HashMap<NPC, RelationshipStatus> relationships = new HashMap<>();
@@ -25,10 +28,18 @@ public class Player {
         this.x = 0;
         this.y = 0;
         this.playerStats = new PlayerStats();
-        this.inventory = new Inventory(this.playerStats);
+        this.equipmentManager = new EquipmentManager();
+        this.inventory = new Inventory(this.playerStats, this.equipmentManager);
         this.shippingBin = null;
+        giveStartingEquipment();
     }
 
+    private void giveStartingEquipment() {
+        equipmentManager.addEquipment(new Equipment("Hoe", 0, 0));
+        equipmentManager.addEquipment(new Equipment("Watering Can", 0, 0));
+        equipmentManager.addEquipment(new Equipment("Pickaxe", 0, 0));
+        equipmentManager.addEquipment(new Equipment("Fishing Rod", 0, 0));
+    }
     
     public String getName(){
         return name;
@@ -83,6 +94,26 @@ public class Player {
 
     public PlayerStats getStats() {
         return playerStats;
+    }
+
+    public EquipmentManager getEquipmentManager() {
+        return equipmentManager;
+    }
+    
+    public boolean hasEquipment(String equipmentName) {
+        return equipmentManager.hasEquipment(equipmentName);
+    }
+    
+    public boolean isEquipped(String equipmentName) {
+        return equipmentManager.isEquipped(equipmentName);
+    }
+    
+    public boolean equipItem(String equipmentName) {
+        return equipmentManager.equipItem(equipmentName);
+    }
+    
+    public boolean unequipItem(String equipmentName) {
+        return equipmentManager.unequipItem(equipmentName);
     }
 
     public NPC getPartner() {

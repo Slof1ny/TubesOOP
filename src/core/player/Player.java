@@ -129,19 +129,27 @@ public class Player {
     }
 
     public void setRelationshipStatus(NPC npc, RelationshipStatus status) {
-        if (status == RelationshipStatus.FIANCE || status == RelationshipStatus.MARRIED) {
-            relationships.put(npc, status);
-        } else {
-            relationships.remove(npc);
+    if (status == RelationshipStatus.FIANCE || status == RelationshipStatus.MARRIED) {
+        if (partner != null && partner != npc) {
+            System.out.println("You already have a partner.");
+            return;
+        }
+        relationships.put(npc, status);
+        partner = npc;
+    } else {
+        relationships.remove(npc);
+        if (partner == npc) {
+            partner = null;
         }
     }
+}
 
     public HashMap<NPC, RelationshipStatus> getAllRelationships() {
         return relationships;
     }
     
     public boolean isSingle() {
-     return getRelationshipStatus(partner) == RelationshipStatus.SINGLE;
+        return partner == null || getRelationshipStatus(partner) == RelationshipStatus.SINGLE;
     }
 
     public void setShippingBin(ShippingBin shippingBin) {

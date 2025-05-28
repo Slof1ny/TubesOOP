@@ -91,13 +91,74 @@ public class FarmMap {
                              .filter(o -> o instanceof House)
                              .map(o -> (House)o)
                              .findFirst()
-                             .orElseThrow();
-        int bx = house.getX() + house.getWidth() + 1;
-        int by = house.getY();
+                             .orElseThrow(() -> new IllegalStateException("House not found on map."));
 
-        bx = Math.min(bx, SIZE - 3);
-        ShippingBin bin = new ShippingBin(bx, by, 3, 2, 's');
+        int binWidth = 3;
+        int binHeight = 2;
+
+        // --- Try placing to the right of the house ---
+        int proposedX = house.getX() + house.getWidth() + 1;
+        int proposedY = house.getY();
+
+        if (tryPlaceShippingBin(proposedX, proposedY, binWidth, binHeight)) {
+            return;
+        }
+
+        // --- Try placing below the house ---
+        proposedX = house.getX();
+        proposedY = house.getY() + house.getHeight() + 1;
+
+        if (tryPlaceShippingBin(proposedX, proposedY, binWidth, binHeight)) {
+            return;
+        }
+        
+        // --- Try placing to the left of the house ---
+        proposedX = house.getX() - binWidth - 1; // 1 tile gap + bin width
+        proposedY = house.getY();
+
+        if (tryPlaceShippingBin(proposedX, proposedY, binWidth, binHeight)) {
+            return;
+        }
+
+        // --- Try placing above the house ---
+        proposedX = house.getX();
+        proposedY = house.getY() - binHeight - 1; // 1 tile gap + bin height
+
+        if (tryPlaceShippingBin(proposedX, proposedY, binWidth, binHeight)) {
+            return;
+        }
+
+        // Fallback: If no ideal spot found. This indicates a potential map generation issue.
+        // For robustness, log an error or throw an exception if strict placement is required.
+        // For now, we'll try a last-resort placement, but it might clip or overlap.
+        System.err.println("Warning: Could not find an ideal unclipped and 1-tile-away position for the Shipping Bin. Attempting fallback placement.");
+        
+        // Simple fallback that might still clip if near edge
+        int bx_fallback = house.getX() + house.getWidth() + 1;
+        int by_fallback = house.getY();
+        bx_fallback = Math.min(bx_fallback, SIZE - binWidth); // Ensure it doesn't go beyond right edge
+        
+        ShippingBin bin = new ShippingBin(bx_fallback, by_fallback, binWidth, binHeight, 's');
         deployObject(bin);
+    }
+
+    // Helper method to try placing the shipping bin
+    private boolean tryPlaceShippingBin(int x, int y, int width, int height) {
+        // Check if proposed area is within map boundaries
+        if (x >= 0 && x + width <= SIZE && y >= 0 && y + height <= SIZE) {
+            // Check if the proposed area is free (not occupied by other objects)
+            if (areaFree(x, y, width, height)) {
+                ShippingBin bin = new ShippingBin(x, y, width, height, 's');
+                deployObject(bin);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Add this getter for the Main class to access deployed objects
+    public List<DeployedObject> getDeployedObjects() {
+        return objects;
     }
 
     private void deployObject(DeployedObject obj) {

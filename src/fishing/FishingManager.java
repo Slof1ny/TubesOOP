@@ -1,8 +1,10 @@
 package fishing;
 
+import java.io.BufferedReader; // Change import from Scanner to BufferedReader
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
+//import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -41,7 +43,8 @@ public class FishingManager {
         }
     }
 
-    public static Future<?> fish(FarmMap farm, FishingLocation location, Player player, Time time, GameCalendar calendar, Scanner sc) {
+    // Change method signature to accept BufferedReader
+    public static Future<?> fish(FarmMap farm, FishingLocation location, Player player, Time time, GameCalendar calendar, BufferedReader reader) {
         if (!location.canFishAt(player)) {
             System.out.println("You can't fish here.");
             return CompletableFuture.completedFuture(null);
@@ -78,7 +81,7 @@ public class FishingManager {
                 for (int i = 0; i < tries && !success; i++) {
                     System.out.print("Your guess: ");
                     
-                    String input = sc.nextLine().trim();
+                    String input = reader.readLine().trim(); // Use reader.readLine()
                     try {
                         int g = Integer.parseInt(input);
                         if (g == secret) {
@@ -98,9 +101,12 @@ public class FishingManager {
                 } else {
                     System.out.println("The fish got away...");
                 }
+            } catch (IOException e) { // Catch IOException for reader.readLine()
+                System.out.println("Error reading input during fishing: " + e.getMessage());
+                // e.printStackTrace(); // Optional: for debugging
             } catch (Exception e) {
                 System.out.println("Error during fishing: " + e.getMessage());
-                e.printStackTrace();
+                // e.printStackTrace(); // Optional: for debugging
             }
         });
     }

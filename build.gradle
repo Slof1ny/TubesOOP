@@ -1,0 +1,82 @@
+plugins {
+    // Apply the Java plugin to enable Java compilation and packaging.
+    id 'java'
+}
+
+// Define the group and version for your project.
+group 'com.spakborhills' // You can change this to your desired group ID
+version '1.0-SNAPSHOT'
+
+// Set the compatibility for source and target Java versions.
+// Adjust '17' if you are using a different Java Development Kit (JDK) version.
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+repositories {
+    // Use Maven Central for dependency resolution.
+    mavenCentral()
+}
+
+// Configure source sets to tell Gradle where to find your source code and resources.
+sourceSets {
+    main {
+        // Main Java source files are located in the 'src' directory.
+        // This means Gradle will look for packages like 'core', 'fishing', 'game', etc., directly under 'src'.
+        java {
+            srcDirs = ['src']
+        }
+        // Main resources (like price_list.csv, note.txt) are located in the 'resources' directory.
+        resources {
+            srcDirs = ['resources']
+        }
+    }
+    test {
+        // Test Java source files are located in the 'test' directory.
+        // This ensures your test files are compiled separately and not included in the main application.
+        java {
+            srcDirs = ['test']
+        }
+        // If you have test-specific resources, you would define them here.
+        // resources {
+        //     srcDirs = ['testResources']
+        // }
+    }
+}
+
+// Configure the JAR task to create an executable JAR.
+jar {
+    manifest {
+        // *** CORRECTED LINE HERE ***
+        // Since Main.java is directly in TubesOOP/src/ and has no package declaration,
+        // it is in the default package.
+        attributes 'Main-Class': 'Main'
+    }
+    // Include all compiled classes from the 'main' source set in the JAR.
+    from sourceSets.main.output
+}
+
+// Define a custom task to run your application directly from Gradle.
+task run(type: JavaExec) {
+    // Set the classpath to include all compiled classes and dependencies from the 'main' source set.
+    classpath = sourceSets.main.runtimeClasspath
+    // Specify the main class to execute.
+    // *** CORRECTED LINE HERE (Matches the jar task) ***
+    mainClass = 'Main'
+    // If you need to pass arguments to your application, uncomment and modify the following line:
+    // args 'arg1', 'arg2'
+}
+
+// Optional: Configure the test task if you plan to run your tests with Gradle.
+test {
+    // Use JUnit Platform for running tests (compatible with JUnit 5).
+    useJUnitPlatform()
+    // If you want to skip tests during a build, you can uncomment the following line:
+    // enabled = false
+}
+
+// Configure the clean task to remove the build directory.
+clean {
+    delete rootProject.buildDir
+}

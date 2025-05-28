@@ -6,6 +6,8 @@ import core.player.Gold;
 import core.player.Inventory;
 import core.player.PlayerStats;
 import core.player.RelationshipStatus;
+import npc.Caroline;
+import npc.Perry;
 import npc.NPC;
 import core.world.Tile; // Placeholder import
 
@@ -67,8 +69,8 @@ public class PlayerTester {
 
         // 6. Test Relationship Status Management
         System.out.println("\n--- Test Scenario 6: Relationship Status Management ---");
-        NPC caroline = new NPC("Caroline");
-        NPC perry = new NPC("Perry");
+        NPC caroline = new Caroline();
+        NPC perry = new Perry();
 
         System.out.println("Initial relationship with Caroline: " + player1.getRelationshipStatus(caroline));
         System.out.println("Initial relationship with Perry: " + player1.getRelationshipStatus(perry));

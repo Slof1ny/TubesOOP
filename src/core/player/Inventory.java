@@ -78,6 +78,15 @@ public class Inventory {
         return true;
     }
 
+    public Item getItemByName(String name) {
+        for (Map.Entry<Item, Integer> entry : items.entrySet()) {
+            if (entry.getKey().getName().equalsIgnoreCase(name)) { // Use equalsIgnoreCase for flexible matching
+                return entry.getKey();
+            }
+        }
+        return null; // Item not found
+    }
+    
     public void showInventory() {
         System.out.println("Inventory:");
         for (Map.Entry<Item, Integer> entry : items.entrySet()) {

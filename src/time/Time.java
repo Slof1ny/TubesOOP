@@ -67,7 +67,7 @@ public class Time {
                 calendar.nextDay();
             }
         }
-        System.out.printf("%02d : %02d\n", hour, minute);
+        // System.out.printf("%02d : %02d\n", hour, minute);
     }
 
     public void runTime() {
@@ -133,10 +133,10 @@ public class Time {
                 hour++;
                 if(hour == 18){
                     isNight = true;
-                    System.out.println("===NIGHT MODE===");
+                    //System.out.println("===NIGHT MODE===");
                 } else if (hour == 6){
                     isNight = false;
-                    System.out.println("===LIGHT MODE===");
+                    //System.out.println("===LIGHT MODE===");
                 }
                 
                 if(hour == 24){ // Hari baru dimulai
@@ -148,7 +148,7 @@ public class Time {
                     }
                 }
             }
-            System.out.printf("%02d : %02d\n", hour, minute);
+            // System.out.printf("%02d : %02d\n", hour, minute);
 
         };
         scheduler.scheduleAtFixedRate(updateTime, 0, 1, TimeUnit.SECONDS);

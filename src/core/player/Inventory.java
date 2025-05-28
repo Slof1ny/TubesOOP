@@ -23,6 +23,13 @@ public class Inventory {
         addItem(Seed.getSeedByName("Parsnip Seeds"), 15);
     }
 
+    public Map<item.Item, Integer> getAllItems() {
+    // Return a copy to prevent external modification of the internal map
+    // Note: This only returns non-equipment items. Equipment is separate.
+        return new HashMap<>(items);
+    }
+
+
     public void addItem(Item item, int quantity){
         if (item instanceof Equipment) {
             Equipment equipment = (Equipment) item;

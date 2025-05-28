@@ -70,10 +70,11 @@ public class MainMenu extends JPanel {
         newGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("New Game button clicked!"); // DEBUGGING PRINT STATEMENT
                 if (gameView != null) {
-                    gameView.showScreen("FarmMap"); // Switch to Farm Map screen
+                    gameView.showScreen("GameScreen"); // Corrected to "GameScreen" as per Step 6
                     // Request focus for the FarmMapPanel so it can receive key events
-                    gameView.farmMapPanel.requestFocusInWindow();
+                    // This is handled inside showScreen() now for "GameScreen"
                 }
             }
         });

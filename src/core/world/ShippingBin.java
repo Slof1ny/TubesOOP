@@ -7,14 +7,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class ShippingBin {
+public class ShippingBin extends DeployedObject{
     private static final int MAX_UNIQUE_SLOTS = 16;
     private Map<Item, Integer> itemsToShip; // Item -> Quantity
     private int uniqueSlotsUsed;
 
+    // THIS IS THE CORRECTED NO-ARGUMENT CONSTRUCTOR
     public ShippingBin() {
+        // As ShippingBin extends DeployedObject, its no-arg constructor must call super().
+        // We use placeholder values (0,0,0,0,' ') because the actual position
+        // is set later when FarmMap calls its other constructor during placement.
+        super(0, 0, 0, 0, ' ');
         this.itemsToShip = new HashMap<>();
         this.uniqueSlotsUsed = 0;
+    }
+
+    public ShippingBin(int x, int y, int w, int h, char symbol) {
+            super(x, y, w, h, symbol);
+            this.itemsToShip = new HashMap<>();
+            this.uniqueSlotsUsed = 0;
+    }
+
+    @Override
+    public void interact(Player p, FarmMap map) {
+        // This method is required by DeployedObject, but the actual interaction
+        // logic is handled by the GUI controller.
     }
 
     public boolean addItem(Player player, Item item, int quantity) {

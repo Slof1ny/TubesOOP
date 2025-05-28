@@ -8,6 +8,10 @@ import core.world.FarmMap;
 import core.world.Tile;
 import core.player.Player;
 
+// Add these imports for the FarmMapController constructor
+import time.Time;
+import time.GameCalendar;
+
 public class FarmMapPanel extends JPanel {
     private FarmMap farmMap;
     private Player player;
@@ -24,12 +28,13 @@ public class FarmMapPanel extends JPanel {
     // Define DEPLOYED_COLOR as a generic fallback if needed, or remove it from the switch
     private static final Color DEPLOYED_COLOR = Color.LIGHT_GRAY; // Generic deployed color
 
-    // Define DARK_GREEN explicitly, since Color.DARK_GREEN doesn't exist
+    // Define CUSTOM_DARK_GREEN explicitly, since Color.DARK_GREEN doesn't exist
     private static final Color CUSTOM_DARK_GREEN = new Color(0, 100, 0); // A custom dark green
 
     private final int TILE_SIZE = 20; // Size of each tile in pixels (20x20 pixels per tile)
 
-    public FarmMapPanel(FarmMap farmMap, Player player) {
+    // Modify constructor to accept Time, GameCalendar, and PlayerInfoPanel
+    public FarmMapPanel(FarmMap farmMap, Player player, Time gameTime, GameCalendar gameCalendar, PlayerInfoPanel playerInfoPanel) {
         this.farmMap = farmMap;
         this.player = player;
 
@@ -39,8 +44,8 @@ public class FarmMapPanel extends JPanel {
 
         // This panel needs to be focusable to receive keyboard input for movement
         setFocusable(true);
-        // Add the controller for handling keyboard events on this panel
-        addKeyListener(new FarmMapController(player, farmMap, this));
+        // Add the controller, passing all necessary arguments
+        addKeyListener(new FarmMapController(player, farmMap, this, gameTime, gameCalendar, playerInfoPanel));
     }
 
     @Override

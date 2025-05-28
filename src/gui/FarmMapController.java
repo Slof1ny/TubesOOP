@@ -1,15 +1,21 @@
 // TubesOOP/src/gui/FarmMapController.java
 package gui;
 
-import javax.swing.JOptionPane; // To resolve JOptionPane
-import javax.swing.SwingUtilities;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import core.player.Player;
 import core.world.FarmMap;
-import action.Action; // Your existing Action class
-import item.Seed;     // Example for planting action
+import core.world.DeployedObject; // Import DeployedObject
+import core.world.ShippingBin;    // Import ShippingBin class for specific check
+import core.house.House;          // Import House class for specific check
+import core.world.Pond;
+import core.world.Tile;           // Import Tile class
+
+import action.Action;
+import item.Seed;
 import time.Time;
 import time.GameCalendar;
 
@@ -17,44 +23,39 @@ public class FarmMapController extends KeyAdapter {
     private Player player;
     private FarmMap farmMap;
     private FarmMapPanel farmMapPanel;
-    private Time gameTime; // Reference to the game's Time object
-    private GameCalendar gameCalendar; // Reference to the game's GameCalendar object
+    private Time gameTime;
+    private GameCalendar gameCalendar;
+    private PlayerInfoPanel playerInfoPanel;
 
-    public FarmMapController(Player player, FarmMap farmMap, FarmMapPanel farmMapPanel) {
-        this.player = player;
-        this.farmMap = farmMap;
-        this.farmMapPanel = farmMapPanel;
-        // For actions that require time/calendar, you need a way to pass them here
-        // For simplicity in this initial setup, we'll create new instances,
-        // but in a full game, these would typically be passed from GameView or a central GameState class.
-        this.gameCalendar = new GameCalendar(); // Dummy calendar for initial actions
-        this.gameTime = new Time(this.gameCalendar, player); // Dummy time for initial actions
-    }
-
-    // Constructor that includes Time and GameCalendar (preferred for later)
-    public FarmMapController(Player player, FarmMap farmMap, FarmMapPanel farmMapPanel, Time gameTime, GameCalendar gameCalendar) {
+    public FarmMapController(Player player, FarmMap farmMap, FarmMapPanel farmMapPanel, Time gameTime, GameCalendar gameCalendar, PlayerInfoPanel playerInfoPanel) {
         this.player = player;
         this.farmMap = farmMap;
         this.farmMapPanel = farmMapPanel;
         this.gameTime = gameTime;
         this.gameCalendar = gameCalendar;
+        this.playerInfoPanel = playerInfoPanel;
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        boolean actionTaken = false; // Flag to indicate if an action occurred that requires redraw
+        boolean actionTaken = false;
+
+        // Consume the event to prevent it from being processed by other listeners or components
+        if (e.isConsumed()) {
+            return;
+        }
 
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_W: // Move Up
+            case KeyEvent.VK_W:
                 actionTaken = farmMap.movePlayerUp();
                 break;
-            case KeyEvent.VK_S: // Move Down
+            case KeyEvent.VK_S:
                 actionTaken = farmMap.movePlayerDown();
                 break;
-            case KeyEvent.VK_A: // Move Left
+            case KeyEvent.VK_A:
                 actionTaken = farmMap.movePlayerLeft();
                 break;
-            case KeyEvent.VK_D: // Move Right
+            case KeyEvent.VK_D:
                 actionTaken = farmMap.movePlayerRight();
                 break;
             case KeyEvent.VK_T: // 'T' for Tilling
@@ -86,7 +87,7 @@ public class FarmMapController extends KeyAdapter {
                     JOptionPane.showMessageDialog(farmMapPanel, ex.getMessage(), "Harvesting Error", JOptionPane.WARNING_MESSAGE);
                 }
                 break;
-            case KeyEvent.VK_R: // 'R' for Watering (Changed from VK_W to avoid duplicate case)
+            case KeyEvent.VK_R: // 'R' for Watering
                 try {
                     Action.water(farmMap, player, gameTime, gameCalendar);
                     actionTaken = true;
@@ -94,18 +95,70 @@ public class FarmMapController extends KeyAdapter {
                     JOptionPane.showMessageDialog(farmMapPanel, ex.getMessage(), "Watering Error", JOptionPane.WARNING_MESSAGE);
                 }
                 break;
-            // Add more cases for other actions (e.g., 'E' for eating, 'Z' for sleeping, etc.)
-            // Remember to equip tools as needed before calling actions.
+            case KeyEvent.VK_E: // 'E' for Interact with objects (Shipping Bin, House)
+                // Check if player is adjacent to Shipping Bin
+                DeployedObject interactedObject = getAdjacentDeployedObject();
+                if (interactedObject != null) {
+                    if (interactedObject instanceof ShippingBin) {
+                        JOptionPane.showMessageDialog(farmMapPanel, "You are next to the Shipping Bin! (Selling interface coming soon)", "Interact", JOptionPane.INFORMATION_MESSAGE);
+                        // TODO: In next step, replace this with opening the actual selling GUI
+                    } else if (interactedObject instanceof House) {
+                        JOptionPane.showMessageDialog(farmMapPanel, "You are next to your House! (House actions coming soon)", "Interact", JOptionPane.INFORMATION_MESSAGE);
+                        // TODO: In next step, replace this with opening house interior/menu
+                    } else if (interactedObject instanceof Pond) {
+                        JOptionPane.showMessageDialog(farmMapPanel, "You are next to the Pond! (fishing actions coming soon)", "Interact", JOptionPane.INFORMATION_MESSAGE);
+                        // TODO: In next step, replace this with opening house interior/menu
+                    }
+                     else {
+                        JOptionPane.showMessageDialog(farmMapPanel, "You interacted with a " + interactedObject.getSymbol() + "!", "Interact", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    actionTaken = true; // Interaction counts as an action
+                } else {
+                    JOptionPane.showMessageDialog(farmMapPanel, "Nothing to interact with here.", "Interact", JOptionPane.INFORMATION_MESSAGE);
+                }
+                break;
         }
 
-        // If any action changed the game state (player moved, tile changed, etc.)
         if (actionTaken) {
-            // All GUI updates must happen on the Event Dispatch Thread (EDT)
+            e.consume(); // Consume the event to prevent multiple processing
             SwingUtilities.invokeLater(() -> {
-                farmMapPanel.refreshMap(); // Request the map to redraw
-                // You would also update other panels here, e.g., player info panel
-                // playerInfoPanel.refresh();
+                farmMapPanel.refreshMap();
+                playerInfoPanel.refreshPlayerInfo();
             });
         }
+    }
+
+    /**
+     * Helper method to check if the player is adjacent to any deployed object.
+     * Returns the DeployedObject if found, null otherwise.
+     */
+    private DeployedObject getAdjacentDeployedObject() {
+        int px = player.getX();
+        int py = player.getY();
+
+        // Define relative coordinates for adjacent tiles (N, S, E, W, and diagonals if desired)
+        int[][] adjacentOffsets = {
+            {0, -1}, {0, 1}, {-1, 0}, {1, 0}, // Cardinal directions
+            {-1, -1}, {-1, 1}, {1, -1}, {1, 1} // Diagonals (optional, depends on game rules)
+        };
+
+        for (int[] offset : adjacentOffsets) {
+            int checkX = px + offset[0];
+            int checkY = py + offset[1];
+
+            // Ensure check coordinates are within map bounds
+            if (checkX >= 0 && checkX < FarmMap.SIZE && checkY >= 0 && checkY < FarmMap.SIZE) {
+                Tile adjacentTile = farmMap.getTileAt(checkX, checkY);
+                if (adjacentTile != null && adjacentTile.getType() == Tile.TileType.DEPLOYED) {
+                    // Find the deployed object that occupies this tile
+                    for (DeployedObject obj : farmMap.getDeployedObjects()) { // Assuming FarmMap has getDeployedObjects()
+                        if (obj.occupies(checkX, checkY)) {
+                            return obj; // Found an adjacent deployed object
+                        }
+                    }
+                }
+            }
+        }
+        return null; // No adjacent deployed object found
     }
 }

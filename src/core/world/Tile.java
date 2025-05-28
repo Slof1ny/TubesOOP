@@ -42,6 +42,15 @@ public class Tile {
         return plantedCrop; 
     }
 
+    public void plantCrop(Crop crop) {
+        this.plantedCrop = crop;
+        this.type = TileType.PLANTED;
+    }
+
+    public void clearPlantedCrop() {
+        this.plantedCrop = null;
+    }
+
     public void setType(TileType type) {
         if (type == TileType.DEPLOYED) {
             throw new IllegalStateException("Use deployObject method to mark a tile as DEPLOYED");

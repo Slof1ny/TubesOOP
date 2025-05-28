@@ -1,6 +1,8 @@
 package cooking;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import core.player.Player;
 
 public class RecipeBook {
     private static final List<Recipe> all = List.of(
@@ -30,10 +32,10 @@ public class RecipeBook {
         ),
         new Recipe(Recipe.ID.VEGGIE_SOUP, "Veggie Soup",
             Map.of("Cauliflower", 1, "Parsnip", 1, "Potato", 1, "Tomato", 1), 1,
-            p -> p.getStats().getItemCount("Cauliflower") > 0 || 
-                  p.getStats().getItemCount("Parsnip") > 0 || 
-                  p.getStats().getItemCount("Potato") > 0 || 
-                  p.getStats().getItemCount("Tomato") > 0
+            p -> p.getStats().getItemCount("Cauliflower") > 0 ||
+                 p.getStats().getItemCount("Parsnip") > 0 ||
+                 p.getStats().getItemCount("Potato") > 0 ||
+                 p.getStats().getItemCount("Tomato") > 0
         ),
         new Recipe(Recipe.ID.FISH_STEW, "Fish Stew",
             Map.of("Fish", 2, "Hot Pepper", 1, "Cauliflower", 2), 1,
@@ -53,14 +55,43 @@ public class RecipeBook {
         )
     );
 
-    public static List<Recipe> values() { return all; }
+    /** All recipes. */
+    public static List<Recipe> values() {
+        return all;
+    }
 
+    /** Find by enum ID or throw. */
     public static Recipe find(Recipe.ID id) {
         return all.stream()
                   .filter(r -> r.getId() == id)
                   .findFirst()
-                  .orElseThrow(() -> 
-                     new IllegalArgumentException("Recipe not found: " + id)
-                  );
+                  .orElseThrow(() -> new IllegalArgumentException("Recipe not found: " + id));
+    }
+
+    /** Find a recipe by its *display* name (case‐insensitive). */
+    public static Optional<Recipe> findByName(String name) {
+        return all.stream()
+                  .filter(r -> r.getName().equalsIgnoreCase(name))
+                  .findFirst();
+    }
+
+    /** Like findByName but throws if absent. */
+    public static Recipe getFoodByName(String name) {
+        return findByName(name)
+                .orElseThrow(() -> new IllegalArgumentException("Recipe not found: " + name));
+    }
+
+    /** All recipes whose unlockCondition is met. */
+    public static List<Recipe> unlockedRecipes(Player p) {
+        return all.stream()
+                  .filter(r -> r.isUnlocked(p))
+                  .collect(Collectors.toList());
+    }
+
+    /** All recipes for which p has enough ingredients. */
+    public static List<Recipe> craftableRecipes(Player p) {
+        return all.stream()
+                  .filter(r -> r.canCraft(p))
+                  .collect(Collectors.toList());
     }
 }

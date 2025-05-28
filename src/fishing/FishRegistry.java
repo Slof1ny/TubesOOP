@@ -132,6 +132,7 @@ public class FishRegistry {
         List.of("Mountain Lake")
       )
     );
+    private static final Map<String, Fish> FISH_BY_NAME = new HashMap<>();
 
     private static List<TimeRange> createAllDayTimeRanges() {
         return List.of(new TimeRange(0, 24));
@@ -174,5 +175,9 @@ public class FishRegistry {
             case LEGENDARY -> 25;
         };
         return (4*seasons) * hours * (2*weathers) * (4*locations) / C;
+    }
+
+    public static Fish getFishByName(String name) {
+        return FISH_BY_NAME.get(name);
     }
 }

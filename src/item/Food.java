@@ -17,5 +17,4 @@ public class Food extends Item implements EdibleItem {
     public int getEnergyRestored(){
         return energyRestored;
     }
-    
 }

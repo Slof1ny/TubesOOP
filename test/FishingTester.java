@@ -429,7 +429,7 @@ public class FishingTester {
         public TestPlayer(String name, String gender) {
             super(name, gender);
             // Create the game inventory once and keep it
-            this.gameInventory = new core.player.Inventory(this.getStats()) {
+            this.gameInventory = new core.player.Inventory(this.getStats(), this.getEquipmentManager()) {
                 @Override
                 public void addItem(item.Item item, int quantity) {
                     inventory.addItem(item, quantity);

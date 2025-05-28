@@ -1,13 +1,16 @@
 package test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import core.player.Inventory;
 import core.player.PlayerStats;
-import item.Equipment;
+import core.world.Season;
+import item.EquipmentManager;
 import item.Food;
-import item.Item;
 import item.Misc;
 import item.Seed;
-import item.Crop; // Import Crop as well
+import item.Crop;
 
 public class InventoryTester {
     public static void main(String[] args) {
@@ -15,7 +18,7 @@ public class InventoryTester {
 
         // 1. Create an Inventory object
         System.out.println("\n1. Creating a new Inventory object (should have starting items).");
-        Inventory playerInventory = new Inventory(new PlayerStats());
+        Inventory playerInventory = new Inventory(new PlayerStats(), new EquipmentManager());
         playerInventory.showInventory();
 
         // 2. Test addItem() with different item types
@@ -36,7 +39,9 @@ public class InventoryTester {
 
         System.out.println("\n5. Adding 2 more 'Parsnips Seeds' (existing Seed item).");
         // Ensure the Seed object matches the one added initially for HashMap key equality
-        Seed parsnipsSeed = new Seed("Parsnips Seeds", 20, "Spring", 1); // Uses buyPrice
+        List<Season> parsnipSeasons = new ArrayList<>();
+        parsnipSeasons.add(Season.SPRING);
+        Seed parsnipsSeed = new Seed("Parsnips Seeds", 20, parsnipSeasons , 1, 1); // Uses buyPrice
         playerInventory.addItem(parsnipsSeed, 2);
         playerInventory.showInventory(); // Should be 15 + 2 = 17
 

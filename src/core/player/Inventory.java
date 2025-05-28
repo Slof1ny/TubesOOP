@@ -10,23 +10,30 @@ import java.util.Map;
 public class Inventory {
     private Map<Item, Integer> items;
     private PlayerStats playerStats;
+    private EquipmentManager equipmentManager;
 
-    public Inventory(PlayerStats playerStats) {
+    public Inventory(PlayerStats playerStats, EquipmentManager equipmentManager) {
         items = new HashMap<>();
         this.playerStats = playerStats;
+        this.equipmentManager = equipmentManager;
         giveStartingItems();
     }
 
     private void giveStartingItems(){
-        addItem(new Seed("Parsnips Seeds",20, "Spring", 1), 15);
-        addItem(new Equipment("Hoe", 0, 0));
-        addItem(new Equipment("Watering Can", 0, 0));
-        addItem(new Equipment("Pickaxe", 0, 0));
-        addItem(new Equipment("Fishing Rod", 0, 0));
-
+        addItem(new Seed("Parsnips Seeds", 20, "Spring", 1), 15);
     }
 
     public void addItem(Item item, int quantity){
+        if (item instanceof Equipment) {
+            Equipment equipment = (Equipment) item;
+            for (int i = 0; i < quantity; i++) {
+                equipmentManager.addEquipment(new Equipment(equipment.getName(), 
+                                                           equipment.getBuyPrice(), 
+                                                           equipment.getSellPrice()));
+            }
+            return;
+        }
+        
         items.put(item, items.getOrDefault(item, 0) + quantity);
         if (playerStats != null) {
             playerStats.addItem(item.getName(), quantity);
@@ -38,6 +45,16 @@ public class Inventory {
     }
 
     public boolean removeItem(Item item, int quantity) {
+        if (item instanceof Equipment) {
+            Equipment equipment = (Equipment) item;
+            for (int i = 0; i < quantity; i++) {
+                if (!equipmentManager.removeEquipment(equipment.getName())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        
         int currentQuantity = items.getOrDefault(item, 0);
         if (currentQuantity < quantity) return false;
         if (currentQuantity == quantity) items.remove(item);
@@ -46,10 +63,18 @@ public class Inventory {
     }
 
     public int getItemCount(Item item) {
+        if (item instanceof Equipment) {
+            return equipmentManager.hasEquipment(item.getName()) ? 1 : 0;
+        }
+        
         return items.getOrDefault(item, 0);
     }
 
     public int getItemCount(String name) {
+        if (equipmentManager.hasEquipment(name)) {
+            return 1;
+        }
+        
         int total = 0;
         for (var e : items.entrySet()) {
             if (e.getKey().getName().equals(name)) {
@@ -61,6 +86,11 @@ public class Inventory {
 
     /** Remove up to `quantity` items matching `name`. Returns true if successful. */
     public boolean removeByName(String name, int quantity) {
+        if (equipmentManager.hasEquipment(name)) {
+            if (quantity > 1) return false;
+            return equipmentManager.removeEquipment(name);
+        }
+        
         int need = quantity;
         List<Item> toRemove = new ArrayList<>();
         for (var e : items.entrySet()) {
@@ -79,9 +109,13 @@ public class Inventory {
     }
 
     public void showInventory() {
-        System.out.println("Inventory:");
+        System.out.println("=== INVENTORY ===");
+        
+        System.out.println("Items:");
         for (Map.Entry<Item, Integer> entry : items.entrySet()) {
             System.out.println("- " + entry.getKey().getName() + " x" + entry.getValue());
         }
+        
+        equipmentManager.showEquipmentStatus();
     }
 }

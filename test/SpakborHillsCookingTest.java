@@ -1,9 +1,19 @@
 package test;
 
-import com.spakborhills.game.model.*;
-import com.spakborhills.game.enums.*;
-import com.spakborhills.game.actions.CookingManager;
-import com.spakborhills.game.data.RecipeData; // Untuk melihat resep yang ada
+
+import item.CropRegistry;
+import item.Misc;
+import item.FoodRegistry;
+import item.Crop;
+import item.Item;
+import cooking.Fuel;
+import cooking.Firewood;
+import cooking.Coal;
+import recipe.Recipe;
+import cooking.CookingManager;
+import cooking.RecipeData;
+import core.player.Player;
+import core.player.Inventory;
 
 import java.util.List;
 import java.util.Scanner;
@@ -12,32 +22,34 @@ public class SpakborHillsCookingTest {
 
     public static void main(String[] args) {
         // Inisialisasi Player
-        Player player = new Player("Chef Asep", "Dapur Impian", "Laki-laki");
+        Player player = new Player("Chef Asep", "Male");
         System.out.println("Pemain " + player.getName() + " siap memasak!");
 
         // Beri pemain beberapa bahan awal dan fuel
         Inventory inv = player.getInventory();
         // Bahan untuk Baguette (3 Wheat)
-        inv.addItem(new Item("CROP_WHEAT", "Wheat", ItemCategory.CROP, 50, 30), 5);
+        inv.addItem(CropRegistry.getHarvestedCropByName("Wheat"), 5);
         // Bahan untuk Fish n' Chips (2 Ikan, 1 Wheat, 1 Potato)
-        inv.addItem(new Item("FISH_CARP", "Carp", ItemCategory.FISH, 0, 30), 3); // Contoh ikan
-        inv.addItem(new Item("CROP_POTATO", "Potato", ItemCategory.CROP, 0, 80), 2);
+        inv.addItem(Misc.get("Carp"), 3); // Contoh ikan
+        inv.addItem(CropRegistry.getHarvestedCropByName("Potato"), 2);
         // Fuel
-        inv.addItem(new Item(Firewood.ITEM_ID, "Firewood", ItemCategory.MISC, 10, 5), 5);
-        inv.addItem(new Item(Coal.ITEM_ID, "Coal", ItemCategory.MISC, 30, 15), 3);
-        
-        player.gainEnergy(100); // Pastikan energi penuh
+        inv.addItem(Misc.get("Firewood"), 5);
+        inv.addItem(Misc.get("Coal"), 3);
+
+        player.setEnergy(Player.getMaxEnergy()); // Pastikan energi penuh
 
         // Inisialisasi CookingManager
         CookingManager cookingManager = new CookingManager(player);
         // Buka beberapa resep untuk testing (selain yang default)
-        cookingManager.unlockRecipe("recipe_1"); // Fish n' Chips (Store Bought)
+        // If unlocking recipes is needed, implement it here. Otherwise, all recipes may be available by default.
 
         System.out.println("\n--- Status Awal Pemain ---");
-        inv.displayInventory();
+        inv.showInventory();
         System.out.println("Energi: " + player.getEnergy());
         System.out.println("Resep yang tersedia:");
-        cookingManager.getAvailableRecipes().forEach(r -> System.out.println("- " + r.getRecipeName() + " (ID: " + r.getRecipeId() + ")"));
+        for (Recipe r : RecipeData.getAllRecipes()) {
+            System.out.println("- " + r.getRecipeName() + " (ID: " + r.getRecipeId() + ")");
+        }
 
         // Skenario Memasak
         Scanner scanner = new Scanner(System.in);
@@ -54,7 +66,7 @@ public class SpakborHillsCookingTest {
             switch (choice) {
                 case "1":
                     System.out.println("\nResep yang bisa dimasak:");
-                    List<Recipe> availableRecipes = cookingManager.getAvailableRecipes();
+                    List<Recipe> availableRecipes = RecipeData.getAllRecipes();
                     if (availableRecipes.isEmpty()) {
                         System.out.println("Tidak ada resep yang bisa kamu masak saat ini.");
                         break;
@@ -74,7 +86,6 @@ public class SpakborHillsCookingTest {
                         System.out.println("Input tidak valid.");
                         break;
                     }
-                    
                     Recipe selectedRecipe = availableRecipes.get(recipeChoiceIdx);
 
                     System.out.println("Pilih bahan bakar:");
@@ -84,9 +95,9 @@ public class SpakborHillsCookingTest {
                     String fuelChoiceStr = scanner.nextLine();
                     Fuel selectedFuel;
                     if (fuelChoiceStr.equals("1")) {
-                        selectedFuel = new Firewood();
+                        selectedFuel = new cooking.Firewood();
                     } else if (fuelChoiceStr.equals("2")) {
-                        selectedFuel = new Coal();
+                        selectedFuel = new cooking.Coal();
                     } else {
                         System.out.println("Pilihan bahan bakar tidak valid.");
                         break;
@@ -98,7 +109,7 @@ public class SpakborHillsCookingTest {
                     break;
                 case "2":
                     System.out.println("\n--- Inventory Saat Ini ---");
-                    inv.displayInventory();
+                    inv.showInventory();
                     System.out.println("Energi: " + player.getEnergy());
                     break;
                 case "3":
@@ -125,7 +136,7 @@ public class SpakborHillsCookingTest {
             Thread.currentThread().interrupt();
         }
         
-        cookingManager.shutdown();
+        // If CookingManager has a shutdown method, call it. Otherwise, remove this line.
         scanner.close();
         System.out.println("Simulasi memasak selesai.");
     }

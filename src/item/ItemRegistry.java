@@ -2,6 +2,7 @@ package item;
 
 import fishing.FishRegistry;
 import fishing.FishingLocation;
+import cooking.FuelRegistry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,32 +13,34 @@ public class ItemRegistry {
     private static Map<String, FishingLocation> gameFishingLocations;
 
     static {
+        // Register Misc items
         for (Map.Entry<String, Item> entry : Misc.getItems().entrySet()) {
             ALL_ITEMS.put(entry.getKey(), entry.getValue());
         }
 
+        // Register Fuel items
+        for (Item fuel : FuelRegistry.getAllFuelsAsItems()) {
+            ALL_ITEMS.put(fuel.getName(), fuel);
+        }
+
+        // Register Seeds
         for (Seed seed : SeedRegistry.getAllSeeds()) {
             ALL_ITEMS.put(seed.getName(), seed);
         }
 
+        // Register Harvested Crops
         for (Item crop : CropRegistry.getAllHarvestedCrops()) {
             ALL_ITEMS.put(crop.getName(), crop);
         }
 
+        // Register Food items
         for (Food food : FoodRegistry.getAllFood()) {
             ALL_ITEMS.put(food.getName(), food);
         }
-
     }
 
-    /**
-     * Initializes Fish items, requiring the actual FishingLocation instances from the game world.
-     * This method should be called once the game's fishing locations are set up.
-     * It ensures Fish objects created by FishRegistry are added to the central ItemRegistry.
-     * @param fishingLocations A map of fishing location names to their instances.
-     */
     public static void initializeFishItems(Map<String, FishingLocation> fishingLocations) {
-        if (gameFishingLocations == null) { 
+        if (gameFishingLocations == null) {
             gameFishingLocations = fishingLocations;
             List<Fish> allFish = FishRegistry.buildAll(gameFishingLocations);
             for (Fish fish : allFish) {

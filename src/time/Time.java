@@ -165,4 +165,9 @@ public class Time {
         }
     }
 
+    public void displayTime(){ // ADD THIS METHOD
+    System.out.printf("Current Game Time: %02d:%02d%n", hour, minute);
+    System.out.println("Is Night: " + isNight());
+    }
+
 }

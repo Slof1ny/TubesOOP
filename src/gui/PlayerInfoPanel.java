@@ -1,34 +1,35 @@
-// TubesOOP/src/gui/PlayerInfoPanel.java
 package gui;
 
 import javax.swing.*;
 import java.awt.*;
 import core.player.Player;
-import core.player.Inventory; // To access inventory details
+import core.player.Inventory;
+import system.GameManager;
 
 public class PlayerInfoPanel extends JPanel {
-    private Player player;
+    private GameManager gameManager;
     private JLabel nameLabel;
     private JLabel genderLabel;
     private JLabel energyLabel;
     private JLabel goldLabel;
     private JLabel locationLabel;
-    private JTextArea inventoryArea; // For a simple text-based inventory display initially
+    private JTextArea inventoryArea;
 
-    public PlayerInfoPanel(Player player) {
-        this.player = player;
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS)); // Arrange components vertically
-        setBackground(new Color(200, 220, 255)); // Light blue background for info panel
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Padding
+    public PlayerInfoPanel(GameManager gameManager) {
+        this.gameManager = gameManager;
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setBackground(new Color(200, 220, 255));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // --- Player Stats ---
-        nameLabel = new JLabel("Name: " + player.getName());
-        genderLabel = new JLabel("Gender: " + player.getGender());
-        energyLabel = new JLabel("Energy: " + player.getEnergy() + "/100"); // Assuming MAX_ENERGY is 100
-        goldLabel = new JLabel("Gold: " + player.getGold().getAmount() + "g");
-        locationLabel = new JLabel("Location: " + player.getLocation() + " (" + player.getX() + ", " + player.getY() + ")");
+        // Set a preferred size for the panel to ensure it takes up space in BorderLayout.EAST
+        setPreferredSize(new Dimension(250, 0)); // Set a fixed width, height will be determined by layout
 
-        // Style labels
+        nameLabel = new JLabel("Name: ");
+        genderLabel = new JLabel("Gender: ");
+        energyLabel = new JLabel("Energy: ");
+        goldLabel = new JLabel("Gold: ");
+        locationLabel = new JLabel("Location: ");
+
         Font infoFont = new Font("Arial", Font.PLAIN, 14);
         nameLabel.setFont(infoFont);
         genderLabel.setFont(infoFont);
@@ -43,48 +44,46 @@ public class PlayerInfoPanel extends JPanel {
         add(goldLabel);
         add(locationLabel);
 
-        add(Box.createVerticalStrut(15)); // Spacer
+        add(Box.createVerticalStrut(15));
 
-        // --- Inventory Section (Simple Text Display) ---
         add(new JLabel("--- Inventory ---"));
-        inventoryArea = new JTextArea(8, 20); // 8 rows, 20 columns
-        inventoryArea.setEditable(false); // Make it read-only
+        inventoryArea = new JTextArea(8, 20);
+        inventoryArea.setEditable(false);
         inventoryArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        JScrollPane scrollPane = new JScrollPane(inventoryArea); // Add scrollbar if content overflows
+        JScrollPane scrollPane = new JScrollPane(inventoryArea);
         add(scrollPane);
 
-        refreshPlayerInfo(); // Initial refresh
+        refreshPlayerInfo();
     }
 
-    /**
-     * Updates the displayed player information and inventory.
-     * Call this method whenever player stats or inventory change.
-     */
     public void refreshPlayerInfo() {
-        // All GUI updates must happen on the Event Dispatch Thread (EDT)
         SwingUtilities.invokeLater(() -> {
+            Player player = gameManager.getPlayer();
             nameLabel.setText("Name: " + player.getName());
             genderLabel.setText("Gender: " + player.getGender());
             energyLabel.setText("Energy: " + player.getEnergy() + "/100");
             goldLabel.setText("Gold: " + player.getGold().getAmount() + "g");
+            // Ensure player location is refreshed here
             locationLabel.setText("Location: " + player.getLocation() + " (" + player.getX() + ", " + player.getY() + ")");
 
-            // Update inventory display
             StringBuilder inventoryText = new StringBuilder();
             if (player.getInventory() != null) {
-                // Accessing internal map for simplicity in display; ideally, Inventory would have a method for this.
-                // Assuming getTestInventory() or similar for direct map access if needed for testing,
-                // otherwise iterate through a structured representation.
-                // For now, let's adapt to showInventory's output format or use player.getInventory().getAllItems() if it exists.
-                // Since `Inventory.showInventory()` prints to console, let's create a method to get its contents.
                 inventoryText.append("Items:\n");
-                for (var entry : player.getInventory().getAllItems().entrySet()) { // Assuming getAllItems() exists and returns Map<Item, Integer>
-                    inventoryText.append("- ").append(entry.getKey().getName()).append(" x").append(entry.getValue()).append("\n");
+                if (player.getInventory().getAllItems().isEmpty()) {
+                    inventoryText.append("  (No regular items)\n");
+                } else {
+                    for (var entry : player.getInventory().getAllItems().entrySet()) {
+                        inventoryText.append("- ").append(entry.getKey().getName()).append(" x").append(entry.getValue()).append("\n");
+                    }
                 }
                 inventoryText.append("Equipment:\n");
-                for (var entry : player.getEquipmentManager().getOwnedEquipment().entrySet()) {
-                    String status = entry.getValue().isEquipped() ? " [EQUIPPED]" : " [STORED]";
-                    inventoryText.append("- ").append(entry.getKey()).append(status).append("\n");
+                if (player.getEquipmentManager().getOwnedEquipment().isEmpty()) {
+                    inventoryText.append("  (No equipment)\n");
+                } else {
+                    for (var entry : player.getEquipmentManager().getOwnedEquipment().entrySet()) {
+                        String status = entry.getValue().isEquipped() ? " [EQUIPPED]" : " [STORED]";
+                        inventoryText.append("- ").append(entry.getKey()).append(status).append("\n");
+                    }
                 }
             } else {
                 inventoryText.append("Inventory not initialized.");

@@ -6,7 +6,7 @@ import item.EquipmentManager;
 import npc.NPC;
 import java.util.HashMap;
 import core.world.ShippingBin;
-import core.world.FarmMap;
+import core.world.FarmMap; // Keep this for now, might be removed if FarmMap reference is not direct
 
 public class Player {
     private static final int MAX_ENERGY = 100;
@@ -21,6 +21,7 @@ public class Player {
     private NPC partner = null;
     private HashMap<NPC, RelationshipStatus> relationships = new HashMap<>();
     private ShippingBin shippingBin;
+    private String currentLocation; // ADD THIS FIELD
 
     public Player(String name, String gender) {
         this.name = name;
@@ -31,6 +32,7 @@ public class Player {
         this.equipmentManager = new EquipmentManager();
         this.inventory = new Inventory(this.playerStats, this.equipmentManager);
         this.shippingBin = null;
+        this.currentLocation = ""; // Initialize current location
         giveStartingEquipment();
     }
 
@@ -66,11 +68,20 @@ public class Player {
         return y;
     }
 
+    // This method now returns the actual map name (e.g., "Farm Map", "City Map")
+    
     public String getLocation() {
-        return " ";
+        return currentLocation;
+    }
+
+    // ADD THIS METHOD
+    public void setLocation(String location) {
+        this.currentLocation = location;
     }
 
     public Tile getCurrentTile() {
+        // This method will need to be refactored to work with the current active map
+        // For now, it might return null or a dummy tile if not on FarmMap
         return null;
     }
 
@@ -158,5 +169,13 @@ public class Player {
 
     public ShippingBin getShippingBin() {
         return shippingBin;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public void setGender(String gender){
+        this.gender = gender;
     }
 }

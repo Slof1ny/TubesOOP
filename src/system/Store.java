@@ -89,10 +89,10 @@ public class Store {
         itemsForSale.put("Fishing Rod", new Equipment("Fishing Rod", 750, 375));
 
         itemsForSale.put("Coal", new item.Item("Coal", 100, 50) {
-            @Override public String getCategory() { return "Misc"; }
+            @Override public String getCategory() { return "Fuel"; }
         });
         itemsForSale.put("Firewood", new item.Item("Firewood", 50, 20) {
-            @Override public String getCategory() { return "Misc"; }
+            @Override public String getCategory() { return "Fuel"; }
         });
     }
 

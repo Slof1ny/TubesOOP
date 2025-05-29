@@ -21,7 +21,7 @@ public class Player {
     private NPC partner = null;
     private HashMap<NPC, RelationshipStatus> relationships = new HashMap<>();
     private ShippingBin shippingBin;
-    private String currentLocation; // ADD THIS FIELD
+    private String currentLocation;
 
     public Player(String name, String gender) {
         this.name = name;
@@ -32,7 +32,7 @@ public class Player {
         this.equipmentManager = new EquipmentManager();
         this.inventory = new Inventory(this.playerStats, this.equipmentManager);
         this.shippingBin = null;
-        this.currentLocation = ""; // Initialize current location
+        this.currentLocation = "";
         giveStartingEquipment();
     }
 

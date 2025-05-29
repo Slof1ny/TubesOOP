@@ -5,10 +5,10 @@ import core.player.Player;
 import core.player.RelationshipStatus;
 import action.NPCActions;
 import item.*;
+import time.GameCalendar;
+import time.Time;
 import fishing.FishingLocation;
 import core.world.FarmMap;
-import time.GameCalendar;
-import time.Time;        
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,12 +36,15 @@ public class NPCTester {
         GameCalendar gameCalendar = new GameCalendar();
         Time gameTime = new Time(gameCalendar);
         npcActions = new NPCActions(player, gameTime);
+
+        // --- Initialize Item Registries (Crucial Order) ---
         Map<String, FishingLocation> dummyFishingLocations = createDummyFishingLocations();
         ItemRegistry.initializeFishItems(dummyFishingLocations);
+
+        // --- Give player some items for testing ---
         for (Item item : ItemRegistry.getAllItems()) {
-            player.getInventory().addItem(item, 5); // Give 5 of each item for testing
+            player.getInventory().addItem(item, 5);
         }
-    
         player.getInventory().addItem(ItemRegistry.getItemByName("Proposal Ring"), 1);
 
 
@@ -79,6 +82,7 @@ public class NPCTester {
         return locations;
     }
 
+
     private static void runTester() {
         while (true) {
             System.out.println("\n--- Main Menu ---");
@@ -86,6 +90,7 @@ public class NPCTester {
             System.out.println("2. Show Player Status");
             System.out.println("3. Show Player Inventory");
             System.out.println("4. Set Player Energy");
+            System.out.println("5. Divorce Partner");
             System.out.println("0. Exit");
             System.out.print("Choose an option: ");
 
@@ -103,6 +108,9 @@ public class NPCTester {
                     break;
                 case "4":
                     setPlayerEnergy();
+                    break;
+                case "5": // Handle Divorce
+                    System.out.println(npcActions.divorceNPC());
                     break;
                 case "0":
                     System.out.println("Exiting NPC Tester. Goodbye!");
@@ -181,8 +189,10 @@ public class NPCTester {
                 case "3":
                     boolean hasRing = player.getInventory().getItemCount(ItemRegistry.getItemByName("Proposal Ring")) > 0;
                     System.out.println(npcActions.proposeToNPC(npc, hasRing));
+                    
+                    // If proposal is successful, daysSinceLastProposal is set to 0.
                     if (npc.getRelationshipStatus() == RelationshipStatus.FIANCE) {
-                        npcActions.setDaysSinceLastProposalForTesting(1); // Set to 1 day past proposal
+                        npcActions.setDaysSinceLastProposalForTesting(1);
                         System.out.println("DEBUG: Days since last proposal set to 1 for marriage test.");
                     }
                     break;

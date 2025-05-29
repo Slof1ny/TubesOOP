@@ -1,8 +1,9 @@
-package com.spakborhills.game.tasks;
 
-import com.spakborhills.game.model.Player;
-import com.spakborhills.game.model.Item;
-import com.spakborhills.game.model.Inventory; // Asumsi kelas Inventory sudah ada
+package cooking;
+
+import core.player.Player;
+import item.Item;
+import core.player.Inventory;
 
 /**
  * Tugas yang berjalan secara asynchronous untuk mensimulasikan proses memasak.

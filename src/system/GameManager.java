@@ -15,6 +15,7 @@ import fishing.FishRegistry; // Import
 import java.util.Map; // Import
 import java.util.HashMap; // Import
 import java.util.ArrayList; //Import
+import item.*;
 
 public class GameManager {
     private Player player;
@@ -33,7 +34,9 @@ public class GameManager {
         player.getGold().add(500); //
         player.getInventory().addItem(item.Seed.getSeedByName("Wheat Seeds"), 5); //
         player.getInventory().addItem(new item.Food("Fish n' Chips", 150, 135, 50), 2); //
-        player.getInventory().addItem(new item.Misc("Coal", 30, 20), 10); //
+        player.getInventory().addItem(new item.Item("Coal", 30, 20) {
+                @Override public String getCategory() { return "Misc"; }
+        }, 10);
         
         // Equip tools - ensure equipment added by Player constructor is accessible by name
         player.equipItem("Hoe"); //

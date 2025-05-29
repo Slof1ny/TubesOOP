@@ -87,8 +87,12 @@ public class Store {
         itemsForSale.put("Pickaxe", new Equipment("Pickaxe", 500, 250));
         itemsForSale.put("Fishing Rod", new Equipment("Fishing Rod", 750, 375));
 
-        itemsForSale.put("Coal", new Misc("Coal", 100, 50));
-        itemsForSale.put("Firewood", new Misc("Firewood", 50, 20));
+        itemsForSale.put("Coal", new item.Item("Coal", 100, 50) {
+            @Override public String getCategory() { return "Misc"; }
+        });
+        itemsForSale.put("Firewood", new item.Item("Firewood", 50, 20) {
+            @Override public String getCategory() { return "Misc"; }
+        });
     }
 
     public void displayStoreMenu() {

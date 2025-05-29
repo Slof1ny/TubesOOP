@@ -2,6 +2,7 @@ package system;
 
 import item.Item;
 import item.Seed;
+import item.SeedRegistry;
 import item.Food;
 import item.Equipment;
 import item.Misc;
@@ -57,17 +58,17 @@ public class Store {
     }
 
     private void initializeStoreInventory() {
-        itemsForSale.put("Parsnip Seeds", Seed.getSeedByName("Parsnip Seeds"));
-        itemsForSale.put("Cauliflower Seeds", Seed.getSeedByName("Cauliflower Seeds"));
-        itemsForSale.put("Potato Seeds", Seed.getSeedByName("Potato Seeds"));
-        itemsForSale.put("Wheat Seeds", Seed.getSeedByName("Wheat Seeds"));
-        itemsForSale.put("Blueberry Seeds", Seed.getSeedByName("Blueberry Seeds"));
-        itemsForSale.put("Tomato Seeds", Seed.getSeedByName("Tomato Seeds"));
-        itemsForSale.put("Hot Pepper Seeds", Seed.getSeedByName("Hot Pepper Seeds"));
-        itemsForSale.put("Melon Seeds", Seed.getSeedByName("Melon Seeds"));
-        itemsForSale.put("Cranberry Seeds", Seed.getSeedByName("Cranberry Seeds"));
-        itemsForSale.put("Pumpkin Seeds", Seed.getSeedByName("Pumpkin Seeds"));
-        itemsForSale.put("Grape Seeds", Seed.getSeedByName("Grape Seeds"));
+        itemsForSale.put("Parsnip Seeds", SeedRegistry.getSeedByName("Parsnip Seeds"));
+        itemsForSale.put("Cauliflower Seeds", SeedRegistry.getSeedByName("Cauliflower Seeds"));
+        itemsForSale.put("Potato Seeds", SeedRegistry.getSeedByName("Potato Seeds"));
+        itemsForSale.put("Wheat Seeds", SeedRegistry.getSeedByName("Wheat Seeds"));
+        itemsForSale.put("Blueberry Seeds", SeedRegistry.getSeedByName("Blueberry Seeds"));
+        itemsForSale.put("Tomato Seeds", SeedRegistry.getSeedByName("Tomato Seeds"));
+        itemsForSale.put("Hot Pepper Seeds", SeedRegistry.getSeedByName("Hot Pepper Seeds"));
+        itemsForSale.put("Melon Seeds", SeedRegistry.getSeedByName("Melon Seeds"));
+        itemsForSale.put("Cranberry Seeds", SeedRegistry.getSeedByName("Cranberry Seeds"));
+        itemsForSale.put("Pumpkin Seeds", SeedRegistry.getSeedByName("Pumpkin Seeds"));
+        itemsForSale.put("Grape Seeds", SeedRegistry.getSeedByName("Grape Seeds"));
 
         itemsForSale.put("Fish n' Chips", new Food("Fish n' Chips", 150, 135, 50));
         itemsForSale.put("Baguette", new Food("Baguette", 100, 80, 25));

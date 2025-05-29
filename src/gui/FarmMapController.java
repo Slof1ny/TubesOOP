@@ -19,6 +19,7 @@ import fishing.FishingLocation;
 import action.Action;
 import item.Seed;
 import item.Item;
+import item.SeedRegistry;
 import time.Time;
 import time.GameCalendar;
 import system.GameManager; // Import GameManager

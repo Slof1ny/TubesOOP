@@ -29,7 +29,7 @@ public class NPCInteractionPanel extends JPanel {
     public NPCInteractionPanel(GameView gameView, GameManager gameManager) {
         this.gameView = gameView;
         this.gameManager = gameManager;
-        this.npcActions = new NPCActions(gameManager.getPlayer(), gameManager.getGameTime());
+        this.npcActions = new NPCActions(gameManager.getPlayer(), gameManager);
 
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));

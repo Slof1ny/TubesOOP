@@ -9,9 +9,9 @@ public class Orenji extends NPC {
         super(
             "Orenji si Kucing Barista",
             "Warung Kopi Orenji (Tersembunyi)",
-            Set.of("ITEM_PREMIUM_COFFEE_BEAN", "ITEM_CATNIP_SUPREME"),
-            Set.of("Baguette", "ITEM_WARM_MILK"), 
-            Set.of("ITEM_CHEAP_COFFEE_POWDER", "ITEM_DOG_BISCUIT")
+            Set.of("Premium Coffee Bean", "Catnip Supreme"),
+            Set.of("Baguette", "Warm Milk"), 
+            Set.of("Cheap Coffee Powder", "Dog Biscuit")
         );
     }
 

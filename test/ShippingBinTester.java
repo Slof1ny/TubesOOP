@@ -2,27 +2,13 @@
 package test;
 
 import core.player.Player;
-import core.player.Gold;
-import core.player.Inventory;
-import core.player.PlayerStats;
 import core.world.ShippingBin;
 import item.*;
-import core.world.FarmMap; // Import FarmMap
-import core.world.Tile; // Import Tile
-import core.world.Season;
-import core.world.Weather;
-import system.StatisticsManager;
+import core.world.FarmMap;
 import time.GameCalendar;
-import time.Time; // Import Time
+import time.Time;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-// Placeholder imports for Item dependencies if needed
-import fishing.FishType;
-import fishing.FishingLocation;
-import time.GameCalendar; // For GameCalendar enum
 
 public class ShippingBinTester {
 

@@ -15,7 +15,10 @@ public class MayorTadi extends NPC {
 
     @Override
     public String getReactionToItem(Item giftedItem) {
-        return super.getReactionToItem(giftedItem);
+        if (giftedItem == null) return "neutral";
+        if (lovedItems.contains(giftedItem)) return "loved";
+        if (likedItems.contains(giftedItem)) return "liked";
+        return "hated";
     }
 
     @Override

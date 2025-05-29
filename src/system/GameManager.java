@@ -34,7 +34,7 @@ public class GameManager {
         // Player initialization might be deferred or updated by PlayerCreationPanel
         player = new Player("Dr. Asep Spakbor", "Male"); // Default, will be changed
         player.getGold().add(500); //
-        player.getInventory().addItem(item.Seed.getSeedByName("Wheat Seeds"), 5); //
+        player.getInventory().addItem(item.SeedRegistry.getSeedByName("Wheat Seeds"), 5); //
         player.getInventory().addItem(new item.Food("Fish n' Chips", 150, 135, 50), 2); //
         player.getInventory().addItem(new item.Item("Coal", 30, 20) {
                 @Override public String getCategory() { return "Misc"; }

@@ -15,12 +15,12 @@ public class Orenji extends NPC {
         );
     }
 
-    // @Override
-    // public String getReactionToItem(Item giftedItem) {
-    //     if (giftedItem == null) {
-    //         System.out.println(this.name + ": ...meow? (Dia memiringkan kepalanya, tampak bingung dengan ketiadaan.)");
-    //         return "neutral";
-    //     }
+    @Override
+    public String getReactionToItem(Item giftedItem) {
+        if (giftedItem == null) {
+            System.out.println(this.name + ": ...meow? (Dia memiringkan kepalanya, tampak bingung dengan ketiadaan.)");
+            return "neutral";
+        }
 
         // Special rule for all fish
         if (giftedItem.getCategory().equals("Fish")) {

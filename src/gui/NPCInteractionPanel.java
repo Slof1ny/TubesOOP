@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent;
 
 import system.GameManager;
 import npc.NPC;
-import npc.actions.NPCActions; // Ensure this is your correct NPCActions class
+import action.NPCActions; // Ensure this is your correct NPCActions class
 import core.player.Player;
 import core.player.RelationshipStatus; // Import for relationship status enum
 import item.Item;

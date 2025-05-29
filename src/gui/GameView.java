@@ -18,6 +18,7 @@ public class GameView extends JFrame {
     public PlayerCreationPanel playerCreationPanel;
     public ShippingBinPanel shippingBinPanel;
     public NPCInteractionPanel npcInteractionPanel;
+    public EquipmentPanel equipmentPanel;
 
     public GameView() {
         setTitle("Spakbor Hills");
@@ -43,6 +44,7 @@ public class GameView extends JFrame {
         storePanel = new StorePanel(this, gameManager.getPlayer(), gameManager.getGameStore(), playerInfoPanel);
         shippingBinPanel = new ShippingBinPanel(this, gameManager);
         npcInteractionPanel = new NPCInteractionPanel(this, gameManager);
+        equipmentPanel = new EquipmentPanel(this, gameManager);
 
         // 3. Create screen-specific content panels (WITHOUT PlayerInfoPanel)
         JPanel gameScreenOnlyMapPanel = new JPanel(new BorderLayout());
@@ -61,7 +63,8 @@ public class GameView extends JFrame {
         centerCardPanel.add(storePanel, "StoreScreen");
         centerCardPanel.add(cityScreenOnlyMapPanel, "CityScreen");
         centerCardPanel.add(shippingBinPanel, "ShippingBinScreen");
-        centerCardPanel.add(npcInteractionPanel, "NPCInteractionScreen"); 
+        centerCardPanel.add(npcInteractionPanel, "NPCInteractionScreen");
+        centerCardPanel.add(equipmentPanel, "EquipmentScreen"); 
 
 
         // 5. Set GameView's main layout and add components
@@ -116,6 +119,9 @@ public class GameView extends JFrame {
             shippingBinPanel.onShow();
         } else if (screenName.equals("NPCInteractionScreen") && npcInteractionPanel.isShowing()) {
             npcInteractionPanel.requestFocusInWindow();
+        } else if (screenName.equals("EquipmentScreen") && equipmentPanel.isShowing()) { 
+            equipmentPanel.refreshEquipmentList(); // Refresh and request focus
+            equipmentPanel.requestFocusInWindow(); 
         }
     }
         // MainMenu doesn't usually need a specific refresh call here for its components

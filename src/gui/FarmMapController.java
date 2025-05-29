@@ -103,6 +103,10 @@ public class FarmMapController extends KeyAdapter {
                     JOptionPane.showMessageDialog(farmMapPanel, ex.getMessage(), "Watering Error", JOptionPane.WARNING_MESSAGE);
                 }
                 break;
+            case KeyEvent.VK_I: // 'I' for Equipment
+                gameView.showScreen("EquipmentScreen");
+                actionTaken = true; // It's an action that changes the screen
+                break;
             case KeyEvent.VK_E: // Interact
                 DeployedObject interactedObject = getAdjacentDeployedObject(); //
                 if (interactedObject != null) { //

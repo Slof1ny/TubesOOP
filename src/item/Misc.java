@@ -20,6 +20,10 @@ public final class Misc {
 
     private Misc() {}
 
+    public static Map<String, Item> getItems() {
+        return ITEMS;
+    }
+    
     /** Lookup by exact display name. */
     public static Item get(String name) {
         return ITEMS.get(name);

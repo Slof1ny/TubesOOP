@@ -8,7 +8,7 @@ public class FoodRegistry {
     private static final Map<String, Food> FOOD_BY_NAME = new HashMap<>();
 
     static {
-        FOOD_BY_NAME.put("Fish n’ Chips", new Food("Fish n’ Chips", 150, 135, 50));
+        FOOD_BY_NAME.put("Fish n' Chips", new Food("Fish n' Chips", 150, 135, 50));
         FOOD_BY_NAME.put("Baguette", new Food("Baguette", 100, 80, 25));
         FOOD_BY_NAME.put("Sashimi", new Food("Sashimi", 300, 275, 70));
         FOOD_BY_NAME.put("Fugu", new Food("Fugu", 0, 135, 50));

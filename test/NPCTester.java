@@ -7,6 +7,8 @@ import action.NPCActions;
 import item.*;
 import fishing.FishingLocation;
 import core.world.FarmMap;
+import time.GameCalendar;
+import time.Time;        
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,15 +33,19 @@ public class NPCTester {
 
     private static void initializeGame() {
         player = new Player("TestPlayer", "MALE");
-        npcActions = new NPCActions(player);
+        GameCalendar gameCalendar = new GameCalendar();
+        Time gameTime = new Time(gameCalendar);
+        npcActions = new NPCActions(player, gameTime);
         Map<String, FishingLocation> dummyFishingLocations = createDummyFishingLocations();
         ItemRegistry.initializeFishItems(dummyFishingLocations);
-
         for (Item item : ItemRegistry.getAllItems()) {
-            player.getInventory().addItem(item, 5);
+            player.getInventory().addItem(item, 5); // Give 5 of each item for testing
         }
+    
         player.getInventory().addItem(ItemRegistry.getItemByName("Proposal Ring"), 1);
 
+
+        // --- Initialize NPCs ---
         allNPCs = new HashMap<>();
         allNPCs.put("Abigail", new Abigail());
         allNPCs.put("Caroline", new Caroline());
@@ -79,7 +85,7 @@ public class NPCTester {
             System.out.println("1. Interact with an NPC");
             System.out.println("2. Show Player Status");
             System.out.println("3. Show Player Inventory");
-            System.out.println("4. Set Player Energy"); // New option added
+            System.out.println("4. Set Player Energy");
             System.out.println("0. Exit");
             System.out.print("Choose an option: ");
 
@@ -96,7 +102,7 @@ public class NPCTester {
                     player.getInventory().showInventory();
                     break;
                 case "4":
-                    setPlayerEnergy(); // Call the new method
+                    setPlayerEnergy();
                     break;
                 case "0":
                     System.out.println("Exiting NPC Tester. Goodbye!");
@@ -111,7 +117,7 @@ public class NPCTester {
         System.out.print("Enter new energy value: ");
         try {
             int newEnergy = Integer.parseInt(scanner.nextLine());
-            player.setEnergy(newEnergy); // Assumes Player class has this method
+            player.setEnergy(newEnergy);
             System.out.println("Player energy set to " + newEnergy);
         } catch (NumberFormatException e) {
             System.out.println("Invalid input. Please enter a number.");
@@ -167,23 +173,28 @@ public class NPCTester {
                     System.out.println(npcActions.chatWithNPC(npc));
                     System.out.println(npc.getChatDialogue(player));
                     break;
+
                 case "2":
                     giftItemToNPC(npc);
                     break;
+
                 case "3":
                     boolean hasRing = player.getInventory().getItemCount(ItemRegistry.getItemByName("Proposal Ring")) > 0;
                     System.out.println(npcActions.proposeToNPC(npc, hasRing));
                     if (npc.getRelationshipStatus() == RelationshipStatus.FIANCE) {
-                        npcActions.setDaysSinceLastProposalForTesting(1);
+                        npcActions.setDaysSinceLastProposalForTesting(1); // Set to 1 day past proposal
                         System.out.println("DEBUG: Days since last proposal set to 1 for marriage test.");
                     }
                     break;
+
                 case "4":
                     boolean hasRingForMarriage = player.getInventory().getItemCount(ItemRegistry.getItemByName("Proposal Ring")) > 0;
                     System.out.println(npcActions.marryNPC(npc, hasRingForMarriage));
                     break;
+
                 case "0":
-                    return;
+                    return; // Go back to NPC selection
+
                 default:
                     System.out.println("Invalid action. Please try again.");
             }

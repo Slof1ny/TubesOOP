@@ -125,4 +125,21 @@ public class Inventory {
         
         equipmentManager.showEquipmentStatus();
     }
+
+    public Item findItemByName(String name){
+        for(Item item : items.keySet()){
+            if(item.getName().equalsIgnoreCase(name)){
+                return item;
+            }
+        }
+
+        if (equipmentManager.hasEquipment(name)) {
+            for(Equipment eq : equipmentManager.getOwnedEquipment().values()){
+                if(eq.getName().equalsIgnoreCase(name)){
+                    return eq;
+                }
+            }
+        }
+        return null;
+    }
 }

@@ -76,7 +76,7 @@ public class PlayerCreationPanel extends JPanel {
         confirmButton = new JButton("Start Adventure!");
         confirmButton.setFont(new Font("Arial", Font.BOLD, 20));
         confirmButton.setBackground(new Color(70, 130, 180));
-        confirmButton.setForeground(Color.WHITE);
+        confirmButton.setForeground(Color.BLACK);
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 2;

@@ -2,16 +2,8 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
-import core.player.Player;
-import core.world.FarmMap;
-import core.world.ShippingBin;
-import time.GameCalendar;
-import time.Time;
-import system.Store;
-import system.PriceList;
-import npc.Emily;
-import core.player.Inventory;
 import system.GameManager;
+import npc.NPC;
 
 public class GameView extends JFrame {
 
@@ -25,6 +17,7 @@ public class GameView extends JFrame {
     public CityMapPanel cityMapPanel;
     public PlayerCreationPanel playerCreationPanel;
     public ShippingBinPanel shippingBinPanel;
+    public NPCInteractionPanel npcInteractionPanel;
 
     public GameView() {
         setTitle("Spakbor Hills");
@@ -49,6 +42,7 @@ public class GameView extends JFrame {
         cityMapPanel = new CityMapPanel(gameManager, this); // CityMapPanel gets GameManager and GameView
         storePanel = new StorePanel(this, gameManager.getPlayer(), gameManager.getGameStore(), playerInfoPanel);
         shippingBinPanel = new ShippingBinPanel(this, gameManager);
+        npcInteractionPanel = new NPCInteractionPanel(this, gameManager);
 
         // 3. Create screen-specific content panels (WITHOUT PlayerInfoPanel)
         JPanel gameScreenOnlyMapPanel = new JPanel(new BorderLayout());
@@ -67,6 +61,7 @@ public class GameView extends JFrame {
         centerCardPanel.add(storePanel, "StoreScreen");
         centerCardPanel.add(cityScreenOnlyMapPanel, "CityScreen");
         centerCardPanel.add(shippingBinPanel, "ShippingBinScreen");
+        centerCardPanel.add(npcInteractionPanel, "NPCInteractionScreen"); 
 
 
         // 5. Set GameView's main layout and add components
@@ -80,6 +75,17 @@ public class GameView extends JFrame {
     // Getter for GameManager so controllers can access it via GameView reference
     public GameManager getGameManager() {
         return this.gameManager;
+    }
+
+    public void showNPCInteractionScreen(NPC npc) {
+        if (npc != null && npcInteractionPanel != null) {
+            npcInteractionPanel.setupForNPC(npc);
+            showScreen("NPCInteractionScreen"); // Use your existing showScreen logic
+        } else {
+            System.err.println("Error: NPC or NPCInteractionPanel is null. Cannot show interaction screen.");
+            // Optionally, show an error message to the user or default to city screen
+            showScreen("CityScreen");
+        }
     }
 
     public void showScreen(String screenName) {
@@ -108,6 +114,8 @@ public class GameView extends JFrame {
             storePanel.refreshStoreDisplay();
         } else if (screenName.equals("ShippingBinScreen")){
             shippingBinPanel.onShow();
+        } else if (screenName.equals("NPCInteractionScreen") && npcInteractionPanel.isShowing()) {
+            npcInteractionPanel.requestFocusInWindow();
         }
     }
         // MainMenu doesn't usually need a specific refresh call here for its components

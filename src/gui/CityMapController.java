@@ -10,6 +10,7 @@ import core.world.GameMap;
 import core.world.DeployedObject;
 import core.world.CityMap; // For specific building types
 import system.GameManager;
+import npc.NPC;
 
 public class CityMapController extends KeyAdapter {
     private GameManager gameManager;
@@ -54,12 +55,34 @@ public class CityMapController extends KeyAdapter {
                 break;
             case KeyEvent.VK_E: // 'E' for Interact with objects (Buildings) OR Exit Map
                 DeployedObject interactedObject = getAdjacentDeployedObject(cityMap, player);
+                NPC targetNpc = null;
                 if (interactedObject != null) {
-                    // Check specific building types for interaction
-                    if (interactedObject.getSymbol() == 'S') { // Emily's Store
-                        JOptionPane.showMessageDialog(cityMapPanel, "Welcome to Emily's Store!", "Interact", JOptionPane.INFORMATION_MESSAGE);
-                        gameView.showScreen("StoreScreen"); // Switch to store screen
-                    } else if (interactedObject.getSymbol() == 'X') { // Exit to Farm
+                    actionTaken = true;
+                    if(interactedObject instanceof CityMap.Building){
+                        CityMap.Building building = (CityMap.Building) interactedObject;
+                        String buildingName = building.getBuildingName();
+                        if ("Emily's Store".equals(buildingName)){
+                            gameView.showScreen("StoreScreen");
+                        } else if ("Mayor's Manor".equals(buildingName)) {
+                            targetNpc = gameManager.getNpcByName("Mayor Tadi");
+                        } else if ("Caroline's Carpentry".equals(buildingName)) {
+                            targetNpc = gameManager.getNpcByName("Caroline");
+                        } else if ("Perry's Cabin".equals(buildingName)) {
+                            targetNpc = gameManager.getNpcByName("Perry");
+                        } else if ("Dasco's Gambling Den".equals(buildingName)) {
+                            targetNpc = gameManager.getNpcByName("Dasco");
+                        } else if ("Abigail's Tent".equals(buildingName)) {
+                            targetNpc = gameManager.getNpcByName("Abigail");
+                        }
+                        else{
+                            JOptionPane.showMessageDialog(cityMapPanel, "You are interacting with " + buildingName + "!", "Interact", JOptionPane.INFORMATION_MESSAGE);
+                            actionTaken = false;
+                        }
+
+                        if (targetNpc != null) {
+                            gameView.showNPCInteractionScreen(targetNpc);
+                        }
+                    }else if (interactedObject.getSymbol() == 'X') { // Exit to Farm
                         int confirm = JOptionPane.showConfirmDialog(cityMapPanel,
                             "You are at the exit to the Farm. Do you want to go back?",
                             "Transition Map", JOptionPane.YES_NO_OPTION);

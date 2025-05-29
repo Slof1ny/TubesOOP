@@ -6,7 +6,7 @@ import core.world.CityMap;
 import core.world.GameMap;
 import time.GameCalendar;
 import time.Time;
-import npc.Emily;
+import npc.*;
 import gui.PlayerInfoPanel;
 import fishing.FishingLocation; // Import
 import fishing.SpecificFishingLocation; // Import
@@ -15,6 +15,7 @@ import fishing.FishRegistry; // Import
 import java.util.Map; // Import
 import java.util.HashMap; // Import
 import java.util.ArrayList; //Import
+import java.util.List;
 import item.*;
 
 public class GameManager {
@@ -27,6 +28,7 @@ public class GameManager {
     private Store gameStore;
     private PlayerInfoPanel playerInfoPanel;
     private Map<String, FishingLocation> fishingLocations; // Added to store fishing locations
+    private List<NPC> allNpcs;
 
     public GameManager() {
         // Player initialization might be deferred or updated by PlayerCreationPanel
@@ -43,6 +45,15 @@ public class GameManager {
         player.equipItem("Watering Can"); //
         player.equipItem("Pickaxe"); //
         player.equipItem("Fishing Rod"); //
+
+        this.allNpcs = new ArrayList<>();
+        this.allNpcs.add(new Abigail());
+        this.allNpcs.add(new Caroline());
+        this.allNpcs.add(new Dasco());
+        this.allNpcs.add(new Emily());
+        this.allNpcs.add(new MayorTadi());
+        this.allNpcs.add(new Orenji());
+        this.allNpcs.add(new Perry());
 
 
         farmMap = new FarmMap(player); //
@@ -124,6 +135,16 @@ public class GameManager {
 
     public Map<String, FishingLocation> getFishingLocations() { // Getter for fishing locations
         return fishingLocations;
+    }
+
+    public NPC getNpcByName(String name){
+        if (allNpcs == null) return null; // Or initialize if needed
+        for (NPC npc : allNpcs) {
+            if (npc.getName().equalsIgnoreCase(name)) {
+                return npc;
+            }
+        }
+        return null;
     }
 
 

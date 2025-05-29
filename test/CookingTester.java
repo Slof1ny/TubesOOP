@@ -3,12 +3,7 @@ package test;
 
 import item.CropRegistry;
 import item.Misc;
-import item.FoodRegistry;
-import item.Crop;
-import item.Item;
 import cooking.Fuel;
-import cooking.Firewood;
-import cooking.Coal;
 import recipe.Recipe;
 import cooking.CookingManager;
 import cooking.RecipeData;
@@ -18,7 +13,7 @@ import core.player.Inventory;
 import java.util.List;
 import java.util.Scanner;
 
-public class SpakborHillsCookingTest {
+public class CookingTester {
 
     public static void main(String[] args) {
         // Inisialisasi Player

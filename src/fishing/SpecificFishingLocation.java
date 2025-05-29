@@ -48,7 +48,10 @@ public class SpecificFishingLocation extends FishingLocation {
             return false;
         }
 
-        Tile current = player.getCurrentTile();
-        return fishingPositions.contains(current);
+        Tile currentTile = this.farmMap.getTileAt(player.getX(), player.getY());
+        if(currentTile == null){
+            return false;
+        }
+        return fishingPositions.contains(currentTile);
     }
 } 

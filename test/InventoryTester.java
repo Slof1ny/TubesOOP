@@ -9,6 +9,7 @@ import core.world.Season;
 import item.EquipmentManager;
 import item.Food;
 import item.Misc;
+import item.Item;
 import item.Seed;
 import item.Crop;
 
@@ -23,7 +24,7 @@ public class InventoryTester {
 
         // 2. Test addItem() with different item types
         System.out.println("\n2. Adding 5 'Copper Ore' (Misc item).");
-        Misc copperOre = new Misc("Copper Ore", 50, 25); // Example prices
+        Item copperOre = Misc.getItems().get("Coal"); // Example prices
         playerInventory.addItem(copperOre, 5);
         playerInventory.showInventory();
 

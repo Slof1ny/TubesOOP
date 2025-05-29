@@ -40,7 +40,7 @@ public class FarmMapTester {
         System.out.println("Legend: P = Player, h = House, o = Pond, s = Shipping Bin, . = Untilled, t = Tilled, l = Planted");
         System.out.println();
         
-        farm.displayFarmMap();
+        farm.displayMap(player);
         System.out.printf("Player spawned at (%d, %d)%n", player.getX(), player.getY());
         
         // Interactive movement demo
@@ -57,16 +57,16 @@ public class FarmMapTester {
             boolean moved = false;
             switch (input) {
                 case "w":
-                    moved = farm.movePlayerUp();
+                    moved = farm.movePlayer(player, 0, 1); // Move up
                     break;
                 case "a":
-                    moved = farm.movePlayerLeft();
+                    moved = farm.movePlayer(player, -1, 0); // Move left
                     break;
                 case "s":
-                    moved = farm.movePlayerDown();
+                    moved = farm.movePlayer(player, 0, -1); // Move down
                     break;
                 case "d":
-                    moved = farm.movePlayerRight();
+                    moved = farm.movePlayer(player, 1, 0); // Move right
                     break;
                 default:
                     System.out.println("Invalid input. Use W/A/S/D or Q to quit.");
@@ -80,7 +80,7 @@ public class FarmMapTester {
             }
             
             System.out.println();
-            farm.displayFarmMap();
+            farm.displayMap(player);
         }
         
         scanner.close();

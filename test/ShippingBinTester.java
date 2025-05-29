@@ -53,7 +53,7 @@ public class ShippingBinTester {
         Item parsnip = new Crop("Parsnip", 50, 35, 1);
         Item cauliflower = new Crop("Cauliflower", 200, 150, 1);
         Item wheat = new Crop("Wheat", 50, 30, 3);
-        Item coal = new Misc("Coal", 30, 20);
+        Item coal = Misc.getItems().get("Coal"); // Assuming Coal is a Misc item
         Item fishChips = new Food("Fish n' Chips", 150, 135, 50);
 
         player.getInventory().addItem(parsnip, 10);

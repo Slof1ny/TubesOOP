@@ -50,7 +50,7 @@ public class FishingTester {
         // Display the farm map
         System.out.println("=== Farm Map ===");
         System.out.println("Legend: P = Player, h = House, o = Pond, s = Shipping Bin, . = Untilled");
-        farm.displayFarmMap();
+        farm.displayMap(player);
         System.out.println();
         
         // Interactive fishing test
@@ -127,25 +127,24 @@ public class FishingTester {
         boolean moved = false;
         switch (move) {
             case "w":
-                moved = farm.movePlayerUp();
+                moved = farm.movePlayer(player, 0, 1); // Move up
                 break;
             case "a":
-                moved = farm.movePlayerLeft();
+                moved = farm.movePlayer(player, -1, 0); // Move left
                 break;
             case "s":
-                moved = farm.movePlayerDown();
+                moved = farm.movePlayer(player, 0, -1); // Move down
                 break;
             case "d":
-                moved = farm.movePlayerRight();
+                moved = farm.movePlayer(player, 1, 0); // Move right
                 break;
             default:
-                System.out.println("Invalid move!");
-                return;
+                System.out.println("Invalid input. Use W/A/S/D or Q to quit.");
         }
         
         if (moved) {
             System.out.println("Moved to (" + player.getX() + ", " + player.getY() + ")");
-            farm.displayFarmMap();
+            farm.displayMap(player);
         } else {
             System.out.println("Can't move there!");
         }

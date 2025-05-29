@@ -18,7 +18,7 @@ public class GameView extends JFrame {
     public PlayerCreationPanel playerCreationPanel;
     public ShippingBinPanel shippingBinPanel;
     public NPCInteractionPanel npcInteractionPanel;
-    public EquipmentPanel equipmentPanel;
+    public InventoryScreenPanel inventoryScreenPanel;
 
     public GameView() {
         setTitle("Spakbor Hills");
@@ -44,7 +44,7 @@ public class GameView extends JFrame {
         storePanel = new StorePanel(this, gameManager.getPlayer(), gameManager.getGameStore(), null);
         shippingBinPanel = new ShippingBinPanel(this, gameManager);
         npcInteractionPanel = new NPCInteractionPanel(this, gameManager);
-        equipmentPanel = new EquipmentPanel(this, gameManager);
+        inventoryScreenPanel = new InventoryScreenPanel(this, gameManager);
 
         // 3. Create screen-specific content panels (WITHOUT PlayerInfoPanel)
         JPanel gameScreenOnlyMapPanel = new JPanel(new BorderLayout());
@@ -64,7 +64,7 @@ public class GameView extends JFrame {
         centerCardPanel.add(cityScreenOnlyMapPanel, "CityScreen");
         centerCardPanel.add(shippingBinPanel, "ShippingBinScreen");
         centerCardPanel.add(npcInteractionPanel, "NPCInteractionScreen");
-        centerCardPanel.add(equipmentPanel, "EquipmentScreen"); 
+        centerCardPanel.add(inventoryScreenPanel, "InventoryScreen"); 
 
 
         // 5. Set GameView's main layout and add components
@@ -117,9 +117,9 @@ public class GameView extends JFrame {
             shippingBinPanel.onShow();
         } else if (screenName.equals("NPCInteractionScreen") && npcInteractionPanel.isShowing()) {
             npcInteractionPanel.requestFocusInWindow();
-        } else if (screenName.equals("EquipmentScreen") && equipmentPanel.isShowing()) { 
-            equipmentPanel.refreshEquipmentList(); // Refresh and request focus
-            equipmentPanel.requestFocusInWindow(); 
+        } else if (screenName.equals("InventoryScreen") && inventoryScreenPanel.isShowing()) {
+            inventoryScreenPanel.refreshPanelData();
+            inventoryScreenPanel.requestFocusInWindow();
         }
     
         // MainMenu doesn't usually need a specific refresh call here for its components

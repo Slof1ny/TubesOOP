@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.List;
+
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -16,6 +18,7 @@ import fishing.FishingLocation;
 
 import action.Action;
 import item.Seed;
+import item.Item;
 import item.SeedRegistry;
 import time.Time;
 import time.GameCalendar;
@@ -75,17 +78,61 @@ public class FarmMapController extends KeyAdapter {
                     JOptionPane.showMessageDialog(farmMapPanel, ex.getMessage(), "Tilling Error", JOptionPane.WARNING_MESSAGE);
                 }
                 break;
-            case KeyEvent.VK_P: // 'P' for Planting (Example: Parsnip Seeds)
-                Seed parsnipSeed = SeedRegistry.getSeedByName("Parsnip Seeds");
-                if (parsnipSeed != null) {
-                    try {
-                        Action.plant(farmMap, player, gameTime, gameCalendar, parsnipSeed);
-                        actionTaken = true;
-                    } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(farmMapPanel, ex.getMessage(), "Planting Error", JOptionPane.WARNING_MESSAGE);
-                    }
+            case KeyEvent.VK_P: // 'P' for Planting
+                actionTaken = true; // Assume an action is attempted
+                List<Seed> availableSeeds = player.getInventory().getAllOwnedSeeds();
+
+                if (availableSeeds.isEmpty()) {
+                    JOptionPane.showMessageDialog(farmMapPanel, "You have no seeds to plant!", "No Seeds", JOptionPane.INFORMATION_MESSAGE);
+                    actionTaken = false; // No actual action performed
                 } else {
-                    JOptionPane.showMessageDialog(farmMapPanel, "Parsnip Seeds item not found in game data.", "Error", JOptionPane.ERROR_MESSAGE);
+                    Seed seedToPlant = null;
+                    if (availableSeeds.size() == 1) {
+                        seedToPlant = availableSeeds.get(0);
+                        System.out.println("Auto-selected only seed: " + seedToPlant.getName());
+                    } else {
+                        // Multiple seed types available, let player choose
+                        String[] seedNames = new String[availableSeeds.size()];
+                        for (int i = 0; i < availableSeeds.size(); i++) {
+                            seedNames[i] = availableSeeds.get(i).getName() + " (x" + player.getInventory().getItemCount(availableSeeds.get(i)) + ")";
+                        }
+
+                        String chosenSeedDisplay = (String) JOptionPane.showInputDialog(
+                                farmMapPanel,
+                                "Choose a seed to plant:",
+                                "Plant Seed",
+                                JOptionPane.QUESTION_MESSAGE,
+                                null,
+                                seedNames,
+                                seedNames[0]
+                        );
+
+                        if (chosenSeedDisplay != null) {
+                            // Extract base name if quantity was appended for display
+                            String chosenSeedName = chosenSeedDisplay.split(" \\(x")[0];
+                            Item selectedItem = player.getInventory().findItemByName(chosenSeedName);
+                            if (selectedItem instanceof Seed) {
+                                seedToPlant = (Seed) selectedItem;
+                            } else {
+                                JOptionPane.showMessageDialog(farmMapPanel, "Error selecting seed.", "Error", JOptionPane.ERROR_MESSAGE);
+                                actionTaken = false;
+                            }
+                        } else {
+                            actionTaken = false; // Player cancelled dialog
+                        }
+                    }
+
+                    if (seedToPlant != null) {
+                        try {
+                            Action.plant(farmMap, player, gameTime, gameCalendar, seedToPlant);
+                            // Action.plant itself will print success/failure or throw exception
+                        } catch (IllegalArgumentException ex) {
+                            JOptionPane.showMessageDialog(farmMapPanel, ex.getMessage(), "Planting Error", JOptionPane.WARNING_MESSAGE);
+                            actionTaken = false; // Planting failed
+                        }
+                    } else if (actionTaken) { // If we got here due to dialog cancel or error, ensure isActionTaken is false
+                        actionTaken = false;
+                    }
                 }
                 break;
             case KeyEvent.VK_H: // 'H' for Harvesting
@@ -105,8 +152,9 @@ public class FarmMapController extends KeyAdapter {
                 }
                 break;
             case KeyEvent.VK_I: // 'I' for Equipment
-                gameView.showScreen("EquipmentScreen");
-                actionTaken = true; // It's an action that changes the screen
+                gameView.showScreen("InventoryScreen");
+                actionTaken = true;
+                e.consume();
                 break;
             case KeyEvent.VK_E: // Interact
                 DeployedObject interactedObject = getAdjacentDeployedObject(); //
@@ -153,7 +201,9 @@ public class FarmMapController extends KeyAdapter {
         }
 
         if (actionTaken) {
-            e.consume();
+            if(e.getKeyCode() != KeyEvent.VK_I && e.getKeyCode() != KeyEvent.VK_M && e.getKeyCode() != KeyEvent.VK_E){
+                e.consume();
+            }
             SwingUtilities.invokeLater(() -> {
                 farmMapPanel.refreshMap();
                 // playerInfoPanel is refreshed globally by GameView.showScreen()

@@ -28,20 +28,28 @@ public class Inventory {
     }
 
 
-    public void addItem(Item item, int quantity){
+    public void addItem(Item item, int quantity) {
+        if (item == null || quantity <= 0) {
+            System.err.println("Inventory.addItem: Attempted to add null item or non-positive quantity.");
+            return;
+        }
+
         if (item instanceof Equipment) {
-            Equipment equipment = (Equipment) item;
             for (int i = 0; i < quantity; i++) {
-                equipmentManager.addEquipment(new Equipment(equipment.getName(), 
-                                                           equipment.getBuyPrice(), 
-                                                           equipment.getSellPrice()));
+                equipmentManager.addEquipment(new Equipment(item.getName(), item.getBuyPrice(), item.getSellPrice()));
+            }
+            if (playerStats != null) {
+                playerStats.addItem(item.getName(), quantity);
             }
             return;
         }
-        
-        items.put(item, items.getOrDefault(item, 0) + quantity);
+        Item mapKey = findItemByName(item.getName()); // Check if an item with this name already exists
+        if (mapKey == null) {
+             mapKey = item; // If not, use the passed item as the new key
+        }
+        items.put(mapKey, items.getOrDefault(mapKey, 0) + quantity);
         if (playerStats != null) {
-            playerStats.addItem(item.getName(), quantity);
+            playerStats.addItem(item.getName(), quantity); // Stats are usually by name
         }
     }
 
@@ -124,6 +132,16 @@ public class Inventory {
         equipmentManager.showEquipmentStatus();
     }
 
+    public List<Seed> getAllOwnedSeeds() {
+        List<Seed> ownedSeeds = new ArrayList<>();
+        for (Item item : items.keySet()) { // Iterate through the keys of the map
+            if (item instanceof Seed) {
+                ownedSeeds.add((Seed) item);
+            }
+        }
+        return ownedSeeds;
+    }
+    
     public Item findItemByName(String name){
         for(Item item : items.keySet()){
             if(item.getName().equalsIgnoreCase(name)){

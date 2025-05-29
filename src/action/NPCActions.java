@@ -4,7 +4,7 @@ import npc.NPC;
 import core.player.Player;
 import core.player.RelationshipStatus;
 import item.Item;
-import system.GameManager;
+import time.Time;
 
 /**
  * Kelas untuk Mengelola Aksi Terkait NPC.
@@ -13,10 +13,11 @@ public class NPCActions {
     private Player player;
     // private GameManager gameManager; // Untuk mengelola waktu, hari, musim, dll.
     private int daysSinceLastProposal; // Untuk melacak syarat menikah
+    private Time time;
 
-    public NPCActions(Player player, GameManager gameManager) {
+    public NPCActions(Player player, Time time) {
         this.player = player;
-        // this.gameManager = gameManager; // Akan diinisialisasi jika GameManager ada
+        this.time = time;
         this.daysSinceLastProposal = -1; // Belum ada proposal yang aktif
     }
 

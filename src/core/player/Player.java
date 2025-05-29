@@ -55,6 +55,10 @@ public class Player {
         return gold;
     }
     
+    public static int getMaxEnergy() {
+        return MAX_ENERGY;
+    }
+
     public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;

@@ -5,7 +5,6 @@ import fishing.FishingLocation;
 import core.player.Player;
 import core.world.FarmMap;
 import core.world.Tile;
-import core.world.Weather;
 import item.Crop;
 import item.Seed;
 import time.GameCalendar;

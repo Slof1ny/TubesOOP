@@ -1,13 +1,9 @@
 package test;
 
-import java.util.Set;
 import core.player.Player;
 import core.player.Gold;
-import core.player.Inventory;
-import core.player.PlayerStats;
 import core.player.RelationshipStatus;
 import npc.*;
-import core.world.Tile;
 
 public class PlayerTester {
 

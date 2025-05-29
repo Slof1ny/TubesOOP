@@ -4,8 +4,8 @@ import core.player.Player;
 import core.player.RelationshipStatus;
 import item.Item;
 import item.Misc;       
-import item.Seed; 
-import item.Crop;
+import item.SeedRegistry;
+import item.CropRegistry;
 import item.FoodRegistry; 
 import fishing.FishRegistry;
 
@@ -59,10 +59,10 @@ public abstract class NPC {
         // Try prefixed names first
         if (itemName.startsWith("CROP_")) {
             String cropName = itemName.substring(5);
-            item = Crop.getHarvestedCropByName(cropName);
+            item = CropRegistry.getHarvestedCropByName(cropName);
         } else if (itemName.startsWith("SEED_")) {
             String seedName = itemName.substring(5) + " Seeds"; 
-            item = Seed.getSeedByName(seedName);
+            item = SeedRegistry.getSeedByName(seedName);
         } else if (itemName.startsWith("ITEM_")) {
             String actualItemName = itemName.substring(5);
             item = Misc.get(actualItemName);
@@ -73,10 +73,10 @@ public abstract class NPC {
             // If no prefix, try to find item by exact name across all known registries
             item = FoodRegistry.getFoodByName(itemName); // (Try food first)
             if (item == null) {
-                item = Crop.getHarvestedCropByName(itemName); // (Then harvested crops)
+                item = CropRegistry.getHarvestedCropByName(itemName); // (Then harvested crops)
             }
             if (item == null) {
-                item = Seed.getSeedByName(itemName); // (Then seeds)
+                item = SeedRegistry.getSeedByName(itemName); // (Then seeds)
             }
             if (item == null) {
                 item = Misc.get(itemName); // (Then misc items)

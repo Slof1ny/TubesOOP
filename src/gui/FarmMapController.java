@@ -16,6 +16,7 @@ import fishing.FishingLocation;
 
 import action.Action;
 import item.Seed;
+import item.SeedRegistry;
 import time.Time;
 import time.GameCalendar;
 import system.GameManager; // Import GameManager
@@ -75,7 +76,7 @@ public class FarmMapController extends KeyAdapter {
                 }
                 break;
             case KeyEvent.VK_P: // 'P' for Planting (Example: Parsnip Seeds)
-                Seed parsnipSeed = Seed.getSeedByName("Parsnip Seeds");
+                Seed parsnipSeed = SeedRegistry.getSeedByName("Parsnip Seeds");
                 if (parsnipSeed != null) {
                     try {
                         Action.plant(farmMap, player, gameTime, gameCalendar, parsnipSeed);

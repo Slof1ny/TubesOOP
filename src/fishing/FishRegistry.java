@@ -64,7 +64,6 @@ public class FishRegistry {
       ),
       new FishDefinition("Halibut", FishType.REGULAR,
         Arrays.asList(Season.values()),
-        // two ranges combined: 06–11 and 19–02
         List.of(new TimeRange(6,11), new TimeRange(19,2)),
         Arrays.asList(Weather.values()),
         List.of("Ocean")
@@ -132,6 +131,7 @@ public class FishRegistry {
         List.of("Mountain Lake")
       )
     );
+
     private static final Map<String, Fish> FISH_BY_NAME = new HashMap<>();
 
     private static List<TimeRange> createAllDayTimeRanges() {
@@ -140,6 +140,8 @@ public class FishRegistry {
 
     public static List<Fish> buildAll(Map<String,FishingLocation> locationsByName) {
         List<Fish> allCreatedFish = new ArrayList<>(DEFINITIONS.size());
+        FISH_BY_NAME.clear();
+
         for (var d : DEFINITIONS) {
             var associatedLocations = new ArrayList<FishingLocation>();
             for (var name : d.locations()) {
@@ -159,12 +161,12 @@ public class FishRegistry {
 
             Fish newFish = new Fish(d.name(), 0, price, d.type(), d.seasons(), d.timeRanges(), d.weathers(), associatedLocations);
             allCreatedFish.add(newFish);
+            FISH_BY_NAME.put(newFish.getName(), newFish); 
 
             for (FishingLocation loc : associatedLocations) {
                 loc.addFish(newFish);
             }
         }
-
         return allCreatedFish;
     }
 
@@ -179,5 +181,9 @@ public class FishRegistry {
 
     public static Fish getFishByName(String name) {
         return FISH_BY_NAME.get(name);
+    }
+
+    public static List<Fish> getAllFish() {
+        return List.copyOf(FISH_BY_NAME.values());
     }
 }

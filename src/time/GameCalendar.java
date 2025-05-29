@@ -96,4 +96,11 @@ public class GameCalendar {
     public Weather getCurrentWeather(){
         return currentWeather;
     }
+
+    public void displayCalendar(){ // ADD THIS METHOD
+    System.out.println("Current Day in Season: " + dayInSeason);
+    System.out.println("Total Game Day: " + totalDay);
+    System.out.println("Current Season: " + currentSeason);
+    System.out.println("Current Weather: " + currentWeather);
+    }
 }

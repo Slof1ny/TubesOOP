@@ -1,29 +1,41 @@
 package cooking;
 
+import item.Item;
+
 /**
  * Implementasi Coal sebagai bahan bakar.
  * 1 Coal bisa memasak 2 item makanan.
  */
-public class Coal implements Fuel {
-    public static final String ITEM_ID = "ITEM_COAL"; // Sesuaikan dengan ID item di sistem Anda
-    private static final String NAME = "Coal";
+public class Coal extends Item implements Fuel { 
+    public static final String ITEM_ID = "Coal";
+    private static final String NAME = "Coal"; 
     private static final int FOOD_COOK_CAPACITY = 2;
 
+    public Coal() {
+        super(NAME, 15, 7); 
+    }
+
     @Override
-    public String getFuelItemId() {
+    public String getFuelItemId() { 
         return ITEM_ID;
     }
 
     @Override
-    public String getName() {
+    public String getName() { 
         return NAME;
     }
 
     @Override
-    public int getFoodCookCapacity() {
+    public int getFoodCookCapacity() { 
         return FOOD_COOK_CAPACITY;
     }
-     @Override
+
+    @Override
+    public String getCategory() { 
+        return "Fuel";
+    }
+
+    @Override
     public String toString() {
         return NAME + " (Kapasitas: " + FOOD_COOK_CAPACITY + " makanan per unit)";
     }

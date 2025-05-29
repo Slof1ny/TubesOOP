@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import system.StatisticsManager;
 import core.player.Player;
 import core.world.ShippingBin;
+import system.GameManager;
 
 public class Time {
     private int hour;
@@ -15,6 +16,7 @@ public class Time {
 
     private final GameCalendar calendar;
     private Player player;
+    private GameManager gameManager;
 
     public Time(GameCalendar calendar){
         this.hour = 6;
@@ -40,14 +42,25 @@ public class Time {
         this.calendar = calendar;
         this.player = player; // Inisialisasi Player
     }
+    
+    public Time(GameCalendar calendar, Player player, GameManager gameManager){ // Tambahkan Player ke constructor
+        this.hour = 6;
+        this.minute = 0;
+        this.isNight = false;
+        this.scheduler = Executors.newScheduledThreadPool(1);
+        this.calendar = calendar;
+        this.player = player; // Inisialisasi Player
+        this.gameManager = gameManager;
+    }
 
-    public Time(GameCalendar calendar, StatisticsManager data, Player player){ // Tambahkan Player ke constructor
+    public Time(GameCalendar calendar, StatisticsManager data, Player player, GameManager gameManager){ // Tambahkan Player ke constructor
         this.hour = data.savedHour;
         this.minute = data.savedMinute;
         this.isNight = (hour >= 18 || hour < 6);
         this.scheduler = Executors.newScheduledThreadPool(1);
         this.calendar = calendar;
         this.player = player; // Inisialisasi Player
+        this.gameManager = gameManager;
     }
 
     private void tickOneInterval() {
@@ -94,6 +107,9 @@ public class Time {
         this.minute = 0;
         this.isNight = false;
         calendar.nextDay();
+        if (this.gameManager != null) { // Update UI immediately after sleep
+            this.gameManager.onGameTimeTick();
+        }
     }
 
     public int getHour(){
@@ -148,7 +164,10 @@ public class Time {
                     }
                 }
             }
-            System.out.printf("%02d : %02d\n", hour, minute);
+            System.out.printf("Console TIme: %02d : %02d\n", hour, minute);
+            if (this.gameManager != null) {
+                this.gameManager.onGameTimeTick();
+            }
 
         };
         scheduler.scheduleAtFixedRate(updateTime, 0, 1, TimeUnit.SECONDS);
@@ -162,6 +181,9 @@ public class Time {
         // Proses penjualan Shipping Bin saat tidur
         if (player != null && player.getShippingBin() != null) {
             player.getShippingBin().processSales(player);
+        }
+        if (this.gameManager != null) { // Update UI immediately after sleep
+            this.gameManager.onGameTimeTick();
         }
     }
 

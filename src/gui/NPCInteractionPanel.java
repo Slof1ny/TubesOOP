@@ -174,7 +174,7 @@ public class NPCInteractionPanel extends JPanel {
             if (currentNpc != null) {
                 String interactionResult = npcActions.chatWithNPC(currentNpc);
                 dialogueArea.setText(currentNpc.getChatDialogue(gameManager.getPlayer()) + "\n\n--- Interaction Feedback ---\n" + interactionResult);
-                gameManager.getPlayerInfoPanel().refreshPlayerInfo();
+                gameManager.getTopInfoBarPanel().refreshInfo();
                 updateActionButtons();
             }
         });
@@ -198,7 +198,7 @@ public class NPCInteractionPanel extends JPanel {
                     } else {
                         dialogueArea.setText("Item '" + itemName.trim() + "' not found in your inventory.");
                     }
-                    gameManager.getPlayerInfoPanel().refreshPlayerInfo();
+                    gameManager.getTopInfoBarPanel().refreshInfo();
                     updateActionButtons();
                 }
             }
@@ -210,7 +210,7 @@ public class NPCInteractionPanel extends JPanel {
                 boolean hasRing = gameManager.getPlayer().getInventory().getItemCount("Proposal Ring") > 0;
                 String result = npcActions.proposeToNPC(currentNpc, hasRing);
                 dialogueArea.setText("--- Proposal Attempt ---\n" + result);
-                gameManager.getPlayerInfoPanel().refreshPlayerInfo();
+                gameManager.getTopInfoBarPanel().refreshInfo();
                 updateActionButtons();
             } else if (currentNpc != null) {
                  System.out.println("Propose button was clicked but was not enabled. Conditions not met.");
@@ -229,7 +229,7 @@ public class NPCInteractionPanel extends JPanel {
                     // Consider if player should be moved or screen changed automatically.
                     // For now, they remain on this screen until "Leave" is clicked.
                 }
-                gameManager.getPlayerInfoPanel().refreshPlayerInfo();
+                gameManager.getTopInfoBarPanel().refreshInfo();
                 updateActionButtons();
             } else if (currentNpc != null) {
                 System.out.println("Marry button was clicked but was not enabled. Conditions not met.");

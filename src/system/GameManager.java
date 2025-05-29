@@ -7,7 +7,7 @@ import core.world.GameMap;
 import time.GameCalendar;
 import time.Time;
 import npc.*;
-import gui.PlayerInfoPanel;
+import gui.TopInfoBarPanel;
 import fishing.FishingLocation; // Import
 import fishing.SpecificFishingLocation; // Import
 import fishing.FreeFishingLocation; // Import
@@ -26,7 +26,7 @@ public class GameManager {
     private GameCalendar gameCalendar;
     private Time gameTime;
     private Store gameStore;
-    private PlayerInfoPanel playerInfoPanel;
+    private TopInfoBarPanel topInfoBarPanel;
     private Map<String, FishingLocation> fishingLocations; // Added to store fishing locations
     private List<NPC> allNpcs;
 
@@ -64,7 +64,7 @@ public class GameManager {
         // Player position on farmMap is set within farmMap's spawnPlayer
 
         gameCalendar = new GameCalendar(); //
-        gameTime = new Time(gameCalendar, player); //
+        gameTime = new Time(gameCalendar, player, this); //
 
         gameStore = new Store("Emily's Store", new Emily()); //
         player.setShippingBin(new core.world.ShippingBin()); //
@@ -101,12 +101,20 @@ public class GameManager {
         return player;
     }
 
-    public PlayerInfoPanel getPlayerInfoPanel() { //
-        return playerInfoPanel;
+    // public PlayerInfoPanel getPlayerInfoPanel() { //
+    //     return playerInfoPanel;
+    // }
+
+    // public void setPlayerInfoPanel(PlayerInfoPanel playerInfoPanel) { //
+    //     this.playerInfoPanel = playerInfoPanel;
+    // }
+
+    public TopInfoBarPanel getTopInfoBarPanel() { // << ADD THIS
+        return topInfoBarPanel;
     }
 
-    public void setPlayerInfoPanel(PlayerInfoPanel playerInfoPanel) { //
-        this.playerInfoPanel = playerInfoPanel;
+    public void setTopInfoBarPanel(TopInfoBarPanel topInfoBarPanel) { // << ADD THIS
+        this.topInfoBarPanel = topInfoBarPanel;
     }
 
     public GameMap getCurrentMap() { //
@@ -170,9 +178,15 @@ public class GameManager {
             return false;
         }
         
-        if (playerInfoPanel != null) { //
-            playerInfoPanel.refreshPlayerInfo(); //
+        if (topInfoBarPanel != null) { //
+            topInfoBarPanel.refreshInfo(); //
         }
         return true;
+    }
+
+    public void onGameTimeTick(){
+        if(topInfoBarPanel != null && topInfoBarPanel.isVisible()){
+            topInfoBarPanel.refreshInfo();
+        }
     }
 }

@@ -108,8 +108,8 @@ public class ShippingBinPanel extends JPanel {
                         boolean success = player.getShippingBin().addItem(player, item, quantityToShip); //
                         if (success) {
                             // Refresh player info (gold doesn't change yet, but inventory does)
-                            if(gameManager.getPlayerInfoPanel() != null) {
-                                gameManager.getPlayerInfoPanel().refreshPlayerInfo();
+                            if(gameManager.getTopInfoBarPanel() != null) {
+                                gameManager.getTopInfoBarPanel().refreshInfo();
                             }
                             // Refresh this panel to show updated inventory quantities
                             refreshShippingBinDisplay();

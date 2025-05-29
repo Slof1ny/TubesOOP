@@ -97,8 +97,8 @@ public class EquipmentPanel extends JPanel {
         updateButtonStates();
 
         // Update PlayerInfoPanel as well
-        if (gameManager.getPlayerInfoPanel() != null) {
-            gameManager.getPlayerInfoPanel().refreshPlayerInfo();
+        if (gameManager.getTopInfoBarPanel() != null) {
+            gameManager.getTopInfoBarPanel().refreshInfo();
         }
          // Request focus when panel is shown/refreshed
         SwingUtilities.invokeLater(this::requestFocusInWindow);

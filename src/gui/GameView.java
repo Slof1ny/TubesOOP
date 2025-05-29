@@ -12,7 +12,7 @@ public class GameView extends JFrame {
     private JPanel centerCardPanel; // Panel that uses CardLayout
     public MainMenu mainMenuPanel;
     public FarmMapPanel farmMapPanel;
-    public PlayerInfoPanel playerInfoPanel; // The single, persistent info panel
+    public TopInfoBarPanel topInfoBarPanel; // The single, persistent info panel
     public StorePanel storePanel;
     public CityMapPanel cityMapPanel;
     public PlayerCreationPanel playerCreationPanel;
@@ -29,8 +29,8 @@ public class GameView extends JFrame {
         gameManager = new GameManager();
 
         // 1. Create the single PlayerInfoPanel
-        playerInfoPanel = new PlayerInfoPanel(gameManager);
-        gameManager.setPlayerInfoPanel(playerInfoPanel); // GameManager can still have a reference to refresh it
+        topInfoBarPanel = new TopInfoBarPanel(gameManager); // << INITIALIZE THIS
+        gameManager.setTopInfoBarPanel(topInfoBarPanel);
 
         // 2. Create other panels (they no longer take playerInfoPanel directly if it's managed by GameView layout)
         mainMenuPanel = new MainMenu();
@@ -39,9 +39,9 @@ public class GameView extends JFrame {
         playerCreationPanel = new PlayerCreationPanel(this, gameManager);
         // Pass all necessary dependencies to FarmMapPanel and CityMapPanel
         // Ensure FarmMapPanel's controller gets the GameView reference to access GameManager
-        farmMapPanel = new FarmMapPanel(gameManager.getFarmMap(), gameManager.getPlayer(), gameManager.getGameTime(), gameManager.getGameCalendar(), playerInfoPanel, this);
+        farmMapPanel = new FarmMapPanel(gameManager.getFarmMap(), gameManager.getPlayer(), gameManager.getGameTime(), gameManager.getGameCalendar(), null, this);
         cityMapPanel = new CityMapPanel(gameManager, this); // CityMapPanel gets GameManager and GameView
-        storePanel = new StorePanel(this, gameManager.getPlayer(), gameManager.getGameStore(), playerInfoPanel);
+        storePanel = new StorePanel(this, gameManager.getPlayer(), gameManager.getGameStore(), null);
         shippingBinPanel = new ShippingBinPanel(this, gameManager);
         npcInteractionPanel = new NPCInteractionPanel(this, gameManager);
         equipmentPanel = new EquipmentPanel(this, gameManager);
@@ -70,8 +70,7 @@ public class GameView extends JFrame {
         // 5. Set GameView's main layout and add components
         setLayout(new BorderLayout()); // Main layout for GameView JFrame
         add(centerCardPanel, BorderLayout.CENTER);
-        add(playerInfoPanel, BorderLayout.EAST); // PlayerInfoPanel is always on the EAST
-
+        add(topInfoBarPanel, BorderLayout.NORTH);
         showScreen("MainMenu");
     }
 
@@ -94,14 +93,13 @@ public class GameView extends JFrame {
     public void showScreen(String screenName) {
         CardLayout cl = (CardLayout)(centerCardPanel.getLayout()); // Get layout from centerCardPanel
         cl.show(centerCardPanel, screenName); // Show screen in centerCardPanel
-        if (screenName.equals("MainMenu")) {
-            playerInfoPanel.setVisible(false); // Hide PlayerInfoPanel on MainMenu
-            mainMenuPanel.requestFocusInWindow();
-        } else {
-            playerInfoPanel.setVisible(true); // Show PlayerInfoPanel on other screens
-            if (playerInfoPanel != null) {
-                playerInfoPanel.refreshPlayerInfo();
-            }
+
+        boolean showTopBar = !screenName.equals("MainMenu") && !screenName.equals("PlayerCreationScreen");
+        topInfoBarPanel.setVisible(showTopBar);
+        if (showTopBar && topInfoBarPanel != null) {
+            topInfoBarPanel.refreshInfo(); // Refresh whenever a relevant screen is shown
+        }
+
         // Request focus and refresh map for the active panel
         if (screenName.equals("PlayerCreationScreen")) {
             playerCreationPanel.requestFocusInWindow();
@@ -123,7 +121,7 @@ public class GameView extends JFrame {
             equipmentPanel.refreshEquipmentList(); // Refresh and request focus
             equipmentPanel.requestFocusInWindow(); 
         }
-    }
+    
         // MainMenu doesn't usually need a specific refresh call here for its components
 
         revalidate(); // Revalidate the whole GameView

@@ -129,7 +129,7 @@ public class CityMapController extends KeyAdapter {
                 gameManager.getPlayer().getStats().printStats(); // For console debug
                 gameManager.getGameTime().displayTime(); // For console debug
                 gameManager.getGameCalendar().displayCalendar(); // For console debug
-                gameManager.getPlayerInfoPanel().refreshPlayerInfo(); // Update player info on GUI
+                gameManager.getTopInfoBarPanel().refreshInfo(); // Update player info on GUI
             });
         }
     }

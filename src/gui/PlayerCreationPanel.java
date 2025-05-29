@@ -102,8 +102,8 @@ public class PlayerCreationPanel extends JPanel {
 
                 // PlayerInfoPanel is already set up with this gameManager,
                 // so refreshing it will show the new name/gender.
-                if (gameManager.getPlayerInfoPanel() != null) {
-                    gameManager.getPlayerInfoPanel().refreshPlayerInfo();
+                if (gameManager.getTopInfoBarPanel() != null) {
+                    gameManager.getTopInfoBarPanel().refreshInfo();
                 }
                 
                 // Initialize player location correctly after creation before going to farm

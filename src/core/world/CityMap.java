@@ -20,6 +20,7 @@ public class CityMap implements GameMap {
     private static final char GAMBLING_DEN_SYMBOL = 'G'; // Dasco's Gambling Den
     private static final char ABIGAIL_TENT_SYMBOL = 'A'; // Abigail's Tent
     private static final char EXIT_SYMBOL = 'X'; // Exit to Farm
+    private static final char ORENJI_SYMBOL = 'O'; // Exit to Farm
 
     public CityMap(Player player) { // Player passed for initial spawn logic
         initTiles();
@@ -53,6 +54,8 @@ public class CityMap implements GameMap {
 
         // Place Abigail's Tent
         deployObject(new Building("Abigail's Tent", 7, 18, 2, 2, ABIGAIL_TENT_SYMBOL));
+
+        deployObject(new Building("Orenji si Kucing Barista", 10, 8, 1, 1, ORENJI_SYMBOL));
 
         // Place an exit point to the farm (e.g., at the bottom center edge)
         deployObject(new DeployedObject(SIZE / 2, SIZE - 1, 1, 1, EXIT_SYMBOL) {

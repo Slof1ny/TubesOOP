@@ -182,6 +182,14 @@ public class FarmMapController extends KeyAdapter {
                     JOptionPane.showMessageDialog(farmMapPanel, "Nothing to interact with here.", "Interact", JOptionPane.INFORMATION_MESSAGE); //
                 }
                 break;
+            case KeyEvent.VK_K: // 'K' for reKover Land (Recover Land)
+                try {
+                    Action.recoverLand(farmMap, player, gameTime);
+                    actionTaken = true;
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(farmMapPanel, ex.getMessage(), "Recover Land Error", JOptionPane.WARNING_MESSAGE);
+                }
+                break;
             case KeyEvent.VK_F1: // 'H' for Help
                 gameView.showScreen("HelpScreen");
                 actionTaken = true; // It's a screen change

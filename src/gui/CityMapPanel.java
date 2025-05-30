@@ -18,6 +18,7 @@ public class CityMapPanel extends JPanel {
     private static final Color ROAD_COLOR = new Color(128, 128, 128); // Gray for roads/walkable areas
     private static final Color BUILDING_COLOR = new Color(160, 82, 45); // Sienna for generic buildings
     private static final Color PLAYER_COLOR = new Color(255, 0, 0); // Red for player
+    private static final Color ORENJI_CAFE_COLOR = new Color(255, 140, 0);
 
     // Define specific colors for deployed objects if desired (optional, can use generic BUILDING_COLOR)
     private static final Color STORE_COLOR = new Color(255, 165, 0); // Orange for store
@@ -59,6 +60,9 @@ public class CityMapPanel extends JPanel {
                     switch (deployedChar) {
                         case 'S': // Emily's Store
                             tileColor = STORE_COLOR;
+                            break;
+                        case 'O': 
+                            tileColor = ORENJI_CAFE_COLOR; 
                             break;
                         case 'M': // Mayor's Manor
                             tileColor = MAYOR_MANOR_COLOR;

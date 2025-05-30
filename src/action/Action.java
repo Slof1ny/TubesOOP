@@ -52,33 +52,45 @@ public class Action {
         time.advanceGameMinutes(5); 
     }
 
-    public static void recoverLand(FarmMap farm, Player player, Time time) throws IllegalArgumentException { // Removed Calendar as it's not used directly
+    public static void recoverLand(FarmMap farm, Player player, Time time) throws IllegalArgumentException {
         if (!player.isEquipped("Pickaxe")) {
             throw new IllegalArgumentException("Pickaxe must be equipped to recover land.");
         }
 
-        if (player.getEnergy() < (Player.MIN_ENERGY + 5)){ 
-            System.out.println("Not enough energy to recover land.");
-            return;
+        if (player.getEnergy() < 5) { // Check if player has at least 5 energy to spend. MIN_ENERGY is -20.
+                                      // Spending 5 energy should be possible even if current energy is 0 down to -15.
+                                      // Let's adjust to ensure they can go into negative if above MIN_ENERGY + cost
+            if (player.getEnergy() - 5 < Player.MIN_ENERGY) {
+                 System.out.println("Not enough energy to recover land. (Would go below " + Player.MIN_ENERGY + ")");
+                 return;
+            }
         }
+
 
         Tile tile = farm.getTileAt(player.getX(), player.getY());
         if (tile == null) {
-            System.out.println("Invalid tile position.");
-            return;
-        }
-        if (tile.getType() != Tile.TileType.TILLED && tile.getType() != Tile.TileType.PLANTED) { // can recover tilled or planted
-             System.out.println("Cannot recover this tile. It's not tilled soil or planted crop.");
-             return;
-        }
-        if (tile.getType() == Tile.TileType.PLANTED) {
-            tile.clearPlantedCrop(); 
+            System.out.println("Invalid tile position. Cannot recover land here.");
+            throw new IllegalStateException("Player is on an invalid tile position."); // Or handle more gracefully
         }
 
-        tile.setType(Tile.TileType.UNTILLED); 
-        System.out.println("You recovered the land at (" + player.getX() + ", " + player.getY() + ").");
-        player.setEnergy(player.getEnergy() - 5); 
-        time.advanceGameMinutes(5); 
+        if (tile.getType() != Tile.TileType.TILLED && tile.getType() != Tile.TileType.PLANTED) {
+             System.out.println("Cannot recover this tile. It's not tilled soil or has no planted crop.");
+             return;
+        }
+
+        // If there's a crop, it will be destroyed.
+        if (tile.getType() == Tile.TileType.PLANTED) {
+            System.out.println("The crop on this tile will be destroyed by recovering the land.");
+            tile.clearPlantedCrop(); // Removes the crop reference
+        }
+
+        tile.setType(Tile.TileType.UNTILLED); // Change tile type to untilled land
+        // Note: Tile.setType should handle resetting its internal state (like deployedChar if any, though not for tilled/planted)
+
+        System.out.println("You recovered the land at (" + player.getX() + ", " + player.getY() + ") back to untilled land.");
+        
+        player.setEnergy(player.getEnergy() - 5); // Deduct energy [cite: 188]
+        time.advanceGameMinutes(5); // Advance time [cite: 188]
     }
 
     public static void plant(FarmMap farm, Player player, Time time, GameCalendar calendar, Seed seed) throws IllegalArgumentException {

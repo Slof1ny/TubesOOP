@@ -82,6 +82,8 @@ public class CityMapController extends KeyAdapter {
                             targetNpc = gameManager.getNpcByName("Dasco");
                         } else if ("Abigail's Tent".equals(buildingName)) {
                             targetNpc = gameManager.getNpcByName("Abigail");
+                        } else if("Orenji si Kucing Barista".equals(buildingName)){
+                            targetNpc = gameManager.getNpcByName("Orenji si Kucing Barista");
                         }
                         else{
                             JOptionPane.showMessageDialog(cityMapPanel, "You are interacting with " + buildingName + "!", "Interact", JOptionPane.INFORMATION_MESSAGE);

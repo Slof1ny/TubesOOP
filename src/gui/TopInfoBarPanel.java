@@ -11,6 +11,7 @@ public class TopInfoBarPanel extends JPanel {
     private GameManager gameManager;
 
     private JLabel nameLabel;
+    private JLabel farmNameLabel;
     private JLabel energyLabel;
     private JLabel goldLabel;
     private JLabel locationLabel;
@@ -25,10 +26,11 @@ public class TopInfoBarPanel extends JPanel {
         setBackground(new Color(50, 50, 70)); // Darker background like PlayerCreation
         setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
-        Font infoFont = new Font("Arial", Font.BOLD, 14);
+        Font infoFont = new Font("Arial", Font.BOLD, 12);
         Color fontColor = Color.WHITE;
 
         nameLabel = new JLabel("Name: N/A");
+        farmNameLabel = new JLabel("Farm: N/A");
         energyLabel = new JLabel("Energy: N/A");
         goldLabel = new JLabel("Gold: N/A");
         locationLabel = new JLabel("Location: N/A");
@@ -37,7 +39,7 @@ public class TopInfoBarPanel extends JPanel {
         seasonLabel = new JLabel("Season: N/A");
         weatherLabel = new JLabel("Weather: N/A");
 
-        JLabel[] labels = {nameLabel, energyLabel, goldLabel, locationLabel, timeLabel,dayLabel, seasonLabel, weatherLabel};
+        JLabel[] labels = {nameLabel, farmNameLabel, energyLabel, goldLabel, locationLabel, timeLabel,dayLabel, seasonLabel, weatherLabel};
         for (JLabel label : labels) {
             label.setFont(infoFont);
             label.setForeground(fontColor);
@@ -56,6 +58,7 @@ public class TopInfoBarPanel extends JPanel {
         SwingUtilities.invokeLater(() -> { // This is important!
             if (player != null) {
                 nameLabel.setText("Name: " + player.getName());
+                farmNameLabel.setText("Farm: " + player.getFarmName());
                 energyLabel.setText("Energy: " + player.getEnergy() + "/100");
                 goldLabel.setText("Gold: " + player.getGold().getAmount() + "g");
                 locationLabel.setText("Location: " + player.getLocation());

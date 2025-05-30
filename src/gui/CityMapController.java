@@ -53,6 +53,10 @@ public class CityMapController extends KeyAdapter {
             case KeyEvent.VK_D:
                 actionTaken = cityMap.movePlayer(player, 1, 0);
                 break;
+            case KeyEvent.VK_F1: // 'H' for Help
+                gameView.showScreen("HelpScreen");
+                actionTaken = true; // It's a screen change
+                break;
             case KeyEvent.VK_I: // 'I' for Equipment
                 gameView.showScreen("InventoryScreen");
                 actionTaken = true;

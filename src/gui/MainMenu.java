@@ -81,10 +81,16 @@ public class MainMenu extends JPanel {
             }
         });
 
-        helpButton.addActionListener(new ActionListener() { //
+        helpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(gameView, "This is Spakbor Hills! Use WASD to move. More help coming soon!", "Help", JOptionPane.INFORMATION_MESSAGE); //
+                if (gameView != null) {
+                    gameView.showScreen("HelpScreen"); // << SHOW THE NEW HELP PANEL
+                } else { // Fallback if gameView somehow not set (should not happen)
+                    JOptionPane.showMessageDialog(null, 
+                        "Help: WASD to move, E to interact. More info in game (press H).", 
+                        "Basic Help", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
         });
 

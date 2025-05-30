@@ -13,6 +13,7 @@ public class Player {
     public static final int MIN_ENERGY = -20;
     private String name;
     private String gender;
+    private String farmName;
     private Gold gold = new Gold(0);
     private int x, y;
     private int energy = MAX_ENERGY;
@@ -27,6 +28,7 @@ public class Player {
     public Player(String name, String gender) {
         this.name = name;
         this.gender = gender;
+        this.farmName = "My Farm";
         this.x = 0;
         this.y = 0;
         this.playerStats = new PlayerStats();
@@ -71,6 +73,14 @@ public class Player {
 
     public int getY() {
         return y;
+    }
+
+    public String getFarmName() {
+        return farmName;
+    }
+
+    public void setFarmName(String farmName) {
+        this.farmName = (farmName == null || farmName.trim().isEmpty()) ? "My Farm" : farmName.trim();
     }
 
     // This method now returns the actual map name (e.g., "Farm Map", "City Map")

@@ -182,6 +182,10 @@ public class FarmMapController extends KeyAdapter {
                     JOptionPane.showMessageDialog(farmMapPanel, "Nothing to interact with here.", "Interact", JOptionPane.INFORMATION_MESSAGE); //
                 }
                 break;
+            case KeyEvent.VK_F1: // 'H' for Help
+                gameView.showScreen("HelpScreen");
+                actionTaken = true; // It's a screen change
+            break;    
             case KeyEvent.VK_M: // 'M' to switch to City Map
                 if (farmMap.atEdge(player)) {
                     int confirm = JOptionPane.showConfirmDialog(farmMapPanel,

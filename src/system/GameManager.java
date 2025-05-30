@@ -175,6 +175,10 @@ public class GameManager {
         this.gameViewInstance = gv;
     }
 
+    public GameView getGameViewInstance() { 
+        return this.gameViewInstance;
+    }
+
 
     public boolean transitionMap(String destinationMapName) {
         System.out.println("GameManager: Attempting transition to " + destinationMapName);

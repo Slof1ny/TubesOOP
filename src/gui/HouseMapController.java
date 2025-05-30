@@ -53,6 +53,10 @@ public class HouseMapController extends KeyAdapter {
             case KeyEvent.VK_D:
                 actionTaken = currentMap.movePlayer(player, 1, 0);
                 break;
+            case KeyEvent.VK_F1: // 'H' for Help
+                gameView.showScreen("HelpScreen");
+                actionTaken = true; // It's a screen change
+            break;
             case KeyEvent.VK_E: // Interact
                 actionTaken = true; // Assume an attempt
                 Tile playerTile = currentMap.getTileAt(player.getX(), player.getY());

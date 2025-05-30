@@ -3,6 +3,10 @@ package time;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
 import system.StatisticsManager;
 import core.player.Player;
 import core.world.ShippingBin;
@@ -18,6 +22,7 @@ public class Time {
     private final GameCalendar calendar;
     private Player player;
     private GameManager gameManager;
+    private boolean alreadyForcedSleepToday = false;
 
     public Time(GameCalendar calendar){
         this.hour = 6;
@@ -178,6 +183,28 @@ public class Time {
                     }
                 }
             }
+            if (this.hour == 2 && this.minute == 0 && !alreadyForcedSleepToday) {
+                // Check if player is active (not already in a sleep transition from -20 energy)
+                // This simple check assumes if time hits 02:00, and player hasn't manually slept
+                // or been forced to sleep by MIN_ENERGY yet for *this night cycle*, they pass out.
+                if (player != null /* && !player.isSleeping() // if you had such a flag */ ) {
+                    System.out.println("Console: Time is 02:00 AM. Forcing player to sleep.");
+                    if (gameManager != null) {
+                        // Show message before sleep call, as sleep call changes state immediately
+                         SwingUtilities.invokeLater(() -> {
+                            if (gameManager.getGameViewInstance() != null && gameManager.getGameViewInstance().isVisible()) { // You'd need getGameViewInstance() in GameManager
+                                JOptionPane.showMessageDialog(gameManager.getGameViewInstance(),
+                                    "It's 02:00 AM! You collapse from exhaustion and pass out...",
+                                    "Too Late!",
+                                    JOptionPane.WARNING_MESSAGE);
+                            }
+                        });
+                        gameManager.forcePlayerSleep(); // This calls sleep2()
+                        alreadyForcedSleepToday = true; // Prevent re-triggering until flag is reset at 06:00 or new day
+                    }
+                }
+            }
+
             System.out.printf("Console TIme: %02d : %02d\n", hour, minute);
             if (this.gameManager != null) {
                 this.gameManager.onGameTimeTick();
@@ -214,6 +241,7 @@ public class Time {
         this.hour = 6;
         this.minute = 0;
         this.isNight = false;
+        this.alreadyForcedSleepToday = false;
 
         // 3. Advance to the next day & process daily updates
         Weather weatherOfJustEndedDay = calendar.getCurrentWeather();

@@ -7,6 +7,8 @@ import npc.NPC;
 
 public class GameView extends JFrame {
 
+    private String previousScreenName = "MainMenu";
+    private String currentScreenName = "MainMenu";
     private GameManager gameManager;
 
     private JPanel centerCardPanel; // Panel that uses CardLayout
@@ -20,6 +22,7 @@ public class GameView extends JFrame {
     public NPCInteractionPanel npcInteractionPanel;
     public InventoryScreenPanel inventoryScreenPanel;
     public HouseMapPanel houseMapPanel;
+    public HelpScreenPanel helpScreenPanel;
 
     public GameView() {
         setTitle("Spakbor Hills");
@@ -48,6 +51,7 @@ public class GameView extends JFrame {
         npcInteractionPanel = new NPCInteractionPanel(this, gameManager);
         inventoryScreenPanel = new InventoryScreenPanel(this, gameManager);
         houseMapPanel = new HouseMapPanel(gameManager, this);
+        helpScreenPanel = new HelpScreenPanel(this, gameManager);
 
         // 3. Create screen-specific content panels (WITHOUT PlayerInfoPanel)
         JPanel gameScreenOnlyMapPanel = new JPanel(new BorderLayout());
@@ -68,7 +72,8 @@ public class GameView extends JFrame {
         centerCardPanel.add(shippingBinPanel, "ShippingBinScreen");
         centerCardPanel.add(npcInteractionPanel, "NPCInteractionScreen");
         centerCardPanel.add(inventoryScreenPanel, "InventoryScreen"); 
-        centerCardPanel.add(houseMapPanel, "HouseScreen"); 
+        centerCardPanel.add(houseMapPanel, "HouseScreen");
+        centerCardPanel.add(helpScreenPanel, "HelpScreen"); 
 
 
         // 5. Set GameView's main layout and add components
@@ -95,8 +100,19 @@ public class GameView extends JFrame {
     }
 
     public void showScreen(String screenName) {
-        CardLayout cl = (CardLayout)(centerCardPanel.getLayout()); // Get layout from centerCardPanel
-        cl.show(centerCardPanel, screenName); // Show screen in centerCardPanel
+        if (screenName == null) return;
+
+        // Before switching, if we are not going to HelpScreen, current screen becomes previous one
+        if (!screenName.equals("HelpScreen") && this.currentScreenName != null && !this.currentScreenName.equals(screenName)) {
+            this.previousScreenName = this.currentScreenName;
+        }
+        this.currentScreenName = screenName; // Update current screen
+
+        System.out.println("GameView: Showing screen - " + screenName + ". Previous screen was: " + previousScreenName);
+
+
+        CardLayout cl = (CardLayout) (centerCardPanel.getLayout());
+        cl.show(centerCardPanel, screenName);
 
         boolean showTopBar = !screenName.equals("MainMenu") && !screenName.equals("PlayerCreationScreen");
         topInfoBarPanel.setVisible(showTopBar);
@@ -127,12 +143,22 @@ public class GameView extends JFrame {
         }  else if (screenName.equals("HouseScreen") && houseMapPanel.isShowing()) { // << ADD CASE FOR HOUSE SCREEN
             houseMapPanel.refreshMap();
             houseMapPanel.requestFocusInWindow();
+        }   else if (screenName.equals("HelpScreen") && helpScreenPanel.isShowing()) { // << ADD THIS CASE
+            helpScreenPanel.onShow(); // Will request focus
         }
     
         // MainMenu doesn't usually need a specific refresh call here for its components
 
         revalidate(); // Revalidate the whole GameView
         repaint();    // Repaint the whole GameView
+    }
+
+    public void returnToPreviousScreen() {
+        showScreen(previousScreenName);
+    }
+
+    public String getCurrentScreenName() { // Useful for GameManager or other panels
+        return this.currentScreenName;
     }
 
     public static void main(String[] args) {

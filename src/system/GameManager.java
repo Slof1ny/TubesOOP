@@ -264,46 +264,52 @@ public class GameManager {
 
         boolean isFaintFromEnergy = player.getEnergy() <= Player.MIN_ENERGY;
 
-        if (isFaintFromEnergy) {
-            System.out.println("GameManager: Player energy at or below minimum. Forcing sleep due to exhaustion.");
+        if (!isFaintFromEnergy) {
+            // Jam 2 pagi: autopilot ke bed lewat GUI
+            System.out.println("GameManager: Player being forced to sleep due to 02:00 AM time. Will autopilot to bed.");
             SwingUtilities.invokeLater(() -> {
                 if (gameViewInstance != null && gameViewInstance.isVisible()) {
-                    JOptionPane.showMessageDialog(gameViewInstance,
-                        "You've exhausted all your energy and passed out!",
-                        "Exhausted",
-                        JOptionPane.WARNING_MESSAGE);
+                    if (!gameViewInstance.isAutopilotActive()) {
+                        JOptionPane.showMessageDialog(gameViewInstance,
+                            "It's 2:00 AM! You are exhausted and will be taken home to rest.",
+                            "Too Late",
+                            JOptionPane.WARNING_MESSAGE);
+                        gameViewInstance.startAutopilotForceSleep();
+                    }
                 } else {
-                    System.out.println("Player has passed out from exhaustion! (No GUI context for dialog)");
-                }
-            });
-        } else { // This branch is for the 2 AM pass out
-            System.out.println("GameManager: Player being forced to sleep due to 02:00 AM time.");
-            // The dialog for 2 AM is shown in Time.java just before calling this.
-        }
-
-        gameTime.sleep2(); // This handles game state: time, day, energy, daily updates.
-
-        // After gameTime.sleep2(), player should be in the house.
-        // Update map and player position for the UI.
-        if (this.gameViewInstance != null) {
-            System.out.println("GameManager: Player slept. Transitioning to HouseScreen.");
-            
-            // Ensure currentMap reflects HouseMap in GameManager's state
-            this.transitionMap(this.getHouseMap().getName()); 
-            
-            // Explicitly set player's position to the house entry point.
-            // Player.setLocation should have been updated by transitionMap.
-            player.setPosition(HouseMap.ENTRY_LOCATION.x, HouseMap.ENTRY_LOCATION.y);
-            
-            // Update the UI to show the HouseScreen
-            SwingUtilities.invokeLater(() -> {
-                this.gameViewInstance.showScreen("HouseScreen");
-                if (topInfoBarPanel != null) { // Refresh info bar after sleep and screen change
-                    topInfoBarPanel.refreshInfo();
+                    // Fallback: no GUI, do instant sleep
+                    System.out.println("Player has passed out from exhaustion (02:00 AM, no GUI)!");
+                    gameTime.sleep2();
+                    if (gameViewInstance != null) {
+                        SwingUtilities.invokeLater(() -> gameViewInstance.showScreen("GameScreen"));
+                    }
                 }
             });
         } else {
-            System.err.println("GameManager.forcePlayerSleep: gameViewInstance is null, cannot switch to HouseScreen and update UI correctly.");
+            // Energi habis: langsung teleport sleep (instan, tidak autopilot)
+            System.out.println("GameManager: Player energy at or below minimum. Forcing instant sleep due to exhaustion.");
+            gameTime.sleep2(); // This handles game state: time, day, energy, daily updates.
+
+            // After gameTime.sleep2(), player should be in the house.
+            // Update map and player position for the UI.
+            if (this.gameViewInstance != null) {
+                System.out.println("GameManager: Player slept. Transitioning to HouseScreen.");
+                // Ensure currentMap reflects HouseMap in GameManager's state
+                this.transitionMap(this.getHouseMap().getName()); 
+                // Explicitly set player's position to the house entry point.
+                // Player.setLocation should have been updated by transitionMap.
+                player.setPosition(HouseMap.ENTRY_LOCATION.x, HouseMap.ENTRY_LOCATION.y);
+                // Update the UI to show the HouseScreen
+                SwingUtilities.invokeLater(() -> {
+                    this.gameViewInstance.showScreen("HouseScreen");
+                    if (topInfoBarPanel != null) { // Refresh info bar after sleep and screen change
+                        topInfoBarPanel.refreshInfo();
+                    }
+                });
+            } else {
+                System.err.println("GameManager.forcePlayerSleep: gameViewInstance is null, cannot switch to HouseScreen and update UI correctly.");
+            }
         }
     }
+
 }

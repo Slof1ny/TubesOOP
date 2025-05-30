@@ -6,7 +6,6 @@ import java.awt.*;
 import system.GameManager;
 import npc.NPC;
 
-import java.awt.Point;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -14,7 +13,7 @@ import java.util.PriorityQueue;
 import java.util.Comparator;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.Timer;
+
 import core.world.GameMap;
 import core.player.Player;
 
@@ -37,6 +36,7 @@ public class GameView extends JFrame {
     public HouseMapPanel houseMapPanel;
     public HelpScreenPanel helpScreenPanel;
     public CookingPanel cookingPanel;
+    public StatisticsPanel statisticsPanel;
 
 
     public GameView() {
@@ -60,13 +60,14 @@ public class GameView extends JFrame {
         playerCreationPanel = new PlayerCreationPanel(this, gameManager);
         farmMapPanel = new FarmMapPanel(gameManager.getFarmMap(), gameManager.getPlayer(), gameManager.getGameTime(), gameManager.getGameCalendar(), null, this);
         cityMapPanel = new CityMapPanel(gameManager, this);
-        storePanel = new StorePanel(this, gameManager.getPlayer(), gameManager.getGameStore(), null);
+        storePanel = new StorePanel(this, gameManager.getGameStore(), gameManager);
         shippingBinPanel = new ShippingBinPanel(this, gameManager);
         npcInteractionPanel = new NPCInteractionPanel(this, gameManager);
         inventoryScreenPanel = new InventoryScreenPanel(this, gameManager);
         houseMapPanel = new HouseMapPanel(gameManager, this);
         helpScreenPanel = new HelpScreenPanel(this, gameManager);
         cookingPanel = new CookingPanel(this, gameManager);
+        statisticsPanel = new StatisticsPanel(this, gameManager);
 
         JPanel gameScreenOnlyMapPanel = new JPanel(new BorderLayout());
         gameScreenOnlyMapPanel.add(farmMapPanel, BorderLayout.CENTER);
@@ -90,6 +91,7 @@ public class GameView extends JFrame {
         centerCardPanel.add(houseScreenOnlyMapPanel, "HouseScreen");
         centerCardPanel.add(helpScreenPanel, "HelpScreen");
         centerCardPanel.add(cookingPanel, "CookingScreen");
+        centerCardPanel.add(statisticsPanel, "StatisticsScreen");
 
 
         setLayout(new BorderLayout());
@@ -112,11 +114,12 @@ public class GameView extends JFrame {
      */
     public void checkAndAutopilotToBed() {
         if (autopilotActive) return;
-        // LOGIC SWAP: autopilot only if it's 2AM pass out, NOT for energy
-        // So, this method should do nothing for energy exhaustion (handled by instant sleep in GameManager)
-        // Optionally, you can keep this for other triggers, but for now, do nothing for energy
-        // If you want to keep the dialog for energy exhaustion, move it to GameManager.forcePlayerSleep
-        // (No autopilot for energy exhaustion)
+        if (gameManager.getPlayer().getEnergy() <= ENERGY_AUTOPILOT_THRESHOLD) {
+            autopilotActive = true;
+            forceSleepMode = false;
+            JOptionPane.showMessageDialog(this, "Energi habis! Anda akan otomatis pulang dan tidur.");
+            autopilotToBed();
+        }
     }
 
     /**
@@ -443,8 +446,7 @@ public class GameView extends JFrame {
                 SwingUtilities.invokeLater(cityMapPanel::requestFocusInWindow);
                 break;
             case "StoreScreen":
-                storePanel.refreshStoreDisplay();
-                SwingUtilities.invokeLater(storePanel::requestFocusInWindow);
+                storePanel.onShow();
                 break;
             case "ShippingBinScreen":
                 shippingBinPanel.onShow(); // onShow should handle its own refresh and focus
@@ -509,4 +511,13 @@ public class GameView extends JFrame {
             game.setVisible(true);
         });
     }
+
+    public void showStatisticsScreen() {
+    if (statisticsPanel == null) { // Defensive check
+        System.err.println("GameView: StatisticsPanel is null. Cannot show.");
+        return;
+    }
+    statisticsPanel.refreshStatistics(); // Call method to load/update data
+    showScreen("StatisticsScreen");
+}
 }

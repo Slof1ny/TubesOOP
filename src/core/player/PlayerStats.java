@@ -3,12 +3,23 @@ package core.player;
 import java.util.*;
 
 import item.Fish;
+import core.world.Season;
 import fishing.FishType;
 
 public class PlayerStats {
     private Map<String, Integer> itemCount;
     private static final Map<String, List<String>> CATEGORY_MAP = new HashMap<>();
     private int totalGoldEarned;
+    private int totalGoldSpent = 0;
+    private Map<Season, Integer> seasonalIncome = new HashMap<>();
+    private Map<Season, Integer> seasonalExpenditure = new HashMap<>();
+    private Map<Season, Integer> daysPlayedPerSeason = new HashMap<>();
+    private Map<String, Integer> npcChatFrequency = new HashMap<>();
+    private Map<String, Integer> npcGiftFrequency = new HashMap<>();
+    private Map<FishType, Integer> fishCaughtByType = new HashMap<>();
+    private int totalFishCaught = 0;
+    private int totalCropsHarvested = 0;
+    private boolean milestonesCheckedAndDisplayed = false;
 
     public PlayerStats() {
         itemCount = new HashMap<>();
@@ -105,33 +116,93 @@ public class PlayerStats {
         return totalGoldEarned;
     }
 
-// public class Stats {
-//     private Map<String, PlayerStats> playerStats;
+    public void addGoldSpent(int amount, Season currentSeason) {
+        if (amount < 0) {
+            //System.err.println("Cannot spend negative gold. Amount: " + amount);
+            return; // Or throw new IllegalArgumentException("Cannot spend negative gold.");
+        }
+        this.totalGoldSpent += amount;
+        this.seasonalExpenditure.merge(currentSeason, amount, Integer::sum);
+    }
 
-//     public Stats() {
-//         playerStats = new HashMap<>();
-//     }
+    public void incrementNpcChatFrequency(String npcName) {
+        this.npcChatFrequency.merge(npcName, 1, Integer::sum);
+    }
 
-//     // Tambah item untuk pemain tertentu
-//     public void addItemToPlayer(String playerName, String itemName, int amount) {
-//         playerStats.putIfAbsent(playerName, new PlayerStats());
-//         playerStats.get(playerName).addItem(itemName, amount);
-//     }
+    public void incrementNpcGiftFrequency(String npcName) {
+        this.npcGiftFrequency.merge(npcName, 1, Integer::sum);
+    }
 
-//     // Dapatkan jumlah item dari pemain tertentu
-//     public int getPlayerItemCount(String playerName, String itemName) {
-//         PlayerStats stats = playerStats.get(playerName);
-//         if (stats == null) return 0;
-//         return stats.getItemCount(itemName);
-//     }
+    public void recordFishCaught(Fish fish) {
+        if (fish == null) return;
+        this.totalFishCaught++;
+        this.fishCaughtByType.merge(fish.getType(), 1, Integer::sum);
+        // Also ensure the specific fish is tracked by addItem if not already
+        // addItem(fish.getName(), 1); // This is likely already handled by inventory.addItem
+    }
 
-//     // Print statistik semua pemain
-//     public void printAllStats() {
-//         for (Map.Entry<String, PlayerStats> entry : playerStats.entrySet()) {
-//             System.out.println("Player: " + entry.getKey());
-//             entry.getValue().printStats();
-//         }
-//     }
-// }
+    public void recordCropHarvested(String cropName, int quantity) {
+        this.totalCropsHarvested += quantity;
+        // addItem(cropName, quantity); // This is likely already handled by inventory.addItem
+    }
+
+
+    public void incrementDaysPlayedInSeason(Season currentSeason) {
+        this.daysPlayedPerSeason.merge(currentSeason, 1, Integer::sum);
+    }
+
+    public int getTotalGoldSpent() {
+        return totalGoldSpent;
+    }
+
+    public Map<Season, Integer> getSeasonalIncome() {
+        return new HashMap<>(seasonalIncome); // Return a copy
+    }
+
+    public Map<Season, Integer> getSeasonalExpenditure() {
+        return new HashMap<>(seasonalExpenditure); // Return a copy
+    }
+
+    public Map<Season, Integer> getDaysPlayedPerSeason() {
+        return new HashMap<>(daysPlayedPerSeason); // Return a copy
+    }
+
+    public Map<String, Integer> getNpcChatFrequency() {
+        return new HashMap<>(npcChatFrequency); // Return a copy
+    }
+
+    public Map<String, Integer> getNpcGiftFrequency() {
+        return new HashMap<>(npcGiftFrequency); // Return a copy
+    }
+
+    public Map<FishType, Integer> getFishCaughtByType() {
+        return new HashMap<>(fishCaughtByType); // Return a copy
+    }
+
+    public int getTotalFishCaught() {
+        return totalFishCaught;
+    }
+
+    public int getTotalCropsHarvested() {
+        return totalCropsHarvested;
+    }
+
+    public boolean haveMilestonesBeenDisplayed() {
+        return milestonesCheckedAndDisplayed;
+    }
+
+    public void setMilestonesDisplayed(boolean status) {
+        this.milestonesCheckedAndDisplayed = status;
+    }
+
+    // Modification to existing addGoldEarned:
+    // public void addGoldEarned(int amount) { // OLD
+    public void addGoldEarned(int amount, Season currentSeason) { // NEW
+        if (amount < 0) {
+            throw new IllegalArgumentException("Cannot add negative gold earned.");
+        }
+        this.totalGoldEarned += amount;
+        this.seasonalIncome.merge(currentSeason, amount, Integer::sum); // NEW LINE
+    }
 
 }

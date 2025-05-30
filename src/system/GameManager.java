@@ -19,6 +19,8 @@ import gui.GameView;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingUtilities;
+import core.player.RelationshipStatus; 
 
 import java.util.HashMap; // Import
 import java.util.ArrayList; //Import
@@ -42,6 +44,7 @@ public class GameManager {
     private HouseMap houseMap;
     private GameView gameViewInstance;
     private CookingManager cookingManager;
+    private boolean statisticsScreenShown = false;
 
     public GameManager() {
         // Player initialization might be deferred or updated by PlayerCreationPanel
@@ -120,13 +123,9 @@ public class GameManager {
         return player;
     }
 
-    // public PlayerInfoPanel getPlayerInfoPanel() { //
-    //     return playerInfoPanel;
-    // }
-
-    // public void setPlayerInfoPanel(PlayerInfoPanel playerInfoPanel) { //
-    //     this.playerInfoPanel = playerInfoPanel;
-    // }
+    public List<NPC> getAllNpcs() { // If this doesn't exist, add it
+        return new ArrayList<>(allNpcs); // Return a copy
+    }
 
     public TopInfoBarPanel getTopInfoBarPanel() { // << ADD THIS
         return topInfoBarPanel;
@@ -311,5 +310,27 @@ public class GameManager {
             }
         }
     }
+
+    public void checkMilestonesAndShowStatistics() {
+    if (player.getStats().haveMilestonesBeenDisplayed()) { // Use PlayerStats flag
+        return;
+    }
+
+    boolean goldMilestone = player.getStats().getTotalGoldEarned() >= 17209;
+    boolean marriedMilestone = player.getPartner() != null &&
+                             player.getRelationshipStatus(player.getPartner()) == RelationshipStatus.MARRIED;
+
+    if (goldMilestone || marriedMilestone) {
+        player.getStats().setMilestonesDisplayed(true); // Set the flag
+        if (gameViewInstance != null) {
+            System.out.println("GameManager: Milestone reached. Showing statistics screen.");
+            SwingUtilities.invokeLater(() -> {
+                gameViewInstance.showStatisticsScreen();
+            });
+        } else {
+            System.err.println("GameManager: Milestones reached, but GameView instance is null. Cannot show statistics screen.");
+        }
+    }
+}
 
 }

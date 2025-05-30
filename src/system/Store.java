@@ -50,12 +50,6 @@ public class Store {
         return itemsForSale;
     }
 
-    public StorePanel getStorePanel(GameView gameView, Player player, PlayerInfoPanel playerInfoPanel) {
-        if (this.storePanel == null) {
-            this.storePanel = new StorePanel(gameView, player, this, playerInfoPanel);
-        }
-        return this.storePanel;
-    }
 
     private void initializeStoreInventory() {
         itemsForSale.put("Parsnip Seeds", SeedRegistry.getSeedByName("Parsnip Seeds"));
@@ -120,33 +114,72 @@ public class Store {
         System.out.println("----------------------------------");
     }
 
-    public void handlePurchase(Player player, String itemName, int quantity) {
+    // public void handlePurchase(Player player, String itemName, int quantity) {
+    //     if (quantity <= 0) {
+    //         System.out.println("Invalid quantity. Please enter a positive number.");
+    //         return;
+    //     }
+
+    //     Item itemToBuy = itemsForSale.get(itemName);
+
+    //     if (itemToBuy == null) {
+    //         System.out.println("Sorry, '" + itemName + "' is not available in this store.");
+    //         return;
+    //     }
+
+    //     if (itemToBuy.getBuyPrice() <= 0) {
+    //         System.out.println("You cannot buy '" + itemName + "'. It's not for sale.");
+    //         return;
+    //     }
+
+    //     int totalCost = itemToBuy.getBuyPrice() * quantity;
+
+    //     if (player.getGold().getAmount() >= totalCost) {
+    //         if (player.getGold().subtract(totalCost)) {
+    //             player.getInventory().addItem(itemToBuy, quantity);
+    //             System.out.println("You successfully bought " + quantity + " " + itemName + "(s) for " + totalCost + "g.");
+    //         }
+    //     } else {
+    //         System.out.println("You don't have enough gold to buy " + quantity + " " + itemName + "(s). You need " + totalCost + "g.");
+    //     }
+    // }
+
+    public boolean handlePurchase(Player player, String itemName, int quantity) { // MODIFIED: Return boolean, removed Season parameter
         if (quantity <= 0) {
-            System.out.println("Invalid quantity. Please enter a positive number.");
-            return;
+            System.out.println("Store: Invalid quantity. Please enter a positive number.");
+            // In a GUI context, this message might be better handled by the panel.
+            return false;
         }
 
         Item itemToBuy = itemsForSale.get(itemName);
 
         if (itemToBuy == null) {
-            System.out.println("Sorry, '" + itemName + "' is not available in this store.");
-            return;
+            System.out.println("Store: Sorry, '" + itemName + "' is not available in this store.");
+            return false;
         }
 
         if (itemToBuy.getBuyPrice() <= 0) {
-            System.out.println("You cannot buy '" + itemName + "'. It's not for sale.");
-            return;
+            System.out.println("Store: You cannot buy '" + itemName + "'. It's not for sale.");
+            return false;
         }
 
         int totalCost = itemToBuy.getBuyPrice() * quantity;
 
         if (player.getGold().getAmount() >= totalCost) {
-            if (player.getGold().subtract(totalCost)) {
+            if (player.getGold().subtract(totalCost)) { // This returns boolean
                 player.getInventory().addItem(itemToBuy, quantity);
-                System.out.println("You successfully bought " + quantity + " " + itemName + "(s) for " + totalCost + "g.");
+                System.out.println("Store: You successfully bought " + quantity + " " + itemToBuy.getName() + "(s) for " + totalCost + "g.");
+                // PlayerStats expenditure will be handled by the caller (StorePanel)
+                return true; // Purchase successful
+            } else {
+                // This case should ideally not be reached if getAmount check is correct,
+                // but good for robustness.
+                System.out.println("Store: Gold subtraction failed unexpectedly for " + itemName);
+                return false;
             }
         } else {
-            System.out.println("You don't have enough gold to buy " + quantity + " " + itemName + "(s). You need " + totalCost + "g.");
+            System.out.println("Store: You don't have enough gold to buy " + quantity + " " + itemToBuy.getName() + "(s). You need " + totalCost + "g.");
+            return false; // Not enough gold
         }
     }
 }

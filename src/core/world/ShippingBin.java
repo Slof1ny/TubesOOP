@@ -59,8 +59,8 @@ public class ShippingBin extends DeployedObject{
         return true;
     }
 
-    public int processSales(Player player) {
-        int totalGoldEarned = 0;
+    public int processSales(Player player, Season currentSeason) { // NEW
+        int totalGoldEarnedThisSale = 0; // Renamed to avoid confusion with PlayerStats field
         System.out.println("\n--- Memproses Penjualan Shipping Bin ---");
         if (itemsToShip.isEmpty()) {
             System.out.println("Shipping Bin kosong. Tidak ada yang dijual.");
@@ -69,20 +69,20 @@ public class ShippingBin extends DeployedObject{
                 Item item = entry.getKey();
                 int quantity = entry.getValue();
                 int itemSaleValue = item.getSellPrice() * quantity;
-                totalGoldEarned += itemSaleValue;
+                totalGoldEarnedThisSale += itemSaleValue;
                 System.out.println("- " + quantity + "x " + item.getName() + " dijual seharga " + itemSaleValue + "g.");
             }
-            player.getGold().add(totalGoldEarned);
+            player.getGold().add(totalGoldEarnedThisSale);
             // Perbarui total pendapatan di PlayerStats
-            player.getStats().addGoldEarned(totalGoldEarned);
-            System.out.println("Total emas yang didapat: " + totalGoldEarned + "g.");
+            player.getStats().addGoldEarned(totalGoldEarnedThisSale, currentSeason); // MODIFIED: pass currentSeason
+            System.out.println("Total emas yang didapat: " + totalGoldEarnedThisSale + "g.");
         }
 
         // Kosongkan bin setelah penjualan
         itemsToShip.clear();
         uniqueSlotsUsed = 0;
         System.out.println("--- Penjualan Selesai ---");
-        return totalGoldEarned;
+        return totalGoldEarnedThisSale;
     }
 
 

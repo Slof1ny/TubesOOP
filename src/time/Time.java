@@ -179,7 +179,11 @@ public class Time {
 
                     // Proses penjualan Shipping Bin di akhir hari
                     if (player != null && player.getShippingBin() != null) {
-                        player.getShippingBin().processSales(player);
+                        player.getShippingBin().processSales(player, calendar.getCurrentSeason()); // MODIFIED: Pass current season
+                    }
+
+                    if (this.gameManager != null) {
+                        this.gameManager.checkMilestonesAndShowStatistics();
                     }
                 }
             }
@@ -248,6 +252,10 @@ public class Time {
         int dayThatJustEnded = calendar.getTotalDay(); 
         calendar.nextDay();
 
+        if (player != null && player.getStats() != null) {
+            player.getStats().incrementDaysPlayedInSeason(calendar.getCurrentSeason());
+        }
+
         if (this.gameManager != null) {
             this.gameManager.processNewDayUpdates(
                 calendar.getTotalDay(),
@@ -260,7 +268,11 @@ public class Time {
 
         // 4. Process Shipping Bin sales
         if (player != null && player.getShippingBin() != null) {
-            player.getShippingBin().processSales(player);
+            player.getShippingBin().processSales(player, calendar.getCurrentSeason()); // MODIFIED: Pass current season
+        }
+
+        if (this.gameManager != null) {
+            this.gameManager.checkMilestonesAndShowStatistics();
         }
 
         System.out.println("Console: Slept. New Day - Day " + calendar.getTotalDay() +

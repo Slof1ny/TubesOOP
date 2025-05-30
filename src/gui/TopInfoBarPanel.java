@@ -16,11 +16,12 @@ public class TopInfoBarPanel extends JPanel {
     private JLabel locationLabel;
     private JLabel timeLabel;
     private JLabel seasonLabel;
+    private JLabel dayLabel; 
     private JLabel weatherLabel;
 
     public TopInfoBarPanel(GameManager gameManager) {
         this.gameManager = gameManager;
-        setLayout(new FlowLayout(FlowLayout.LEFT, 15, 5)); // Arrange labels horizontally
+        setLayout(new FlowLayout(FlowLayout.LEFT, 12, 5)); // Arrange labels horizontally
         setBackground(new Color(50, 50, 70)); // Darker background like PlayerCreation
         setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
@@ -32,10 +33,11 @@ public class TopInfoBarPanel extends JPanel {
         goldLabel = new JLabel("Gold: N/A");
         locationLabel = new JLabel("Location: N/A");
         timeLabel = new JLabel("Time: N/A");
+        dayLabel = new JLabel("Day: N/A");
         seasonLabel = new JLabel("Season: N/A");
         weatherLabel = new JLabel("Weather: N/A");
 
-        JLabel[] labels = {nameLabel, energyLabel, goldLabel, locationLabel, timeLabel, seasonLabel, weatherLabel};
+        JLabel[] labels = {nameLabel, energyLabel, goldLabel, locationLabel, timeLabel,dayLabel, seasonLabel, weatherLabel};
         for (JLabel label : labels) {
             label.setFont(infoFont);
             label.setForeground(fontColor);
@@ -62,6 +64,7 @@ public class TopInfoBarPanel extends JPanel {
                 timeLabel.setText(String.format("Time: %02d:%02d", gameTime.getHour(), gameTime.getMinute()));
             }
             if (gameCalendar != null) {
+                dayLabel.setText("Day: " + gameCalendar.getTotalDay());
                 seasonLabel.setText("Season: " + gameCalendar.getCurrentSeason());
                 weatherLabel.setText("Weather: " + gameCalendar.getCurrentWeather());
             }

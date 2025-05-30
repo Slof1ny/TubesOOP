@@ -53,6 +53,11 @@ public class CityMapController extends KeyAdapter {
             case KeyEvent.VK_D:
                 actionTaken = cityMap.movePlayer(player, 1, 0);
                 break;
+            case KeyEvent.VK_I: // 'I' for Equipment
+                gameView.showScreen("InventoryScreen");
+                actionTaken = true;
+                e.consume();
+                break;
             case KeyEvent.VK_E: // 'E' for Interact with objects (Buildings) OR Exit Map
                 DeployedObject interactedObject = getAdjacentDeployedObject(cityMap, player);
                 NPC targetNpc = null;

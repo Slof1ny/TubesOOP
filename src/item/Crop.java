@@ -46,36 +46,48 @@ public class Crop extends Item implements EdibleItem {
     }
 
     /* Advances the growth of the crop by one day.*/
-    public void newDay(int currentDay, Season currentSeason) {
-        if (growthStage < 3) {
-            daysSincePlanting++;
-            if (plantedSeed == null) {
-                return;
+    public void newDay(int currentDay, Season currentSeason, boolean wasYesterdayRainy) {
+        if (growthStage >= 3) { // Already mature/harvestable
+            return;
+        }
+
+        // If the crop is out of season, it might wither (optional: add specific logic for this)
+        if (plantedSeed != null && !plantedSeed.getSeasons().contains(currentSeason)) {
+            // System.out.println(getName() + " is out of season (" + currentSeason + ") and may have withered.");
+            // For now, let's assume it just stops growing or you handle withering elsewhere.
+            // If it should die, you'd clear the crop from the tile.
+            // this.type = TileType.TILLED; this.plantedCrop = null; (This logic would be in Tile if it dies)
+            return;
+        }
+
+        daysSincePlanting++;
+
+        // If yesterday was rainy, it counts as being watered for that day (day currentDay - 1)
+        if (wasYesterdayRainy) {
+            this.lastWateredDay = currentDay - 1;
+            // System.out.println(getName() + " was considered watered due to rain on day " + (currentDay - 1));
+        }
+
+        boolean grewThisDay = false;
+        // Check if watered the day before (currentDay - 1)
+        if (this.lastWateredDay == (currentDay - 1)) {
+            int prevGrowthStage = growthStage;
+            if (growthStage == 0 && daysSincePlanting >= Math.ceil(daysToGrow / 3.0)) {
+                growthStage = 1;
+            } else if (growthStage == 1 && daysSincePlanting >= Math.ceil(daysToGrow * 2.0 / 3.0)) {
+                growthStage = 2;
+            } else if (growthStage == 2 && daysSincePlanting >= daysToGrow) {
+                growthStage = 3; // Harvestable
             }
 
-            if (!plantedSeed.getSeasons().contains(currentSeason)) {
-                return;
+            if (growthStage > prevGrowthStage) {
+                grewThisDay = true;
+                System.out.println("Crop '" + getName() + "' grew to stage " + growthStage + " on day " + currentDay + ". (Days planted: " + daysSincePlanting + "/" + daysToGrow + ")");
+            } else if (growthStage < 3) {
+                 // System.out.println("Crop '" + getName() + "' was watered, but not enough days passed to advance growth stage. Stage: " + growthStage + ", Days planted: " + daysSincePlanting + "/" + daysToGrow);
             }
-
-            boolean grew = false;
-            if (lastWateredDay == currentDay -1 ) {
-                if (growthStage == 0 && daysSincePlanting >= Math.ceil(daysToGrow / 3.0)) {
-                    growthStage = 1;
-                    grew = true;
-                } else if (growthStage == 1 && daysSincePlanting >= Math.ceil(daysToGrow * 2 / 3.0)) {
-                    growthStage = 2;
-                    grew = true;
-                } else if (growthStage == 2 && daysSincePlanting >= daysToGrow) {
-                    growthStage = 3;
-                    grew = true;
-                }
-
-                if (grew) {
-                    System.out.println(getName() + " grew to stage " + growthStage + "!");
-                }
-            } else {
-                return;
-            }
+        } else if (growthStage < 3) { // Not watered and not yet mature
+            System.out.println("Crop '" + getName() + "' did not grow on day " + currentDay + " because it was not watered on day " + (currentDay - 1) + " (Last watered: " + this.lastWateredDay + ") and yesterday was not rainy.");
         }
     }
 

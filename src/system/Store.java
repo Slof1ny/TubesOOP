@@ -94,6 +94,15 @@ public class Store {
         itemsForSale.put("Firewood", new item.Item("Firewood", 50, 20) {
             @Override public String getCategory() { return "Fuel"; }
         });
+        
+        Item proposalRing = new Item("Proposal Ring", 2500, 0) { // Buy: 2500g, Sell: 0g (or non-sellable)
+            @Override
+            public String getCategory() {
+                return "Special"; // A distinct category
+            }
+        };
+        itemsForSale.put(proposalRing.getName(), proposalRing);
+        System.out.println("DEBUG: Proposal Ring added to store for " + proposalRing.getBuyPrice() + "g.");
     }
 
     public void displayStoreMenu() {

@@ -29,7 +29,7 @@ public class NPCActions {
      */
     public String chatWithNPC(NPC npc) {
         if (npc == null) return "NPC tidak valid untuk diajak bicara.";
-        if (player.getEnergy() < 10) {
+        if (player.getEnergy() < (Player.MIN_ENERGY + 10)) {
             return "Energi tidak cukup untuk berbicara dengan " + npc.getName() + ".";
         }
         player.setEnergy(player.getEnergy() - 10);
@@ -52,7 +52,7 @@ public class NPCActions {
         if (itemToGift == null) {
             return "Item yang ingin diberikan tidak valid.";
         }
-        if (player.getEnergy() < 5) {
+        if (player.getEnergy() < (Player.MIN_ENERGY + 5)) {
             return "Energi tidak cukup untuk memberi hadiah kepada " + npc.getName() + ".";
         }
         // Cek jumlah item berdasarkan nama
@@ -108,7 +108,7 @@ public class NPCActions {
         if (!hasProposalRing) {
             return "Kamu membutuhkan Proposal Ring untuk melamar!";
         }
-        if (player.getEnergy() < 10) {
+        if (player.getEnergy() < (Player.MIN_ENERGY + 10)) {
             return "Energi tidak cukup untuk melamar.";
         }
 
@@ -154,7 +154,7 @@ public class NPCActions {
         if (!hasProposalRing) {
             return "Kamu membutuhkan Proposal Ring untuk menikah!";
         }
-        if (player.getEnergy() < 80) { 
+        if (player.getEnergy() < (Player.MIN_ENERGY + 80)) { 
             return "Energi tidak cukup untuk upacara pernikahan.";
         }
 

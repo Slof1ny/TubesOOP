@@ -176,38 +176,33 @@ public class GameManager {
     }
 
 
-    public boolean transitionMap(String destinationMapName) { //
-        if (destinationMapName.equals(farmMap.getName())) { //
-            currentMap = farmMap; //
-            // Player position for farm map is usually set by its spawnPlayer logic or specific transitions
-            // For now, let's use a default if coming from city. City->Farm exit logic in CityMapController
-            // sets player to farmMap.getName(), then GameScreen is shown which uses currentMap.
-            // GameManager's transitionMap for Farm could set a standard entry point.
-            // Example: player.setPosition(farmMap.getSize() / 2, farmMap.getSize() -1 ); // Entry from South
-            player.setLocation(farmMap.getName()); //
-            System.out.println("Transitioned to Farm Map."); //
-        } else if (destinationMapName.equals(cityMap.getName())) { //
-            currentMap = cityMap; //
-            // Example: Player position when entering city from farm.
-            // Farm->City exit logic in FarmMapController sets player to cityMap.getName()
-            player.setPosition(cityMap.getSize() / 2, 0); // Entry from North (top)
-            player.setLocation(cityMap.getName()); //
-            System.out.println("Transitioned to City Map."); //
-        } else if (destinationMapName.equals(houseMap.getName())) { // << ADD CASE FOR HOUSE
+    public boolean transitionMap(String destinationMapName) {
+        System.out.println("GameManager: Attempting transition to " + destinationMapName);
+        if (destinationMapName.equals(farmMap.getName())) {
+            currentMap = farmMap;
+            player.setLocation(farmMap.getName());
+            player.setPosition(farmMap.getHouseExitSpawnX(), farmMap.getHouseExitSpawnY()); // Example
+        } else if (destinationMapName.equals(cityMap.getName())) {
+            currentMap = cityMap;
+            player.setLocation(cityMap.getName());
+            player.setPosition(cityMap.getSize() / 2, 0); // Example
+        } else if (houseMap != null && destinationMapName.equals(houseMap.getName())) { // Check houseMap is not null
             currentMap = houseMap;
             player.setLocation(houseMap.getName());
-            player.setPosition(HouseMap.ENTRY_LOCATION.x, HouseMap.ENTRY_LOCATION.y); // Spawn at house entry
-            System.out.println("Transitioned to House Interior. Player at " + player.getX() + "," + player.getY());
+            // Set player to the defined entry point in HouseMap
+            player.setPosition(HouseMap.ENTRY_LOCATION.x, HouseMap.ENTRY_LOCATION.y);
         } else {
-            System.out.println("Unknown map: " + destinationMapName); //
+            System.err.println("Unknown map for transition: " + destinationMapName);
             return false;
         }
         
-        if (topInfoBarPanel != null) { //
-            topInfoBarPanel.refreshInfo(); //
+        if (getTopInfoBarPanel() != null && getTopInfoBarPanel().isVisible()) {
+            getTopInfoBarPanel().refreshInfo();
         }
+        System.out.println("Transitioned to " + destinationMapName + ". Player at (" + player.getX() + "," + player.getY() + ")");
         return true;
     }
+
 
     public void onGameTimeTick(){
         if(topInfoBarPanel != null && topInfoBarPanel.isVisible()){
@@ -252,13 +247,14 @@ public class GameManager {
 
             gameTime.sleep2();
 
-            if (gameViewInstance != null && (currentMap instanceof core.world.FarmMap || currentMap instanceof core.world.HouseMap) ) {
-                String targetScreen = (currentMap instanceof core.world.HouseMap) ? "HouseScreen" : "GameScreen";
-                 SwingUtilities.invokeLater(() -> gameViewInstance.showScreen(targetScreen));
-            } else if (gameViewInstance != null) {
-                // If fainted on a menu or inventory, default to farm screen after waking up
-                SwingUtilities.invokeLater(() -> gameViewInstance.showScreen("GameScreen"));
-            }
+            if (this.gameViewInstance != null) {
+            System.out.println("GameManager: Player fainted. Transitioning to HouseScreen.");
+            // Transition the game state to HouseMap first
+            this.transitionMap(this.getHouseMap().getName()); // This sets currentMap and player location/position
+
+            // Then show the HouseScreen in the GUI
+            SwingUtilities.invokeLater(() -> this.gameViewInstance.showScreen("HouseScreen"));
+        }
         }
     }
 }

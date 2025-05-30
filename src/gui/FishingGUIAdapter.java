@@ -28,7 +28,7 @@ public class FishingGUIAdapter {
             return;
         }
 
-        if (player.getEnergy() < 5) { //
+        if (player.getEnergy() < (Player.MIN_ENERGY + 5)) { //
             JOptionPane.showMessageDialog(parentComponent, "Not enough energy to fish.", "Cannot Fish", JOptionPane.WARNING_MESSAGE);
             return;
         }

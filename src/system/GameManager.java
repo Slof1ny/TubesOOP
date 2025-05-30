@@ -15,6 +15,11 @@ import fishing.SpecificFishingLocation; // Import
 import fishing.FreeFishingLocation; // Import
 import fishing.FishRegistry; // Import
 import java.util.Map; // Import
+import gui.GameView;
+
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
 import java.util.HashMap; // Import
 import java.util.ArrayList; //Import
 import java.util.List;
@@ -34,6 +39,7 @@ public class GameManager {
     private Map<String, FishingLocation> fishingLocations; // Added to store fishing locations
     private List<NPC> allNpcs;
     private HouseMap houseMap;
+    private GameView gameViewInstance;
 
     public GameManager() {
         // Player initialization might be deferred or updated by PlayerCreationPanel
@@ -165,6 +171,10 @@ public class GameManager {
         return null;
     }
 
+    public void setGameView(GameView gv) { // <<<<<< 2. ADD THIS SETTER METHOD
+        this.gameViewInstance = gv;
+    }
+
 
     public boolean transitionMap(String destinationMapName) { //
         if (destinationMapName.equals(farmMap.getName())) { //
@@ -215,20 +225,40 @@ public class GameManager {
 
         // Call NPCActions to increment day for marriage check if applicable
         if (this.player != null && this.gameTime != null) {
-            // Assuming you have an easy way to get your NPCActions instance
-            // For example, if it's created and stored in GameManager:
-            // if (this.npcActionsInstance != null) { // You'd need to store this
-            // this.npcActionsInstance.incrementDayForMarriageCheck();
-            // }
-            // Or, if NPCActions is lightweight, create a temporary one if not stored
             NPCActions tempNpcActions = new NPCActions(this.player, this.gameTime);
             tempNpcActions.incrementDayForMarriageCheck();
 
         }
 
-
-        // Any other logic that needs to happen once per day
-        // e.g., NPC schedule changes, store stock refresh (if any)
         System.out.println("GameManager: Finished processing new day updates.");
+    }
+
+    public void forcePlayerSleep() {
+        if (player.getEnergy() <= Player.MIN_ENERGY) {
+            System.out.println("GameManager: Player energy at or below minimum. Forcing sleep.");
+            // Display a message to the player via GUI
+            // This needs to be done on the EDT
+            SwingUtilities.invokeLater(() -> {
+                if (gameViewInstance != null && gameViewInstance.isVisible()) { // Check if gameViewInstance is set and visible
+                    JOptionPane.showMessageDialog(gameViewInstance,
+                        "You've exhausted all your energy and passed out!",
+                        "Exhausted",
+                        JOptionPane.WARNING_MESSAGE);
+                } else { // Fallback if GUI context isn't readily available
+                    System.out.println("Player has passed out from exhaustion!");
+                }
+            });
+
+
+            gameTime.sleep2();
+
+            if (gameViewInstance != null && (currentMap instanceof core.world.FarmMap || currentMap instanceof core.world.HouseMap) ) {
+                String targetScreen = (currentMap instanceof core.world.HouseMap) ? "HouseScreen" : "GameScreen";
+                 SwingUtilities.invokeLater(() -> gameViewInstance.showScreen(targetScreen));
+            } else if (gameViewInstance != null) {
+                // If fainted on a menu or inventory, default to farm screen after waking up
+                SwingUtilities.invokeLater(() -> gameViewInstance.showScreen("GameScreen"));
+            }
+        }
     }
 }

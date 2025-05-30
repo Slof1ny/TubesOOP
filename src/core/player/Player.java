@@ -10,6 +10,7 @@ import core.world.FarmMap; // Keep this for now, might be removed if FarmMap ref
 
 public class Player {
     public static final int MAX_ENERGY = 100;
+    public static final int MIN_ENERGY = -20;
     private String name;
     private String gender;
     private Gold gold = new Gold(0);
@@ -94,8 +95,8 @@ public class Player {
     }
 
     public void setEnergy(int energy) {
-        if (energy < 0) {
-            this.energy = 0;
+        if (energy < MIN_ENERGY) {
+            this.energy = MIN_ENERGY;
         } else if (energy > MAX_ENERGY) {
             this.energy = MAX_ENERGY;
         } else {

@@ -46,7 +46,7 @@ public class FishingManager {
             System.out.println("You can't fish here.");
             return CompletableFuture.completedFuture(null);
         }
-        if (player.getEnergy() < 5) {
+        if (player.getEnergy() < (Player.MIN_ENERGY + 5)) {
             System.out.println("Not enough energy to fish.");
             return CompletableFuture.completedFuture(null);
         }

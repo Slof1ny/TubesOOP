@@ -28,6 +28,7 @@ public class GameView extends JFrame {
         setLocationRelativeTo(null);
 
         gameManager = new GameManager();
+        gameManager.setGameView(this);
 
         // 1. Create the single PlayerInfoPanel
         topInfoBarPanel = new TopInfoBarPanel(gameManager); // << INITIALIZE THIS

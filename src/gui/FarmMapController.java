@@ -202,6 +202,23 @@ public class FarmMapController extends KeyAdapter {
         }
 
         if (actionTaken) {
+            // Check energy AFTER the action has potentially reduced it
+            if (player.getEnergy() <= Player.MIN_ENERGY) {
+                // Show message BEFORE forcePlayerSleep changes the screen context
+                JOptionPane.showMessageDialog(
+                    farmMapPanel, // Or whatever panel is currently active
+                    "You've exhausted all your energy and fainted!",
+                    "Exhausted",
+                    JOptionPane.WARNING_MESSAGE
+                );
+                gameManager.forcePlayerSleep(); // This will call time.sleep2()
+                e.consume(); // The event is fully handled by fainting
+                // UI will be refreshed by sleep2 -> onGameTimeTick -> TopInfoBar & potentially screen change
+                return; // IMPORTANT: Stop further processing for THIS key event
+            }
+        }
+
+        if (actionTaken) {
             if(e.getKeyCode() != KeyEvent.VK_I && e.getKeyCode() != KeyEvent.VK_M && e.getKeyCode() != KeyEvent.VK_E){
                 e.consume();
             }

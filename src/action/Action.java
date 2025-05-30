@@ -30,7 +30,7 @@ public class Action {
             throw new IllegalArgumentException("Hoe must be equipped to till.");
         }
 
-        if (player.getEnergy() < 5){ 
+        if (player.getEnergy() < (Player.MIN_ENERGY + 5)){ 
             System.out.println("Not enough energy to till.");
             return;
         }
@@ -57,7 +57,7 @@ public class Action {
             throw new IllegalArgumentException("Pickaxe must be equipped to recover land.");
         }
 
-        if (player.getEnergy() < 5){ 
+        if (player.getEnergy() < (Player.MIN_ENERGY + 5)){ 
             System.out.println("Not enough energy to recover land.");
             return;
         }
@@ -91,7 +91,7 @@ public class Action {
             return;
         }
 
-        if (player.getEnergy() < 5) { 
+        if (player.getEnergy() < (Player.MIN_ENERGY + 5)) { 
             System.out.println("Not enough energy to plant.");
             return;
         }
@@ -124,7 +124,7 @@ public class Action {
             throw new IllegalArgumentException("Watering Can must be equipped to water.");
         }
 
-        if (player.getEnergy() < 5) {
+        if (player.getEnergy() < (Player.MIN_ENERGY + 5)) {
             System.out.println("Not enough energy to water.");
             return;
         }
@@ -152,7 +152,7 @@ public class Action {
     }
 
     public static void harvest(FarmMap farm, Player player, Time time) {
-        if (player.getEnergy() < 5) {
+        if (player.getEnergy() < (Player.MIN_ENERGY + 5)) {
             System.out.println("Not enough energy to harvest.");
             return;
         }

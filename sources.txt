@@ -36,6 +36,7 @@
 "C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/fishing/SpecificFishingLocation.java"
 "C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/CityMapController.java"
 "C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/CityMapPanel.java"
+"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/CookingPanel.java"
 "C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/EquipmentPanel.java"
 "C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/FarmMapController.java"
 "C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/FarmMapPanel.java"

@@ -258,78 +258,58 @@ public class GameManager {
     }
 
     public void forcePlayerSleep() {
-<<<<<<< Updated upstream
         // This method is called for the 2 AM pass out OR -20 energy pass out.
         // The JOptionPane for 2 AM is already shown by Time.java before this is called.
         // The JOptionPane for -20 energy is shown here.
 
         boolean isFaintFromEnergy = player.getEnergy() <= Player.MIN_ENERGY;
 
-        if (isFaintFromEnergy) {
-            System.out.println("GameManager: Player energy at or below minimum. Forcing sleep due to exhaustion.");
+        if (!isFaintFromEnergy) {
+            // Jam 2 pagi: autopilot ke bed lewat GUI
+            System.out.println("GameManager: Player being forced to sleep due to 02:00 AM time. Will autopilot to bed.");
             SwingUtilities.invokeLater(() -> {
                 if (gameViewInstance != null && gameViewInstance.isVisible()) {
-                    JOptionPane.showMessageDialog(gameViewInstance,
-                        "You've exhausted all your energy and passed out!",
-                        "Exhausted",
-                        JOptionPane.WARNING_MESSAGE);
-                } else {
-                    System.out.println("Player has passed out from exhaustion! (No GUI context for dialog)");
-                }
-            });
-        } else { // This branch is for the 2 AM pass out
-            System.out.println("GameManager: Player being forced to sleep due to 02:00 AM time.");
-            // The dialog for 2 AM is shown in Time.java just before calling this.
-        }
-
-        gameTime.sleep2(); // This handles game state: time, day, energy, daily updates.
-
-        // After gameTime.sleep2(), player should be in the house.
-        // Update map and player position for the UI.
-        if (this.gameViewInstance != null) {
-            System.out.println("GameManager: Player slept. Transitioning to HouseScreen.");
-            
-            // Ensure currentMap reflects HouseMap in GameManager's state
-            this.transitionMap(this.getHouseMap().getName()); 
-            
-            // Explicitly set player's position to the house entry point.
-            // Player.setLocation should have been updated by transitionMap.
-            player.setPosition(HouseMap.ENTRY_LOCATION.x, HouseMap.ENTRY_LOCATION.y);
-            
-            // Update the UI to show the HouseScreen
-            SwingUtilities.invokeLater(() -> {
-                this.gameViewInstance.showScreen("HouseScreen");
-                if (topInfoBarPanel != null) { // Refresh info bar after sleep and screen change
-                    topInfoBarPanel.refreshInfo();
-                }
-            });
-        } else {
-            System.err.println("GameManager.forcePlayerSleep: gameViewInstance is null, cannot switch to HouseScreen and update UI correctly.");
-=======
-        if (player.getEnergy() <= Player.MIN_ENERGY) {
-            System.out.println("GameManager: Player energy at or below minimum. Forcing sleep.");
-            // Display a message to the player via GUI and autopilot to bed if possible
-            SwingUtilities.invokeLater(() -> {
-                if (gameViewInstance != null && gameViewInstance.isVisible()) {
-                    // Only show the message if not already autopiloting
                     if (!gameViewInstance.isAutopilotActive()) {
                         JOptionPane.showMessageDialog(gameViewInstance,
-                            "You've exhausted all your energy and passed out!\nYou will be taken home to rest.",
-                            "Exhausted",
+                            "It's 2:00 AM! You are exhausted and will be taken home to rest.",
+                            "Too Late",
                             JOptionPane.WARNING_MESSAGE);
                         gameViewInstance.startAutopilotForceSleep();
                     }
                 } else {
                     // Fallback: no GUI, do instant sleep
-                    System.out.println("Player has passed out from exhaustion!");
+                    System.out.println("Player has passed out from exhaustion (02:00 AM, no GUI)!");
                     gameTime.sleep2();
-                    // Optionally, show screen if GUI available
                     if (gameViewInstance != null) {
                         SwingUtilities.invokeLater(() -> gameViewInstance.showScreen("GameScreen"));
                     }
                 }
             });
->>>>>>> Stashed changes
+        } else {
+            // Energi habis: langsung teleport sleep (instan, tidak autopilot)
+            System.out.println("GameManager: Player energy at or below minimum. Forcing instant sleep due to exhaustion.");
+            gameTime.sleep2(); // This handles game state: time, day, energy, daily updates.
+
+            // After gameTime.sleep2(), player should be in the house.
+            // Update map and player position for the UI.
+            if (this.gameViewInstance != null) {
+                System.out.println("GameManager: Player slept. Transitioning to HouseScreen.");
+                // Ensure currentMap reflects HouseMap in GameManager's state
+                this.transitionMap(this.getHouseMap().getName()); 
+                // Explicitly set player's position to the house entry point.
+                // Player.setLocation should have been updated by transitionMap.
+                player.setPosition(HouseMap.ENTRY_LOCATION.x, HouseMap.ENTRY_LOCATION.y);
+                // Update the UI to show the HouseScreen
+                SwingUtilities.invokeLater(() -> {
+                    this.gameViewInstance.showScreen("HouseScreen");
+                    if (topInfoBarPanel != null) { // Refresh info bar after sleep and screen change
+                        topInfoBarPanel.refreshInfo();
+                    }
+                });
+            } else {
+                System.err.println("GameManager.forcePlayerSleep: gameViewInstance is null, cannot switch to HouseScreen and update UI correctly.");
+            }
         }
     }
+
 }

@@ -112,12 +112,11 @@ public class GameView extends JFrame {
      */
     public void checkAndAutopilotToBed() {
         if (autopilotActive) return;
-        if (gameManager.getPlayer().getEnergy() <= ENERGY_AUTOPILOT_THRESHOLD) {
-            autopilotActive = true;
-            forceSleepMode = false;
-            JOptionPane.showMessageDialog(this, "Energi habis! Anda akan otomatis pulang dan tidur.");
-            autopilotToBed();
-        }
+        // LOGIC SWAP: autopilot only if it's 2AM pass out, NOT for energy
+        // So, this method should do nothing for energy exhaustion (handled by instant sleep in GameManager)
+        // Optionally, you can keep this for other triggers, but for now, do nothing for energy
+        // If you want to keep the dialog for energy exhaustion, move it to GameManager.forcePlayerSleep
+        // (No autopilot for energy exhaustion)
     }
 
     /**
@@ -480,18 +479,8 @@ public class GameView extends JFrame {
                 break;
         }
     
-<<<<<<< Updated upstream
         revalidate();
         repaint();
-=======
-        // MainMenu doesn't usually need a specific refresh call here for its components
-
-        revalidate(); // Revalidate the whole GameView
-        repaint();    // Repaint the whole GameView
-
-        // --- AUTOPILOT ENERGY CHECK ---
-        checkAndAutopilotToBed();
->>>>>>> Stashed changes
     }
 
     public void returnToPreviousScreen() {

@@ -1,3 +1,4 @@
+// Path: TubesOOP/src/gui/GameView.java
 package gui;
 
 import javax.swing.*;
@@ -11,10 +12,10 @@ public class GameView extends JFrame {
     private String currentScreenName = "MainMenu";
     private GameManager gameManager;
 
-    private JPanel centerCardPanel; // Panel that uses CardLayout
+    private JPanel centerCardPanel;
     public MainMenu mainMenuPanel;
     public FarmMapPanel farmMapPanel;
-    public TopInfoBarPanel topInfoBarPanel; // The single, persistent info panel
+    public TopInfoBarPanel topInfoBarPanel;
     public StorePanel storePanel;
     public CityMapPanel cityMapPanel;
     public PlayerCreationPanel playerCreationPanel;
@@ -25,6 +26,7 @@ public class GameView extends JFrame {
     public HelpScreenPanel helpScreenPanel;
     public CookingPanel cookingPanel;
 
+
     public GameView() {
         setTitle("Spakbor Hills");
         setSize(1000, 700);
@@ -34,19 +36,15 @@ public class GameView extends JFrame {
         gameManager = new GameManager();
         gameManager.setGameView(this);
 
-        // 1. Create the single PlayerInfoPanel
-        topInfoBarPanel = new TopInfoBarPanel(gameManager); // << INITIALIZE THIS
+        topInfoBarPanel = new TopInfoBarPanel(gameManager);
         gameManager.setTopInfoBarPanel(topInfoBarPanel);
 
-        // 2. Create other panels (they no longer take playerInfoPanel directly if it's managed by GameView layout)
         mainMenuPanel = new MainMenu();
-        mainMenuPanel.setGameView(this); // mainMenuPanel needs a reference to GameView to switch screens
+        mainMenuPanel.setGameView(this);
 
         playerCreationPanel = new PlayerCreationPanel(this, gameManager);
-        // Pass all necessary dependencies to FarmMapPanel and CityMapPanel
-        // Ensure FarmMapPanel's controller gets the GameView reference to access GameManager
         farmMapPanel = new FarmMapPanel(gameManager.getFarmMap(), gameManager.getPlayer(), gameManager.getGameTime(), gameManager.getGameCalendar(), null, this);
-        cityMapPanel = new CityMapPanel(gameManager, this); // CityMapPanel gets GameManager and GameView
+        cityMapPanel = new CityMapPanel(gameManager, this);
         storePanel = new StorePanel(this, gameManager.getPlayer(), gameManager.getGameStore(), null);
         shippingBinPanel = new ShippingBinPanel(this, gameManager);
         npcInteractionPanel = new NPCInteractionPanel(this, gameManager);
@@ -55,16 +53,16 @@ public class GameView extends JFrame {
         helpScreenPanel = new HelpScreenPanel(this, gameManager);
         cookingPanel = new CookingPanel(this, gameManager);
 
-        // 3. Create screen-specific content panels (WITHOUT PlayerInfoPanel)
         JPanel gameScreenOnlyMapPanel = new JPanel(new BorderLayout());
         gameScreenOnlyMapPanel.add(farmMapPanel, BorderLayout.CENTER);
-        // gameScreenOnlyMapPanel.setName("GameScreenContent"); // Optional: for clarity
 
         JPanel cityScreenOnlyMapPanel = new JPanel(new BorderLayout());
         cityScreenOnlyMapPanel.add(cityMapPanel, BorderLayout.CENTER);
-        // cityScreenOnlyMapPanel.setName("CityScreenContent"); // Optional: for clarity
+        
+        JPanel houseScreenOnlyMapPanel = new JPanel(new BorderLayout());
+        houseScreenOnlyMapPanel.add(houseMapPanel, BorderLayout.CENTER);
 
-        // 4. Setup the panel that uses CardLayout
+
         centerCardPanel = new JPanel(new CardLayout());
         centerCardPanel.add(mainMenuPanel, "MainMenu");
         centerCardPanel.add(playerCreationPanel, "PlayerCreationScreen");
@@ -73,20 +71,18 @@ public class GameView extends JFrame {
         centerCardPanel.add(cityScreenOnlyMapPanel, "CityScreen");
         centerCardPanel.add(shippingBinPanel, "ShippingBinScreen");
         centerCardPanel.add(npcInteractionPanel, "NPCInteractionScreen");
-        centerCardPanel.add(inventoryScreenPanel, "InventoryScreen"); 
-        centerCardPanel.add(houseMapPanel, "HouseScreen");
-        centerCardPanel.add(helpScreenPanel, "HelpScreen"); 
+        centerCardPanel.add(inventoryScreenPanel, "InventoryScreen");
+        centerCardPanel.add(houseScreenOnlyMapPanel, "HouseScreen");
+        centerCardPanel.add(helpScreenPanel, "HelpScreen");
         centerCardPanel.add(cookingPanel, "CookingScreen");
 
 
-        // 5. Set GameView's main layout and add components
-        setLayout(new BorderLayout()); // Main layout for GameView JFrame
+        setLayout(new BorderLayout());
         add(centerCardPanel, BorderLayout.CENTER);
         add(topInfoBarPanel, BorderLayout.NORTH);
         showScreen("MainMenu");
     }
 
-    // Getter for GameManager so controllers can access it via GameView reference
     public GameManager getGameManager() {
         return this.gameManager;
     }
@@ -94,10 +90,9 @@ public class GameView extends JFrame {
     public void showNPCInteractionScreen(NPC npc) {
         if (npc != null && npcInteractionPanel != null) {
             npcInteractionPanel.setupForNPC(npc);
-            showScreen("NPCInteractionScreen"); // Use your existing showScreen logic
+            showScreen("NPCInteractionScreen");
         } else {
             System.err.println("Error: NPC or NPCInteractionPanel is null. Cannot show interaction screen.");
-            // Optionally, show an error message to the user or default to city screen
             showScreen("CityScreen");
         }
     }
@@ -105,14 +100,12 @@ public class GameView extends JFrame {
     public void showScreen(String screenName) {
         if (screenName == null) return;
 
-        // Before switching, if we are not going to HelpScreen, current screen becomes previous one
-        if (!screenName.equals("HelpScreen") && this.currentScreenName != null && !this.currentScreenName.equals(screenName)) {
+        if (this.currentScreenName != null && !this.currentScreenName.equals(screenName)) {
             this.previousScreenName = this.currentScreenName;
         }
-        this.currentScreenName = screenName; // Update current screen
+        this.currentScreenName = screenName;
 
         System.out.println("GameView: Showing screen - " + screenName + ". Previous screen was: " + previousScreenName);
-
 
         CardLayout cl = (CardLayout) (centerCardPanel.getLayout());
         cl.show(centerCardPanel, screenName);
@@ -120,52 +113,85 @@ public class GameView extends JFrame {
         boolean showTopBar = !screenName.equals("MainMenu") && !screenName.equals("PlayerCreationScreen");
         topInfoBarPanel.setVisible(showTopBar);
         if (showTopBar && topInfoBarPanel != null) {
-            topInfoBarPanel.refreshInfo(); // Refresh whenever a relevant screen is shown
+            topInfoBarPanel.refreshInfo();
         }
 
-        // Request focus and refresh map for the active panel
-        if (screenName.equals("PlayerCreationScreen")) {
-            playerCreationPanel.requestFocusInWindow();
-            // Player info panel might show default/old data here, but will refresh after creation
-        } else if (screenName.equals("GameScreen")) {
-            farmMapPanel.requestFocusInWindow();
-            farmMapPanel.refreshMap();
-        } else if (screenName.equals("CityScreen")) {
-            cityMapPanel.requestFocusInWindow();
-            cityMapPanel.refreshMap();
-        } else if (screenName.equals("StoreScreen")) {
-            storePanel.requestFocusInWindow();
-            storePanel.refreshStoreDisplay();
-        } else if (screenName.equals("ShippingBinScreen")){
-            shippingBinPanel.onShow();
-        } else if (screenName.equals("NPCInteractionScreen") && npcInteractionPanel.isShowing()) {
-            npcInteractionPanel.requestFocusInWindow();
-        } else if (screenName.equals("InventoryScreen") && inventoryScreenPanel.isShowing()) {
-            inventoryScreenPanel.refreshPanelData();
-            inventoryScreenPanel.requestFocusInWindow();
-        }  else if (screenName.equals("HouseScreen") && houseMapPanel.isShowing()) { // << ADD CASE FOR HOUSE SCREEN
-            houseMapPanel.refreshMap();
-            houseMapPanel.requestFocusInWindow();
-        }   else if (screenName.equals("HelpScreen") && helpScreenPanel.isShowing()) { // << ADD THIS CASE
-            helpScreenPanel.onShow(); // Will request focus
-        }   else if (screenName.equals("CookingScreen")) { // Added case for CookingScreen
-            if (cookingPanel.isShowing()){
-                 cookingPanel.onShow(); // Call onShow to refresh and request focus
-                 cookingPanel.requestFocusInWindow();
-            }
+        // Request focus for the specific panel that will receive key events.
+        // Also, call refresh/onShow methods as appropriate.
+        // Using SwingUtilities.invokeLater for focus requests is generally safer.
+        switch (screenName) {
+            case "MainMenu":
+                SwingUtilities.invokeLater(mainMenuPanel::requestFocusInWindow);
+                break;
+            case "PlayerCreationScreen":
+                SwingUtilities.invokeLater(playerCreationPanel::requestFocusInWindow);
+                break;
+            case "GameScreen":
+                farmMapPanel.refreshMap();
+                SwingUtilities.invokeLater(farmMapPanel::requestFocusInWindow);
+                break;
+            case "CityScreen":
+                cityMapPanel.refreshMap();
+                SwingUtilities.invokeLater(cityMapPanel::requestFocusInWindow);
+                break;
+            case "StoreScreen":
+                storePanel.refreshStoreDisplay();
+                SwingUtilities.invokeLater(storePanel::requestFocusInWindow);
+                break;
+            case "ShippingBinScreen":
+                shippingBinPanel.onShow(); // onShow should handle its own refresh and focus
+                break;
+            case "NPCInteractionScreen":
+                // npcInteractionPanel.setupForNPC() is called before showScreen.
+                // If it has an onShow(), call it, otherwise ensure it requests focus.
+                SwingUtilities.invokeLater(npcInteractionPanel::requestFocusInWindow);
+                break;
+            case "InventoryScreen":
+                inventoryScreenPanel.refreshPanelData(); // refreshPanelData should handle focus
+                break;
+            case "HouseScreen":
+                houseMapPanel.refreshMap();
+                SwingUtilities.invokeLater(houseMapPanel::requestFocusInWindow);
+                break;
+            case "HelpScreen":
+                helpScreenPanel.onShow(); // onShow should handle focus
+                break;
+            case "CookingScreen":
+                cookingPanel.onShow(); // onShow should handle focus
+                break;
+            default:
+                // Fallback for any other screen, try to focus the center panel's visible component
+                // This part might be redundant if all cases are handled above.
+                for (Component comp : centerCardPanel.getComponents()) {
+                    if (comp.isVisible()) {
+                        SwingUtilities.invokeLater(comp::requestFocusInWindow);
+                        break;
+                    }
+                }
+                break;
         }
     
-        // MainMenu doesn't usually need a specific refresh call here for its components
-
-        revalidate(); // Revalidate the whole GameView
-        repaint();    // Repaint the whole GameView
+        revalidate();
+        repaint();
     }
 
     public void returnToPreviousScreen() {
+        if (currentScreenName.equals("HelpScreen") && previousScreenName.equals("HelpScreen")) {
+             if (gameManager.getPlayer().getLocation().equals(gameManager.getFarmMap().getName())) {
+                showScreen("GameScreen");
+            } else if (gameManager.getPlayer().getLocation().equals(gameManager.getCityMap().getName())) {
+                showScreen("CityScreen");
+            } else if (gameManager.getPlayer().getLocation().equals(gameManager.getHouseMap().getName())) {
+                showScreen("HouseScreen");
+            } else {
+                showScreen("MainMenu");
+            }
+            return;
+        }
         showScreen(previousScreenName);
     }
 
-    public String getCurrentScreenName() { // Useful for GameManager or other panels
+    public String getCurrentScreenName() {
         return this.currentScreenName;
     }
 

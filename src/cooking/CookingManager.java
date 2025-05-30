@@ -1,32 +1,41 @@
-// Path: TubesOOP/src/cooking/CookingManager.java
 package cooking;
 
 import core.player.Player;
 import recipe.Recipe;
 import item.Item;
-import item.ItemRegistry; // For resolving item names
-import item.Fish;        // To check category for "ANY_FISH"
+import item.ItemRegistry;
+import item.Fish; // Keep for "ANY_FISH" check if needed by ItemRegistry logic
 import core.player.Inventory;
 
-import java.util.ArrayList; // For managing fish to remove
-import java.util.HashMap; // If needed for temporary counts
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
+// Import ScheduledExecutorService and related classes
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit; // For TimeUnit
 import java.util.stream.Collectors;
+
 
 public class CookingManager implements CookingTask.CookingCompleteListener {
     private final Player player;
     private final Set<String> unlockedRecipeIds;
-    private final ExecutorService cookingExecutor; // Not used by synchronous startCooking
+    // Change ExecutorService to ScheduledExecutorService
+    private final ScheduledExecutorService cookingScheduler;
+    private static final int COOKING_DELAY_SECONDS = 12; // 1 game hour = 60 game mins; 5 game mins = 1 real sec => 60/5 = 12 real secs
 
     public CookingManager(Player player) {
         this.player = player;
         this.unlockedRecipeIds = new HashSet<>();
-        this.cookingExecutor = Executors.newCachedThreadPool();
+        // Initialize as a single-thread scheduled executor
+        this.cookingScheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
+            Thread thread = Executors.defaultThreadFactory().newThread(runnable);
+            thread.setName("CookingSchedulerThread"); // Optional: Name the thread
+            return thread;
+        });
         initializeDefaultRecipes();
     }
 
@@ -39,7 +48,7 @@ public class CookingManager implements CookingTask.CookingCompleteListener {
     public void unlockRecipe(String recipeId) {
         if (RecipeData.getRecipeById(recipeId) != null) {
             unlockedRecipeIds.add(recipeId);
-            System.out.println("Resep '" + RecipeData.getRecipeById(recipeId).getRecipeName() + "' telah dibuka untuk " + player.getName());
+            // System.out.println("Resep '" + RecipeData.getRecipeById(recipeId).getRecipeName() + "' telah dibuka untuk " + player.getName());
         }
     }
 
@@ -61,15 +70,12 @@ public class CookingManager implements CookingTask.CookingCompleteListener {
         if (!isRecipeUnlocked(recipeId)) {
             return "Kamu belum membuka resep untuk '" + recipe.getRecipeName() + "'.";
         }
-        if (player.getEnergy() < Recipe.ENERGY_COST_TO_START_COOKING) { // [cite: 220]
-            return "Energi tidak cukup untuk memulai memasak. Butuh: " + Recipe.ENERGY_COST_TO_START_COOKING + ", dimiliki: " + player.getEnergy() + "."; // [cite: 220]
+        if (player.getEnergy() < Recipe.ENERGY_COST_TO_START_COOKING) {
+            return "Energi tidak cukup untuk memulai memasak. Butuh: " + Recipe.ENERGY_COST_TO_START_COOKING + ", dimiliki: " + player.getEnergy() + ".";
         }
 
         Inventory inventory = player.getInventory();
         Map<String, Integer> requiredIngredientNames = recipe.getRequiredIngredientNames();
-        
-        // --- Ingredient Check ---
-        // Store actual items to remove to handle "ANY_FISH" correctly
         Map<Item, Integer> itemsToConsume = new HashMap<>();
         int anyFishNeeded = 0;
         List<Item> playerFishAvailable = new ArrayList<>();
@@ -95,7 +101,7 @@ public class CookingManager implements CookingTask.CookingCompleteListener {
         if (anyFishNeeded > 0) {
             for (Map.Entry<Item, Integer> invEntry : inventory.getAllItems().entrySet()) {
                 if (invEntry.getKey().getCategory().equals("Fish")) {
-                    for(int i=0; i < invEntry.getValue(); i++){ // Add each fish instance
+                    for(int i=0; i < invEntry.getValue(); i++){
                         playerFishAvailable.add(invEntry.getKey());
                     }
                 }
@@ -103,23 +109,21 @@ public class CookingManager implements CookingTask.CookingCompleteListener {
             if (playerFishAvailable.size() < anyFishNeeded) {
                 return "Bahan tidak cukup untuk '" + recipe.getRecipeName() + "'. Butuh " + anyFishNeeded + "x ANY_FISH, hanya punya " + playerFishAvailable.size() + " ikan.";
             }
-            // Select the first 'anyFishNeeded' fish from the available list
             for (int i = 0; i < anyFishNeeded; i++) {
-                Item fishToUse = playerFishAvailable.get(i); // Simplistic: use the first available ones
+                Item fishToUse = playerFishAvailable.get(i);
                 itemsToConsume.put(fishToUse, itemsToConsume.getOrDefault(fishToUse, 0) + 1);
             }
         }
 
-        // --- Fuel Check ---
         Item outputItemForRecipe = ItemRegistry.getItemByName(recipe.getOutputItemName());
         if (outputItemForRecipe == null) {
              return "Error: Produk resep '" + recipe.getOutputItemName() + "' tidak dikenal.";
         }
-        int totalFoodOutput = recipe.getOutputQuantity(); // Assumes output is always a single type of item
-        int fuelUnitsNeeded = (int) Math.ceil((double) totalFoodOutput / selectedFuel.getFoodCookCapacity()); // [cite: 216]
+        int totalFoodOutput = recipe.getOutputQuantity();
+        int fuelUnitsNeeded = (int) Math.ceil((double) totalFoodOutput / selectedFuel.getFoodCookCapacity());
         if (fuelUnitsNeeded <= 0) fuelUnitsNeeded = 1;
 
-        Item fuelItem = ItemRegistry.getItemByName(selectedFuel.getName()); // Fuel name should match an item name
+        Item fuelItem = ItemRegistry.getItemByName(selectedFuel.getName());
         if (fuelItem == null) {
             return "Error: Bahan bakar '" + selectedFuel.getName() + "' tidak dikenal sebagai item.";
         }
@@ -128,56 +132,59 @@ public class CookingManager implements CookingTask.CookingCompleteListener {
             return "Bahan bakar tidak cukup. Butuh " + fuelUnitsNeeded + "x " + selectedFuel.getName() + ", hanya punya " + fuelInInventoryCount + ".";
         }
 
-        // --- All checks passed, proceed to consume and produce ---
-        player.setEnergy(player.getEnergy() - Recipe.ENERGY_COST_TO_START_COOKING); // [cite: 220]
+        // All checks passed, consume resources and schedule task
+        player.setEnergy(player.getEnergy() - Recipe.ENERGY_COST_TO_START_COOKING);
 
-        // Consume ingredients
         for (Map.Entry<Item, Integer> entry : itemsToConsume.entrySet()) {
             inventory.removeItem(entry.getKey(), entry.getValue());
         }
-
-        // Consume fuel
         inventory.removeItem(fuelItem, fuelUnitsNeeded);
 
-        // Add output product
-        inventory.addItem(outputItemForRecipe, recipe.getOutputQuantity()); // [cite: 220]
+        // Create and schedule the CookingTask
+        CookingTask cookingTask = new CookingTask(
+                player,
+                outputItemForRecipe, // Pass the resolved Item object
+                recipe.getOutputQuantity(),
+                inventory, // Pass the inventory reference
+                0, // cookingDurationMillis for Thread.sleep in task, not strictly needed if using scheduler delay
+                this // Pass CookingManager as the listener
+        );
         
-        // Passive cooking duration means we don't use CookingTask for immediate GUI feedback of item addition
-        // The spec implies the item is added to inventory after the *passive* 1 hour.
-        // However, for this GUI step, the current synchronous implementation means item appears instantly.
-        // If true async passive cooking is added later, item addition would be delayed.
-        // For now, this matches the immediate feedback model the previous synchronous version had.
-        
-        // Simulate time passing (as per spec this is passive, player can do other things)
-        // This part might be handled by a global game loop or event rather than direct time advance here
-        // if cooking is truly asynchronous.
-        // For now, we'll skip explicit time advancement here if it's meant to be passive and concurrent.
-        // The prompt implies CookingManager does the work.
-        // gameTime.advanceGameMinutes(Recipe.COOKING_DURATION_MINUTES); // This would make it active, not passive
+        // Schedule the task to run after 1 game hour (12 real seconds)
+        cookingScheduler.schedule(cookingTask, COOKING_DELAY_SECONDS, TimeUnit.SECONDS);
 
-        return "Memasak '" + recipe.getRecipeName() + "' berhasil! " + recipe.getOutputQuantity() + "x " + outputItemForRecipe.getName() + " ditambahkan ke inventory. (Proses masak pasif selama 1 jam game dimulai)";
+        return "Memasak '" + recipe.getRecipeName() + "' dimulai! Akan selesai dalam 1 jam game. ("+ outputItemForRecipe.getName() +" x"+ recipe.getOutputQuantity()+")";
     }
+    
 
+    // Implementasi CookingCompleteListener
     @Override
     public void onCookingComplete(Player player, Item itemProduced, int quantity) {
-        System.out.println("[CookingManager] Notifikasi: " + player.getName() + " telah selesai memasak " + quantity + "x " + itemProduced.getName() + "!");
+        // This method is called by CookingTask when it finishes
+        // You can add UI notifications here if needed, e.g., via a callback to GameView/GameManager
+        // For now, it just logs to console. The item is already added to inventory by CookingTask.
+        System.out.println("[CookingManager NOTIFICATION] " + player.getName() + " telah selesai memasak " + quantity + "x " + itemProduced.getName() + "! Item ditambahkan ke inventory.");
+        // If you have a GameView reference or an event bus, you could trigger a small GUI notification.
+        // Example: gameManager.notifyPlayer("Cooking complete: " + itemProduced.getName());
     }
-
+    
     @Override
     public void onCookingFailed(Player player, String recipeName, String reason) {
-        System.err.println("[CookingManager] Notifikasi: " + player.getName() + " gagal memasak " + recipeName + ". Alasan: " + reason);
+        System.err.println("[CookingManager NOTIFICATION] " + player.getName() + " gagal memasak " + recipeName + ". Alasan: " + reason);
+        // Potentially refund ingredients here if appropriate, or notify player.
     }
 
+
     public void shutdown() {
-        cookingExecutor.shutdown();
+        cookingScheduler.shutdown();
         try {
-            if (!cookingExecutor.awaitTermination(800, java.util.concurrent.TimeUnit.MILLISECONDS)) {
-                cookingExecutor.shutdownNow();
+            if (!cookingScheduler.awaitTermination(1, TimeUnit.SECONDS)) { // Shorter wait time
+                cookingScheduler.shutdownNow();
             }
         } catch (InterruptedException e) {
-            cookingExecutor.shutdownNow();
+            cookingScheduler.shutdownNow();
             Thread.currentThread().interrupt();
         }
-        System.out.println("CookingManager telah dimatikan.");
+        System.out.println("CookingManager (Scheduler) telah dimatikan.");
     }
 }

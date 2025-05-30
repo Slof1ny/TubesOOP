@@ -247,11 +247,6 @@ public class InventoryScreenPanel extends JPanel {
     }
 
     private void performLeaveAction() {
-        // Go back to the map screen the player was on
-        String previousScreen = "GameScreen"; // Default
-        if (gameManager.getCurrentMap().getName().equals(gameManager.getCityMap().getName())) {
-            previousScreen = "CityScreen";
-        }
-        gameView.showScreen(previousScreen);
+        gameView.returnToPreviousScreen(); 
     }
 }

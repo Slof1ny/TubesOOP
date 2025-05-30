@@ -53,6 +53,11 @@ public class HouseMapController extends KeyAdapter {
             case KeyEvent.VK_D:
                 actionTaken = currentMap.movePlayer(player, 1, 0);
                 break;
+            case KeyEvent.VK_I: // 'I' for Equipment
+                gameView.showScreen("InventoryScreen");
+                actionTaken = true;
+                e.consume();
+                break;
             case KeyEvent.VK_F1: // 'H' for Help
                 gameView.showScreen("HelpScreen");
                 actionTaken = true; // It's a screen change

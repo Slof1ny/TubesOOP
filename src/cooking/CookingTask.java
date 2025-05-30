@@ -1,21 +1,18 @@
-
 package cooking;
 
 import core.player.Player;
 import item.Item;
 import core.player.Inventory;
 
-/**
- * Tugas yang berjalan secara asynchronous untuk mensimulasikan proses memasak.
- */
 public class CookingTask implements Runnable {
     private final Player player;
     private final Item foodToProduce; // Item makanan yang akan dihasilkan
     private final int quantityToProduce; // Jumlah makanan yang akan dihasilkan
     private final Inventory playerInventory; // Referensi langsung ke inventory pemain
-    private final long cookingDurationMillis; // Durasi masak dalam milidetik dunia nyata
+    // cookingDurationMillis is no longer strictly needed if using ScheduledExecutorService's delay
+    private final long cookingDurationMillis_placeholder;
 
-    // Callback untuk memberitahu ketika masakan selesai (opsional)
+
     public interface CookingCompleteListener {
         void onCookingComplete(Player player, Item itemProduced, int quantity);
         void onCookingFailed(Player player, String recipeName, String reason);
@@ -24,50 +21,50 @@ public class CookingTask implements Runnable {
 
 
     public CookingTask(Player player, Item foodToProduce, int quantityToProduce, 
-                       Inventory playerInventory, long cookingDurationMillis, CookingCompleteListener listener) {
+                       Inventory playerInventory, long cookingDurationMillis_placeholder, CookingCompleteListener listener) {
         this.player = player;
         this.foodToProduce = foodToProduce;
         this.quantityToProduce = quantityToProduce;
         this.playerInventory = playerInventory;
-        this.cookingDurationMillis = cookingDurationMillis;
+        this.cookingDurationMillis_placeholder = cookingDurationMillis_placeholder; // Keep for signature, but not used for Thread.sleep
         this.listener = listener;
     }
 
     @Override
     public void run() {
-        String taskName = "Memasak " + foodToProduce.getName() + " untuk " + player.getName();
-        Thread.currentThread().setName(taskName); // Memberi nama thread untuk logging
-        System.out.println("[" + Thread.currentThread().getName() + "] Mulai...");
+        String taskName = "CookingTask-" + foodToProduce.getName() + "-for-" + player.getName();
+        Thread.currentThread().setName(taskName);
+        System.out.println("[" + Thread.currentThread().getName() + "] Processing scheduled cooking completion...");
 
         try {
-            Thread.sleep(cookingDurationMillis); // Simulasikan waktu memasak
+            // The delay is handled by ScheduledExecutorService, so no Thread.sleep() needed here.
+            // If you still wanted a small internal delay for some reason:
+            // if (cookingDurationMillis_placeholder > 0) {
+            //     Thread.sleep(cookingDurationMillis_placeholder);
+            // }
 
-            // Sinkronisasi diperlukan jika inventory bisa diakses/dimodifikasi oleh thread lain secara bersamaan
-            // Jika inventory hanya diubah oleh task ini atau game loop utama secara sekuensial,
-            // sinkronisasi mungkin tidak selalu diperlukan, tapi aman untuk menambahkannya.
-            synchronized (playerInventory) {
+            // Add item to inventory (synchronized if Inventory is not thread-safe, but usually accessed from game thread)
+            // For simplicity here, assuming direct modification is okay as it's called from a single cooking thread.
+            // If multiple cooking tasks could run truly concurrently and modify inventory, synchronization would be vital.
+            synchronized (playerInventory) { // Good practice if inventory might be accessed elsewhere
                 playerInventory.addItem(foodToProduce, quantityToProduce);
             }
             
-            System.out.println("[" + Thread.currentThread().getName() + "] Selesai. " +
+            System.out.println("[" + Thread.currentThread().getName() + "] Completed. " +
                                foodToProduce.getName() + " x" + quantityToProduce + 
-                               " telah ditambahkan ke inventory " + player.getName() + ".");
+                               " added to inventory for " + player.getName() + ".");
+            
             if (listener != null) {
                 listener.onCookingComplete(player, foodToProduce, quantityToProduce);
             }
 
-        } catch (InterruptedException e) {
-            System.err.println("[" + Thread.currentThread().getName() + "] Proses memasak terganggu.");
-            if (listener != null) {
-                listener.onCookingFailed(player, foodToProduce.getName(), "Proses terganggu");
-            }
-            Thread.currentThread().interrupt(); // Restore interrupted status
-        } catch (Exception e) {
-            System.err.println("[" + Thread.currentThread().getName() + "] Gagal menyelesaikan proses memasak: " + e.getMessage());
+        } catch (Exception e) { // Catch generic exceptions during the task execution
+            System.err.println("[" + Thread.currentThread().getName() + "] Failed to complete cooking task: " + e.getMessage());
+            e.printStackTrace(); // Log the full stack trace for debugging
              if (listener != null) {
-                listener.onCookingFailed(player, foodToProduce.getName(), "Kesalahan sistem: " + e.getMessage());
+                listener.onCookingFailed(player, foodToProduce.getName(), "Kesalahan sistem saat menyelesaikan masak: " + e.getMessage());
             }
-            e.printStackTrace();
+            // No Thread.currentThread().interrupt() unless it was an InterruptedException and re-interrupting is desired.
         }
     }
 }

@@ -205,7 +205,7 @@ public class Time {
                 }
             }
 
-            System.out.printf("Console TIme: %02d : %02d\n", hour, minute);
+            System.out.printf("Console Time: %02d : %02d\n", hour, minute);
             if (this.gameManager != null) {
                 this.gameManager.onGameTimeTick();
             }

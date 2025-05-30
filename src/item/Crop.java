@@ -47,47 +47,64 @@ public class Crop extends Item implements EdibleItem {
 
     /* Advances the growth of the crop by one day.*/
     public void newDay(int currentDay, Season currentSeason, boolean wasYesterdayRainy) {
-        if (growthStage >= 3) { // Already mature/harvestable
+        if (growthStage >= 3) { // Already mature/harvestable, no further changes
             return;
         }
 
-        // If the crop is out of season, it might wither (optional: add specific logic for this)
+        // Check if out of season
         if (plantedSeed != null && !plantedSeed.getSeasons().contains(currentSeason)) {
-            // System.out.println(getName() + " is out of season (" + currentSeason + ") and may have withered.");
-            // For now, let's assume it just stops growing or you handle withering elsewhere.
-            // If it should die, you'd clear the crop from the tile.
-            // this.type = TileType.TILLED; this.plantedCrop = null; (This logic would be in Tile if it dies)
-            return;
+            // System.out.println("Crop '" + getName() + "' is out of season (" + currentSeason + ") and will not grow further.");
+            // Optionally, implement logic for the crop to die/disappear here.
+            return; // For now, just stops growing.
         }
 
+        // Increment age of the plant. daysSincePlanting counts how many newDay calls it has received.
+        // If planted on Day X, first newDay call is for morning of Day X+1, daysSincePlanting becomes 1.
         daysSincePlanting++;
 
-        // If yesterday was rainy, it counts as being watered for that day (day currentDay - 1)
-        if (wasYesterdayRainy) {
-            this.lastWateredDay = currentDay - 1;
-            // System.out.println(getName() + " was considered watered due to rain on day " + (currentDay - 1));
-        }
+        boolean effectivelyWateredYesterday = (this.lastWateredDay == (currentDay - 1)) || wasYesterdayRainy;
 
-        boolean grewThisDay = false;
-        // Check if watered the day before (currentDay - 1)
-        if (this.lastWateredDay == (currentDay - 1)) {
-            int prevGrowthStage = growthStage;
-            if (growthStage == 0 && daysSincePlanting >= Math.ceil(daysToGrow / 3.0)) {
-                growthStage = 1;
-            } else if (growthStage == 1 && daysSincePlanting >= Math.ceil(daysToGrow * 2.0 / 3.0)) {
-                growthStage = 2;
-            } else if (growthStage == 2 && daysSincePlanting >= daysToGrow) {
-                growthStage = 3; // Harvestable
+        if (effectivelyWateredYesterday) {
+            if (wasYesterdayRainy && this.lastWateredDay != (currentDay - 1)) {
+                // If rain watered it, and player didn't, update lastWateredDay to reflect this.
+                this.lastWateredDay = currentDay - 1;
+                 System.out.println("Crop '" + getName() + "' was watered by rain on day " + (currentDay -1) + ".");
             }
 
-            if (growthStage > prevGrowthStage) {
-                grewThisDay = true;
-                System.out.println("Crop '" + getName() + "' grew to stage " + growthStage + " on day " + currentDay + ". (Days planted: " + daysSincePlanting + "/" + daysToGrow + ")");
-            } else if (growthStage < 3) {
-                 // System.out.println("Crop '" + getName() + "' was watered, but not enough days passed to advance growth stage. Stage: " + growthStage + ", Days planted: " + daysSincePlanting + "/" + daysToGrow);
+            // Check for harvestable state
+            // If daysSincePlanting has reached daysToGrow, it's ready.
+            // e.g., daysToGrow = 1. Plant day X (dsp=0). Next morning (day X+1), newDay called, dsp becomes 1. 1 >= 1, so harvestable.
+            if (daysSincePlanting >= daysToGrow) {
+                if (growthStage < 3) { // To prevent multiple "now harvestable" messages
+                    growthStage = 3; // Directly to harvestable
+                    System.out.println("Crop '" + getName() + "' is now HARVESTABLE (Stage 3) on day " + currentDay +
+                                       ". (Days since planting: " + daysSincePlanting + ", Needs to grow for: " + daysToGrow + " days)");
+                }
+            } else if (daysToGrow > 1) { // Handle intermediate visual stages for multi-day crops
+                int prevGrowthStage = growthStage;
+                // Example for visual stages (can be adjusted based on number of desired sprites/stages)
+                // Stage 0: Planted
+                // Stage 1: Small sprout (e.g., after 1/3 of growth time)
+                // Stage 2: Medium plant (e.g., after 2/3 of growth time)
+                // Stage 3: Harvestable
+                if (daysSincePlanting >= Math.ceil(daysToGrow * 0.67)) { // approx 2/3
+                    growthStage = 2;
+                } else if (daysSincePlanting >= Math.ceil(daysToGrow * 0.34)) { // approx 1/3
+                    growthStage = 1;
+                }
+                // else it stays at stage 0 (just planted but not yet sprouted)
+
+                if (growthStage > prevGrowthStage) {
+                    System.out.println("Crop '" + getName() + "' grew to visual stage " + growthStage + " on day " + currentDay +
+                                       ". (Days since planting: " + daysSincePlanting + ")");
+                }
             }
-        } else if (growthStage < 3) { // Not watered and not yet mature
-            System.out.println("Crop '" + getName() + "' did not grow on day " + currentDay + " because it was not watered on day " + (currentDay - 1) + " (Last watered: " + this.lastWateredDay + ") and yesterday was not rainy.");
+             // If daysToGrow is 1, and it was watered, the above (daysSincePlanting >= daysToGrow) handles it.
+        } else { // Not watered and no rain yesterday
+            if (growthStage < 3) {
+                System.out.println("Crop '" + getName() + "' did not advance growth on day " + currentDay +
+                                   " because it was not effectively watered on day " + (currentDay - 1) + " (Last watered: " + this.lastWateredDay + ").");
+            }
         }
     }
 

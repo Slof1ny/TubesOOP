@@ -176,7 +176,7 @@ public class FishRegistry {
             case REGULAR   -> 5;
             case LEGENDARY -> 25;
         };
-        return (4*seasons) * hours * (2*weathers) * (4*locations) / C;
+        return (4/seasons) * (24/hours) * (2/weathers) * (4/locations) * C;
     }
 
     public static Fish getFishByName(String name) {

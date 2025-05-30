@@ -156,31 +156,141 @@ public class FarmMapController extends KeyAdapter {
                 actionTaken = true;
                 e.consume();
                 break;
-            case KeyEvent.VK_E: // Interact
-                DeployedObject interactedObject = getAdjacentDeployedObject(); //
-                if (interactedObject != null) { //
-                    if (interactedObject instanceof ShippingBin) {
-                        gameView.showScreen("ShippingBinScreen"); // THIS IS THE CORRECTED PART
-                        actionTaken = true;
-                    } else if (interactedObject instanceof core.house.House) { // << MODIFIED
-                        System.out.println("Interacting with House on FarmMap, attempting to enter.");
-                        gameManager.transitionMap(gameManager.getHouseMap().getName());
-                        gameView.showScreen("HouseScreen");
-                    } else if (interactedObject instanceof Pond) {
-                        FishingLocation pondLocation = gameManager.getFishingLocations().get("Pond");
-                        if (pondLocation != null) {
-                            FishingGUIAdapter.startFishingGUI(farmMap, pondLocation, player, gameTime, gameCalendar, farmMapPanel);
+            // Inside gui/FarmMapController.java
+// In the keyPressed method:
+
+            case KeyEvent.VK_E:
+                actionTaken = false; // Inisialisasi ulang untuk setiap penekanan tombol
+                String farmMapName = farmMap.getName();
+                // Ambil lokasi pemain SAAT INI, SEBELUM ada perubahan karena aksi perjalanan
+                String initialPlayerLocationForThisKeyPress = player.getLocation();
+
+                // 1. AKSI: Perjalanan & Langsung Memancing dari Batas Kiri FarmMap
+                if (player.getX() == 0 && initialPlayerLocationForThisKeyPress.equals(farmMapName)) {
+                    actionTaken = true; // Interaksi perjalanan sedang diupayakan
+                    String[] fishingSpotOptions = {"Mountain Lake", "Forest River", "Ocean", "Cancel"};
+                    String chosenSpotName = (String) JOptionPane.showInputDialog(
+                            farmMapPanel,
+                            "Pilih lokasi untuk memancing:\n(Biaya perjalanan: -10 Energi, +15 Menit Waktu Game)\nSesi memancing akan langsung dimulai setelah tiba.",
+                            "Pergi Memancing",
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            fishingSpotOptions,
+                            fishingSpotOptions[0]
+                    );
+
+                    if (chosenSpotName != null && !chosenSpotName.equals("Cancel")) {
+                        // Cek energi untuk perjalanan
+                        if (player.getEnergy() - 10 < Player.MIN_ENERGY) {
+                            JOptionPane.showMessageDialog(farmMapPanel, "Energi tidak cukup untuk melakukan perjalanan.", "Tidak Bisa Pergi", JOptionPane.WARNING_MESSAGE);
+                            actionTaken = false; // Perjalanan gagal
                         } else {
-                             JOptionPane.showMessageDialog(farmMapPanel, "Fishing at the pond is not set up correctly.", "Error", JOptionPane.ERROR_MESSAGE);
+                            // Kurangi energi dan majukan waktu untuk perjalanan
+                            player.setEnergy(player.getEnergy() - 10);
+                            gameTime.advanceGameMinutes(15);
+
+                            // Update lokasi pemain (sementara) untuk sesi memancing ini
+                            player.setLocation(chosenSpotName);
+
+                            // (Opsional) Refresh info bar untuk menunjukkan lokasi baru sebelum memancing
+                            if (gameManager.getTopInfoBarPanel() != null) {
+                                gameManager.getTopInfoBarPanel().refreshInfo();
+                            }
+                            // (Opsional) Anda bisa menampilkan dialog "Travel Complete" singkat di sini jika diinginkan
+                            // JOptionPane.showMessageDialog(farmMapPanel, "Anda telah tiba di " + chosenSpotName + ". Memulai memancing...", "Perjalanan Selesai", JOptionPane.INFORMATION_MESSAGE);
+
+                            // Langsung mulai memancing
+                            FishingLocation targetFishingLocation = gameManager.getFishingLocations().get(chosenSpotName);
+
+                            if (targetFishingLocation != null && targetFishingLocation.canFishAt(player)) {
+                                // FishingGUIAdapter akan menangani pengurangan energi & waktu untuk aksi memancing itu sendiri
+                                FishingGUIAdapter.startFishingGUI(farmMap, targetFishingLocation, player, gameTime, gameCalendar, farmMapPanel);
+                            } else {
+                                String errorMsg = "Tidak bisa memulai memancing di " + chosenSpotName + ".";
+                                if (targetFishingLocation == null) {
+                                    errorMsg += " Data lokasi tidak ditemukan.";
+                                    System.err.println("DEBUG: FishingLocation tidak ditemukan untuk key: " + chosenSpotName);
+                                } else { // targetFishingLocation ada tapi canFishAt() false
+                                    errorMsg += " Tidak bisa memancing di spot ini sekarang (canFishAt gagal).";
+                                    System.err.println("DEBUG: canFishAt gagal untuk " + chosenSpotName + " meskipun player.location sudah diupdate.");
+                                }
+                                JOptionPane.showMessageDialog(farmMapPanel, errorMsg, "Gagal Memancing", JOptionPane.WARNING_MESSAGE);
+                            }
+
+                            // PENTING: Setelah sesi memancing selesai (berhasil atau tidak),
+                            // kembalikan lokasi logis pemain ke Farm Map.
+                            player.setLocation(farmMapName);
+                            // Tidak perlu pop-up untuk pengembalian lokasi ini, ini perubahan state internal.
+                            // Info bar akan di-refresh di akhir blok actionTaken.
                         }
-                        actionTaken = true; // Fishing attempt is an action
-                    } else {
-                        JOptionPane.showMessageDialog(farmMapPanel, "You interacted with a " + interactedObject.getSymbol() + "!", "Interact", JOptionPane.INFORMATION_MESSAGE); //
-                        actionTaken = true;
+                    } else { // Pemain membatalkan dialog pemilihan lokasi
+                        actionTaken = false;
                     }
-                } else {
-                    JOptionPane.showMessageDialog(farmMapPanel, "Nothing to interact with here.", "Interact", JOptionPane.INFORMATION_MESSAGE); //
+                    // Event perjalanan dan memancing sudah ditangani, konsumsi event.
+                    if (!e.isConsumed()) e.consume();
                 }
+                // 2. AKSI: Interaksi dengan Objek di FarmMap (Rumah, Kolam, Shipping Bin)
+                //    Hanya jika pemain berada di "Farm Map" secara logis DAN tidak sedang melakukan aksi perjalanan dari batas.
+                else if (initialPlayerLocationForThisKeyPress.equals(farmMapName)) {
+                    DeployedObject interactedObject = getAdjacentDeployedObject();
+                    if (interactedObject != null) {
+                        actionTaken = true; // Interaksi dengan objek adalah sebuah aksi
+                        if (interactedObject instanceof ShippingBin) {
+                            gameView.showScreen("ShippingBinScreen");
+                        } else if (interactedObject instanceof core.house.House) {
+                            gameManager.transitionMap(gameManager.getHouseMap().getName());
+                            gameView.showScreen("HouseScreen");
+                        } else if (interactedObject instanceof Pond) { // Kolam di farm
+                            FishingLocation pondLocation = gameManager.getFishingLocations().get("Pond");
+                            if (pondLocation != null && pondLocation.canFishAt(player)) {
+                                FishingGUIAdapter.startFishingGUI(farmMap, pondLocation, player, gameTime, gameCalendar, farmMapPanel);
+                            } else {
+                                JOptionPane.showMessageDialog(farmMapPanel, "Anda harus berada di sebelah kolam untuk memancing.", "Tidak Bisa Memancing Disini", JOptionPane.INFORMATION_MESSAGE);
+                                actionTaken = false;
+                            }
+                        } else { // Objek lain di farm
+                            JOptionPane.showMessageDialog(farmMapPanel, "Anda berinteraksi dengan " + interactedObject.getSymbol() + "!", "Interaksi", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                        if (!e.isConsumed()) e.consume();
+                    } else {
+                        // Tidak ada objek untuk berinteraksi di farm
+                        JOptionPane.showMessageDialog(farmMapPanel, "Tidak ada yang bisa diinteraksikan di sini (di farm).", "Interaksi", JOptionPane.INFORMATION_MESSAGE);
+                        actionTaken = false; // Tidak ada aksi nyata yang terjadi
+                    }
+                }
+                // 3. FALLBACK: Jika pemain tidak di Farm Map (misal, Kota, Rumah) atau kondisi lain tidak terpenuhi.
+                //    Dengan logika pengembalian lokasi setelah memancing, blok ini seharusnya jarang sekali dijangkau
+                //    kecuali ada kondisi tak terduga atau pemain berada di map lain yang controllernya belum aktif.
+                else {
+                    JOptionPane.showMessageDialog(farmMapPanel, "Tidak ada yang bisa diinteraksikan di sini (lokasi saat ini: " + initialPlayerLocationForThisKeyPress + ").", "Interaksi", JOptionPane.INFORMATION_MESSAGE);
+                    actionTaken = false;
+                }
+
+                // Logika refresh umum setelah aksi (jika ada aksi yang mengubah state)
+                if (actionTaken) {
+                    // Cek kondisi pingsan karena energi habis setelah aksi
+                    if (player.getEnergy() <= Player.MIN_ENERGY) {
+                        if (!e.isConsumed()) { // Hanya consume jika belum di-consume oleh fainting logic lain (jika ada)
+                            e.consume();
+                        }
+                        JOptionPane.showMessageDialog(farmMapPanel, "Energi Anda habis dan Anda pingsan!", "Pingsan", JOptionPane.WARNING_MESSAGE);
+                        gameManager.forcePlayerSleep(); // Ini juga akan me-refresh UI
+                    } else {
+                        // Jika tidak pingsan, pastikan UI di-refresh
+                        if (!e.isConsumed()) { // Consume event jika aksi terjadi dan belum di-consume
+                            e.consume();
+                        }
+                        // Update GUI
+                        SwingUtilities.invokeLater(() -> {
+                            farmMapPanel.refreshMap();
+                            if (gameManager.getTopInfoBarPanel() != null && gameManager.getTopInfoBarPanel().isVisible()) {
+                                gameManager.getTopInfoBarPanel().refreshInfo();
+                            }
+                        });
+                    }
+                }
+                // Jika actionTaken false (misal, dialog dibatalkan atau "nothing to interact with"),
+                // tidak perlu refresh spesifik atau consume event di sini, kecuali sudah di-consume di path spesifik.
                 break;
             case KeyEvent.VK_K: // 'K' for reKover Land (Recover Land)
                 try {

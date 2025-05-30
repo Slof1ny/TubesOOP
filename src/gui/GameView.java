@@ -19,6 +19,7 @@ public class GameView extends JFrame {
     public ShippingBinPanel shippingBinPanel;
     public NPCInteractionPanel npcInteractionPanel;
     public InventoryScreenPanel inventoryScreenPanel;
+    public HouseMapPanel houseMapPanel;
 
     public GameView() {
         setTitle("Spakbor Hills");
@@ -45,6 +46,7 @@ public class GameView extends JFrame {
         shippingBinPanel = new ShippingBinPanel(this, gameManager);
         npcInteractionPanel = new NPCInteractionPanel(this, gameManager);
         inventoryScreenPanel = new InventoryScreenPanel(this, gameManager);
+        houseMapPanel = new HouseMapPanel(gameManager, this);
 
         // 3. Create screen-specific content panels (WITHOUT PlayerInfoPanel)
         JPanel gameScreenOnlyMapPanel = new JPanel(new BorderLayout());
@@ -65,6 +67,7 @@ public class GameView extends JFrame {
         centerCardPanel.add(shippingBinPanel, "ShippingBinScreen");
         centerCardPanel.add(npcInteractionPanel, "NPCInteractionScreen");
         centerCardPanel.add(inventoryScreenPanel, "InventoryScreen"); 
+        centerCardPanel.add(houseMapPanel, "HouseScreen"); 
 
 
         // 5. Set GameView's main layout and add components
@@ -120,6 +123,9 @@ public class GameView extends JFrame {
         } else if (screenName.equals("InventoryScreen") && inventoryScreenPanel.isShowing()) {
             inventoryScreenPanel.refreshPanelData();
             inventoryScreenPanel.requestFocusInWindow();
+        }  else if (screenName.equals("HouseScreen") && houseMapPanel.isShowing()) { // << ADD CASE FOR HOUSE SCREEN
+            houseMapPanel.refreshMap();
+            houseMapPanel.requestFocusInWindow();
         }
     
         // MainMenu doesn't usually need a specific refresh call here for its components

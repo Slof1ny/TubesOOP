@@ -1,5 +1,6 @@
 package system;
 
+import core.house.House;
 import core.player.Player;
 import core.world.FarmMap;
 import core.world.CityMap;
@@ -7,6 +8,7 @@ import core.world.GameMap;
 import time.GameCalendar;
 import time.Time;
 import npc.*;
+import core.world.Season;
 import gui.TopInfoBarPanel;
 import fishing.FishingLocation; // Import
 import fishing.SpecificFishingLocation; // Import
@@ -17,6 +19,8 @@ import java.util.HashMap; // Import
 import java.util.ArrayList; //Import
 import java.util.List;
 import item.*;
+import action.NPCActions;
+import core.world.HouseMap;
 
 public class GameManager {
     private Player player;
@@ -29,6 +33,7 @@ public class GameManager {
     private TopInfoBarPanel topInfoBarPanel;
     private Map<String, FishingLocation> fishingLocations; // Added to store fishing locations
     private List<NPC> allNpcs;
+    private HouseMap houseMap;
 
     public GameManager() {
         // Player initialization might be deferred or updated by PlayerCreationPanel
@@ -58,6 +63,7 @@ public class GameManager {
 
         farmMap = new FarmMap(player); //
         cityMap = new CityMap(player); //
+        houseMap = new HouseMap(player);
 
         currentMap = farmMap; // Default to farm map
         player.setLocation(farmMap.getName()); // Set initial player location
@@ -128,6 +134,10 @@ public class GameManager {
     public CityMap getCityMap() { //
         return cityMap;
     }
+    
+    public HouseMap getHouseMap(){
+        return houseMap;
+    }
 
     public GameCalendar getGameCalendar() { //
         return gameCalendar;
@@ -173,6 +183,11 @@ public class GameManager {
             player.setPosition(cityMap.getSize() / 2, 0); // Entry from North (top)
             player.setLocation(cityMap.getName()); //
             System.out.println("Transitioned to City Map."); //
+        } else if (destinationMapName.equals(houseMap.getName())) { // << ADD CASE FOR HOUSE
+            currentMap = houseMap;
+            player.setLocation(houseMap.getName());
+            player.setPosition(HouseMap.ENTRY_LOCATION.x, HouseMap.ENTRY_LOCATION.y); // Spawn at house entry
+            System.out.println("Transitioned to House Interior. Player at " + player.getX() + "," + player.getY());
         } else {
             System.out.println("Unknown map: " + destinationMapName); //
             return false;
@@ -188,5 +203,32 @@ public class GameManager {
         if(topInfoBarPanel != null && topInfoBarPanel.isVisible()){
             topInfoBarPanel.refreshInfo();
         }
+    }
+
+    public void processNewDayUpdates(int currentDayNumber, Season currentSeason, boolean wasYesterdayRainy, int yesterdayDayNumber) {
+        System.out.println("GameManager: Processing new day updates for Day " + currentDayNumber + ". Yesterday was rainy: " + wasYesterdayRainy);
+        if (farmMap != null) {
+            // Pass currentDayNumber for crop growth logic, and whether yesterday was rainy
+            // The Crop.newDay() will use wasYesterdayRainy to set lastWateredDay to yesterdayDayNumber if true
+            farmMap.updateDailyCropGrowth(currentDayNumber, currentSeason, wasYesterdayRainy);
+        }
+
+        // Call NPCActions to increment day for marriage check if applicable
+        if (this.player != null && this.gameTime != null) {
+            // Assuming you have an easy way to get your NPCActions instance
+            // For example, if it's created and stored in GameManager:
+            // if (this.npcActionsInstance != null) { // You'd need to store this
+            // this.npcActionsInstance.incrementDayForMarriageCheck();
+            // }
+            // Or, if NPCActions is lightweight, create a temporary one if not stored
+            NPCActions tempNpcActions = new NPCActions(this.player, this.gameTime);
+            tempNpcActions.incrementDayForMarriageCheck();
+
+        }
+
+
+        // Any other logic that needs to happen once per day
+        // e.g., NPC schedule changes, store stock refresh (if any)
+        System.out.println("GameManager: Finished processing new day updates.");
     }
 }

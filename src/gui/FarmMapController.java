@@ -162,9 +162,10 @@ public class FarmMapController extends KeyAdapter {
                     if (interactedObject instanceof ShippingBin) {
                         gameView.showScreen("ShippingBinScreen"); // THIS IS THE CORRECTED PART
                         actionTaken = true;
-                    } else if (interactedObject instanceof House) { //
-                        JOptionPane.showMessageDialog(farmMapPanel, "You are next to your House! (House actions coming soon)", "Interact", JOptionPane.INFORMATION_MESSAGE); //
-                        actionTaken = true;
+                    } else if (interactedObject instanceof core.house.House) { // << MODIFIED
+                        System.out.println("Interacting with House on FarmMap, attempting to enter.");
+                        gameManager.transitionMap(gameManager.getHouseMap().getName());
+                        gameView.showScreen("HouseScreen");
                     } else if (interactedObject instanceof Pond) {
                         FishingLocation pondLocation = gameManager.getFishingLocations().get("Pond");
                         if (pondLocation != null) {

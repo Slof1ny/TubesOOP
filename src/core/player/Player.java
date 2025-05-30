@@ -9,7 +9,7 @@ import core.world.ShippingBin;
 import core.world.FarmMap; // Keep this for now, might be removed if FarmMap reference is not direct
 
 public class Player {
-    private static final int MAX_ENERGY = 100;
+    public static final int MAX_ENERGY = 100;
     private String name;
     private String gender;
     private Gold gold = new Gold(0);

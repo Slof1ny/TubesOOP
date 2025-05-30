@@ -81,7 +81,7 @@ public class Tile {
     public void deployObject(char c) {
         // Simplified validation, ensure this list is comprehensive for all map objects
         if (c == 'h' || c == 'o' || c == 's' || // FarmMap symbols
-            c == 'S' || c == 'M' || c == 'C' || c == 'R' || c == 'G' || c == 'A' || c == 'X') { // CityMap symbols
+            c == 'S' || c == 'M' || c == 'C' || c == 'R' || c == 'G' || c == 'A' || c == 'B' || c == 'T' ||c == 'X') { // CityMap symbols
             this.type = TileType.DEPLOYED;
             this.deployedChar = c;
             this.plantedCrop = null; // Cannot have a crop if an object is deployed

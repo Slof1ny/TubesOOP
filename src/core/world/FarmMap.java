@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 import core.house.*;
 import core.player.Player;
+import item.Crop;
 
 
 public class FarmMap implements GameMap {
@@ -193,4 +194,37 @@ public class FarmMap implements GameMap {
     public int getSize() {
         return SIZE;
     }
+
+    public void updateDailyCropGrowth(int currentDay, Season currentSeason, boolean wasYesterdayRainy) {
+        System.out.println("FarmMap: Updating daily crop growth for day " + currentDay + ". Yesterday rainy: " + wasYesterdayRainy);
+        for (int x = 0; x < SIZE; x++) {
+            for (int y = 0; y < SIZE; y++) {
+                Tile tile = grid[x][y];
+                if (tile != null && tile.getType() == Tile.TileType.PLANTED && tile.getPlantedCrop() != null) {
+                    Crop crop = tile.getPlantedCrop();
+                    // Pass necessary info to crop's newDay method
+                    crop.newDay(currentDay, currentSeason, wasYesterdayRainy);
+                }
+            }
+        }
+    }
+
+    public int getHouseExitSpawnX() {
+    // Find the house object
+    for (DeployedObject obj : objects) {
+        if (obj instanceof core.house.House) {
+            return obj.getX() + obj.getWidth() / 2; // Center below the house
+        }
+    }
+    return SIZE / 2; // Fallback
+}
+
+public int getHouseExitSpawnY() {
+    for (DeployedObject obj : objects) {
+        if (obj instanceof core.house.House) {
+            return obj.getY() + obj.getHeight(); // Just below the house
+        }
+    }
+    return SIZE - 2; // Fallback
+}
 }

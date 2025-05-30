@@ -40,7 +40,7 @@ public class PlayerStats {
         ));
 
         CATEGORY_MAP.put("Food", Arrays.asList(
-            "Fish n’ Chips", "Baguette", "Sashimi", "Fugu", "Wine", "Pumpkin Pie",
+            "Fish n' Chips", "Baguette", "Sashimi", "Fugu", "Wine", "Pumpkin Pie",
             "Veggie Soup", "Fish Stew", "Spakbor Salad", "Fish Sandwich",
             "The Legends of Spakbor", "Cooked Pig's Head"
         ));

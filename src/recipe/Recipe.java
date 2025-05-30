@@ -1,60 +1,41 @@
+// Path: TubesOOP/src/recipe/Recipe.java
 package recipe;
 
 import cooking.UnlockCondition;
+import item.Item; // Will be used by methods resolving names, or in CookingManager
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import item.Item;
 
-/**
- * Merepresentasikan satu resep masakan dalam game "Spakbor Hills".
- * Kelas ini menyimpan semua informasi yang relevan tentang sebuah resep,
- * termasuk bahan yang dibutuhkan, item yang dihasilkan, dan cara untuk membukanya.
- */
 public class Recipe {
 
-    private final String recipeId;          // ID unik untuk resep, mis: "recipe_1", "recipe_fish_n_chips"
-    private final String recipeName;        // Nama resep yang akan ditampilkan ke pemain, mis: "Fish n’ Chips"
-    
-    // Bahan yang dibutuhkan: Kunci adalah Item, Nilai adalah kuantitas (Integer)
-    private final Map<Item, Integer> requiredIngredients; 
-    
-    private final Item outputItem;          // Item makanan yang dihasilkan oleh resep ini
-    private final int outputQuantity;       // Jumlah item makanan yang dihasilkan setiap kali resep ini dimasak
-    
-    private final UnlockCondition unlockCondition; // Kondisi bagaimana resep ini bisa di-unlock oleh pemain
-    private final String unlockDetail;      // Deskripsi tambahan untuk kondisi unlock (mis: nama toko, nama item, dll.)
+    private final String recipeId;
+    private final String recipeName;
+    private final Map<String, Integer> requiredIngredientNames; // Changed from Map<Item, Integer>
+    private final String outputItemName; // Changed from Item
+    private final int outputQuantity;
+    private final UnlockCondition unlockCondition;
+    private final String unlockDetail;
 
-    // Konstanta berdasarkan spesifikasi tugas
-    public static final int COOKING_DURATION_MINUTES = 60; // Durasi memasak adalah 1 jam (60 menit)
-    public static final int ENERGY_COST_TO_START_COOKING = 10; // Biaya energi untuk memulai percobaan memasak
+    public static final int COOKING_DURATION_MINUTES = 60; //
+    public static final int ENERGY_COST_TO_START_COOKING = 10; //
 
-    /**
-     * Konstruktor untuk membuat objek Recipe baru.
-     * @param recipeId ID unik untuk resep.
-     * @param recipeName Nama resep yang ditampilkan.
-     * @param requiredIngredients Peta bahan yang dibutuhkan (itemId -> kuantitas).
-     * @param outputItemId ID item dari makanan yang dihasilkan.
-     * @param outputQuantity Jumlah makanan yang dihasilkan.
-     * @param unlockCondition Kondisi untuk membuka resep ini.
-     * @param unlockDetail Detail tambahan mengenai kondisi unlock.
-     */
-    public Recipe(String recipeId, String recipeName, Map<Item, Integer> requiredIngredients,
-                  Item outputItem, int outputQuantity, UnlockCondition unlockCondition, String unlockDetail) {
-        
-        // Validasi input dasar
+    public Recipe(String recipeId, String recipeName, Map<String, Integer> requiredIngredientNames,
+                  String outputItemName, int outputQuantity, UnlockCondition unlockCondition, String unlockDetail) { // Constructor updated
+
         if (recipeId == null || recipeId.trim().isEmpty()) {
             throw new IllegalArgumentException("Recipe ID tidak boleh null atau kosong.");
         }
         if (recipeName == null || recipeName.trim().isEmpty()) {
             throw new IllegalArgumentException("Nama resep tidak boleh null atau kosong.");
         }
-        if (requiredIngredients == null || requiredIngredients.isEmpty()) {
+        if (requiredIngredientNames == null || requiredIngredientNames.isEmpty()) {
             throw new IllegalArgumentException("Resep harus memiliki setidaknya satu bahan.");
         }
-        if (outputItem == null) {
-            throw new IllegalArgumentException("Output Item tidak boleh null.");
+        if (outputItemName == null || outputItemName.trim().isEmpty()) { // Check for empty string too
+            throw new IllegalArgumentException("Output Item name tidak boleh null atau kosong.");
         }
         if (outputQuantity <= 0) {
             throw new IllegalArgumentException("Kuantitas output harus lebih besar dari 0.");
@@ -65,8 +46,8 @@ public class Recipe {
 
         this.recipeId = recipeId;
         this.recipeName = recipeName;
-        this.requiredIngredients = Collections.unmodifiableMap(new HashMap<>(requiredIngredients));
-        this.outputItem = outputItem;
+        this.requiredIngredientNames = Collections.unmodifiableMap(new HashMap<>(requiredIngredientNames)); // Store the string map
+        this.outputItemName = outputItemName;
         this.outputQuantity = outputQuantity;
         this.unlockCondition = unlockCondition;
         this.unlockDetail = (unlockDetail == null) ? "" : unlockDetail;
@@ -82,16 +63,12 @@ public class Recipe {
         return recipeName;
     }
 
-    /**
-     * Mengembalikan peta bahan yang dibutuhkan yang tidak dapat diubah.
-     * @return Map<String, Integer> dari itemId ke kuantitas.
-     */
-    public Map<Item, Integer> getRequiredIngredients() {
-        return requiredIngredients; // Sudah unmodifiable dari constructor
+    public Map<String, Integer> getRequiredIngredientNames() { // Getter updated
+        return requiredIngredientNames;
     }
 
-    public Item getOutputItem() {
-        return outputItem;
+    public String getOutputItemName() { // Getter updated
+        return outputItemName;
     }
 
     public int getOutputQuantity() {
@@ -110,23 +87,26 @@ public class Recipe {
 
     @Override
     public String toString() {
+        // This will now show item names, which is fine for a general toString.
+        // Resolution to Item objects and their details will happen in CookingManager or UI.
         return "Recipe Information:\n" +
                "  ID        : " + recipeId + "\n" +
                "  Name      : " + recipeName + "\n" +
-               "  Ingredients: " + requiredIngredientsToString() + "\n" +
-               "  Output    : " + outputItem.getName() + " (x" + outputQuantity + ")\n" +
+               "  Ingredients: " + requiredIngredientsMapToString() + "\n" + // Call the updated helper
+               "  Output    : " + outputItemName + " (x" + outputQuantity + ")\n" +
                "  Unlock    : " + unlockCondition + (unlockDetail.isEmpty() ? "" : " (" + unlockDetail + ")") + "\n" +
                "  Cook Time : " + COOKING_DURATION_MINUTES + " minutes (game)\n" +
                "  Energy Cost: " + ENERGY_COST_TO_START_COOKING;
     }
-    
-    private String requiredIngredientsToString() {
-        if (requiredIngredients.isEmpty()) {
+
+    // Helper method to print the string map of ingredients
+    private String requiredIngredientsMapToString() {
+        if (requiredIngredientNames.isEmpty()) {
             return "None";
         }
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<Item, Integer> entry : requiredIngredients.entrySet()) {
-            sb.append("\n    - ").append(entry.getKey().getName()).append(": ").append(entry.getValue());
+        for (Map.Entry<String, Integer> entry : requiredIngredientNames.entrySet()) {
+            sb.append("\n    - ").append(entry.getKey()).append(": ").append(entry.getValue());
         }
         return sb.toString();
     }
@@ -136,11 +116,11 @@ public class Recipe {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Recipe recipe = (Recipe) o;
-        return recipeId.equals(recipe.recipeId); // ID Resep dianggap unik
+        return recipeId.equals(recipe.recipeId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(recipeId); // ID Resep digunakan untuk hashCode
+        return Objects.hash(recipeId);
     }
 }

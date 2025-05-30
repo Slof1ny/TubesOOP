@@ -17,10 +17,12 @@ public class HouseMap implements GameMap {
     private static final char BED_SYMBOL = 'B';
     private static final char TV_SYMBOL = 'T';
     private static final char EXIT_SYMBOL = 'X'; // To leave the house
+    private static final char STOVE_SYMBOL = 'S';
 
     // Define specific coordinates for interaction spots
     public static final Point BED_LOCATION = new Point(5, 5); // Example location
     public static final Point TV_LOCATION = new Point(5, 10);  // Example location
+    public static final Point STOVE_LOCATION = new Point(10, 5);
     public static final Point EXIT_LOCATION = new Point(SIZE / 2, SIZE - 1); // Example exit (e.g., "front door" at the bottom edge)
     public static final Point ENTRY_LOCATION = new Point(SIZE / 2, SIZE - 2); // Where player appears when entering
 
@@ -51,6 +53,10 @@ public class HouseMap implements GameMap {
         // TV Interaction Spot
         InteractionSpot tv = new InteractionSpot(TV_LOCATION.x, TV_LOCATION.y, TV_SYMBOL, "TV");
         deployObject(tv, grid[TV_LOCATION.x][TV_LOCATION.y]);
+
+        // Stove Interaction Spot
+        InteractionSpot stove = new InteractionSpot(STOVE_LOCATION.x, STOVE_LOCATION.y, STOVE_SYMBOL, "STOVE"); // "STOVE" type
+        deployObject(stove, grid[STOVE_LOCATION.x][STOVE_LOCATION.y]);
         
         // Exit Spot
         InteractionSpot exit = new InteractionSpot(EXIT_LOCATION.x, EXIT_LOCATION.y, EXIT_SYMBOL, "EXIT_TO_FARM");

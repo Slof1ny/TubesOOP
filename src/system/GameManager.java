@@ -26,6 +26,7 @@ import java.util.List;
 import item.*;
 import action.NPCActions;
 import core.world.HouseMap;
+import  cooking.CookingManager;
 
 public class GameManager {
     private Player player;
@@ -40,6 +41,7 @@ public class GameManager {
     private List<NPC> allNpcs;
     private HouseMap houseMap;
     private GameView gameViewInstance;
+    private CookingManager cookingManager;
 
     public GameManager() {
         // Player initialization might be deferred or updated by PlayerCreationPanel
@@ -57,15 +59,7 @@ public class GameManager {
         player.equipItem("Pickaxe"); //
         player.equipItem("Fishing Rod"); //
 
-        this.allNpcs = new ArrayList<>();
-        this.allNpcs.add(new Abigail());
-        this.allNpcs.add(new Caroline());
-        this.allNpcs.add(new Dasco());
-        this.allNpcs.add(new Emily());
-        this.allNpcs.add(new MayorTadi());
-        this.allNpcs.add(new Orenji());
-        this.allNpcs.add(new Perry());
-
+        this.cookingManager = new CookingManager(player);
 
         farmMap = new FarmMap(player); //
         cityMap = new CityMap(player); //
@@ -88,7 +82,16 @@ public class GameManager {
             System.err.println("Failed to load price_list.csv: " + e.getMessage()); //
         }
 
-        initializeFishingLocations(); // New method to set up fishing
+        initializeFishingLocations(); 
+
+        this.allNpcs = new ArrayList<>();
+        this.allNpcs.add(new Abigail());
+        this.allNpcs.add(new Caroline());
+        this.allNpcs.add(new Dasco());
+        this.allNpcs.add(new Emily());
+        this.allNpcs.add(new MayorTadi());
+        this.allNpcs.add(new Orenji());
+        this.allNpcs.add(new Perry());
 
         gameTime.runTime2(); //
     }
@@ -127,6 +130,10 @@ public class GameManager {
 
     public void setTopInfoBarPanel(TopInfoBarPanel topInfoBarPanel) { // << ADD THIS
         this.topInfoBarPanel = topInfoBarPanel;
+    }
+
+    public CookingManager getCookingManager() { // Added getter
+        return cookingManager;
     }
 
     public GameMap getCurrentMap() { //

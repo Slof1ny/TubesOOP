@@ -82,6 +82,9 @@ public class HouseMapController extends KeyAdapter {
                         String weatherForecast = "Today's weather: " + gameManager.getGameCalendar().getCurrentWeather() +
                                                "\n(Energy -5, Time +15 mins)";
                         JOptionPane.showMessageDialog(houseMapPanel, weatherForecast, "Weather Forecast", JOptionPane.INFORMATION_MESSAGE);
+                    } else if ("STOVE".equals(interactionType)) { // Added STOVE interaction
+                        gameView.showScreen("CookingScreen");
+                        // actionTaken is already true
                     } else if ("EXIT_TO_FARM".equals(interactionType)) {
                         gameManager.transitionMap(gameManager.getFarmMap().getName());
                         // Player position on farm map is set by FarmMap's spawn or transition logic

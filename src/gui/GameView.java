@@ -23,6 +23,7 @@ public class GameView extends JFrame {
     public InventoryScreenPanel inventoryScreenPanel;
     public HouseMapPanel houseMapPanel;
     public HelpScreenPanel helpScreenPanel;
+    public CookingPanel cookingPanel;
 
     public GameView() {
         setTitle("Spakbor Hills");
@@ -52,6 +53,7 @@ public class GameView extends JFrame {
         inventoryScreenPanel = new InventoryScreenPanel(this, gameManager);
         houseMapPanel = new HouseMapPanel(gameManager, this);
         helpScreenPanel = new HelpScreenPanel(this, gameManager);
+        cookingPanel = new CookingPanel(this, gameManager);
 
         // 3. Create screen-specific content panels (WITHOUT PlayerInfoPanel)
         JPanel gameScreenOnlyMapPanel = new JPanel(new BorderLayout());
@@ -74,6 +76,7 @@ public class GameView extends JFrame {
         centerCardPanel.add(inventoryScreenPanel, "InventoryScreen"); 
         centerCardPanel.add(houseMapPanel, "HouseScreen");
         centerCardPanel.add(helpScreenPanel, "HelpScreen"); 
+        centerCardPanel.add(cookingPanel, "CookingScreen");
 
 
         // 5. Set GameView's main layout and add components
@@ -145,6 +148,11 @@ public class GameView extends JFrame {
             houseMapPanel.requestFocusInWindow();
         }   else if (screenName.equals("HelpScreen") && helpScreenPanel.isShowing()) { // << ADD THIS CASE
             helpScreenPanel.onShow(); // Will request focus
+        }   else if (screenName.equals("CookingScreen")) { // Added case for CookingScreen
+            if (cookingPanel.isShowing()){
+                 cookingPanel.onShow(); // Call onShow to refresh and request focus
+                 cookingPanel.requestFocusInWindow();
+            }
         }
     
         // MainMenu doesn't usually need a specific refresh call here for its components

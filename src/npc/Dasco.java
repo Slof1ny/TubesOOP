@@ -8,7 +8,7 @@ public class Dasco extends NPC {
     public Dasco() {
         super("Dasco", "Dasco's Gambling Den",
             Set.of("The Legends of Spakbor", "Cooked Pig's Head", "Wine", "Fugu", "Spakbor Salad"), 
-            Set.of("Fish Sandwich", "Fish Stew", "Baguette", "Fish n’ Chips"), 
+            Set.of("Fish Sandwich", "Fish Stew", "Baguette", "Fish n' Chips"), 
             Set.of("Legend", "Grape", "Cauliflower", "Wheat", "Pufferfish", "Salmon")
         );
     }

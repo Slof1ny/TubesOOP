@@ -5,6 +5,7 @@ import core.player.RelationshipStatus;
 import item.Item;
 import item.Misc;       
 import item.SeedRegistry;
+import item.ItemRegistry;
 import item.CropRegistry;
 import item.FoodRegistry; 
 import fishing.FishRegistry;
@@ -83,6 +84,9 @@ public abstract class NPC {
             }
             if (item == null) {
                 item = FishRegistry.getFishByName(itemName); // (Finally, fish)
+            }
+            if (item == null) {
+                item = ItemRegistry.getItemByName(itemName); // Try the global ItemRegistry
             }
         }
 

@@ -195,12 +195,26 @@ public class GameManager {
         System.out.println("GameManager: Attempting transition to " + destinationMapName);
         if (destinationMapName.equals(farmMap.getName())) {
             currentMap = farmMap;
+            // Simpan lokasi sebelumnya sebelum update
+            String prevLoc = player.getLocation();
             player.setLocation(farmMap.getName());
-            player.setPosition(farmMap.getHouseExitSpawnX(), farmMap.getHouseExitSpawnY()); // Example
+            // Jika sebelumnya dari city, masuk ke farm di entry dari city
+            if (prevLoc != null && prevLoc.equals(cityMap.getName())) {
+                player.setPosition(farmMap.getEntryFromCityX(), farmMap.getEntryFromCityY());
+            } else {
+                player.setPosition(farmMap.getHouseExitSpawnX(), farmMap.getHouseExitSpawnY());
+            }
         } else if (destinationMapName.equals(cityMap.getName())) {
             currentMap = cityMap;
+            String prevLoc = player.getLocation();
             player.setLocation(cityMap.getName());
-            player.setPosition(cityMap.getSize() / 2, 0); // Example
+            // Jika sebelumnya dari farm, masuk ke city di entry dari farm
+            if (prevLoc != null && prevLoc.equals(farmMap.getName())) {
+                // Entry from farm to city is always bottom center (default for your CityMap)
+                player.setPosition(cityMap.getSize() / 2, 0);
+            } else {
+                player.setPosition(cityMap.getSize() / 2, 0); // Default spawn
+            }
         } else if (houseMap != null && destinationMapName.equals(houseMap.getName())) { // Check houseMap is not null
             currentMap = houseMap;
             player.setLocation(houseMap.getName());

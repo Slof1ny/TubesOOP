@@ -100,7 +100,7 @@ public class Tile {
     public boolean isWalkable() {
         // Player can walk on UNTILLED and TILLED land.
         // PLANTED land might be walkable or not depending on game rules (usually walkable before full growth).
-        // DEPLOYED land is generally not walkable.
+        // DEPLOYED land is generally not walkable, except for special cases (handled in map.isWalkable)
         return type == TileType.UNTILLED || type == TileType.TILLED || type == TileType.PLANTED;
     }
 

@@ -209,22 +209,28 @@ public class FarmMap implements GameMap {
         }
     }
 
-    public int getHouseExitSpawnX() {
-    // Find the house object
-    for (DeployedObject obj : objects) {
-        if (obj instanceof core.house.House) {
-            return obj.getX() + obj.getWidth() / 2; // Center below the house
-        }
-    }
-    return SIZE / 2; // Fallback
-}
+    // --- Map transition helpers (see GameMap interface) ---
+    // Map transition helpers (tidak pakai @Override karena belum ada di interface GameMap)
+    public int getExitToCityX() { return SIZE / 2; }
+    public int getExitToCityY() { return SIZE - 1; }
+    public int getEntryFromCityX() { return SIZE / 2; }
+    public int getEntryFromCityY() { return 0; }
 
-public int getHouseExitSpawnY() {
-    for (DeployedObject obj : objects) {
-        if (obj instanceof core.house.House) {
-            return obj.getY() + obj.getHeight(); // Just below the house
+    // Tetap pertahankan helper untuk house exit agar tidak break logic lain
+    public int getHouseExitSpawnX() {
+        for (DeployedObject obj : objects) {
+            if (obj instanceof core.house.House) {
+                return obj.getX() + obj.getWidth() / 2;
+            }
         }
+        return SIZE / 2;
     }
-    return SIZE - 2; // Fallback
-}
+    public int getHouseExitSpawnY() {
+        for (DeployedObject obj : objects) {
+            if (obj instanceof core.house.House) {
+                return obj.getY() + obj.getHeight();
+            }
+        }
+        return SIZE - 2;
+    }
 }

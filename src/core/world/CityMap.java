@@ -93,7 +93,10 @@ public class CityMap implements GameMap {
         objects.add(obj);
         for (int dx = 0; dx < obj.width; dx++) {
             for (int dy = 0; dy < obj.height; dy++) {
-                grid[obj.getX() + dx][obj.getY() + dy].deployObject(obj.getSymbol());
+                int tx = obj.getX() + dx, ty = obj.getY() + dy;
+                grid[tx][ty].deployObject(obj.getSymbol());
+                // If the object is not walkable, ensure the tile is marked as DEPLOYED (not walkable by Tile.isWalkable)
+                // This is for extra safety, but pathfinding and movement should always use map.isWalkable
             }
         }
     }
@@ -121,8 +124,13 @@ public class CityMap implements GameMap {
     @Override
     public boolean isWalkable(int x, int y) {
         if (x < 0 || y < 0 || x >= SIZE || y >= SIZE) return false;
-        // For CityMap, assume all tiles are walkable by default unless they are deployed objects that are NOT walkable.
-        // For example, if a building is not walkable, its deployObject method would have set isWalkable to false implicitly.
+        for (DeployedObject obj : objects) {
+            if (obj.occupies(x, y) && !obj.isWalkable()) return false;
+        }
+        // If any object occupies and is walkable (like EXIT), allow it
+        for (DeployedObject obj : objects) {
+            if (obj.occupies(x, y) && obj.isWalkable()) return true;
+        }
         return grid[x][y].isWalkable();
     }
 

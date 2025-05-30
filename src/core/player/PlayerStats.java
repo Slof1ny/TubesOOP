@@ -2,6 +2,9 @@ package core.player;
 
 import java.util.*;
 
+import item.Fish;
+import fishing.FishType;
+
 public class PlayerStats {
     private Map<String, Integer> itemCount;
     private static final Map<String, List<String>> CATEGORY_MAP = new HashMap<>();

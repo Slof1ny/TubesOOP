@@ -195,12 +195,26 @@ public class GameManager {
         System.out.println("GameManager: Attempting transition to " + destinationMapName);
         if (destinationMapName.equals(farmMap.getName())) {
             currentMap = farmMap;
+            // Simpan lokasi sebelumnya sebelum update
+            String prevLoc = player.getLocation();
             player.setLocation(farmMap.getName());
-            player.setPosition(farmMap.getHouseExitSpawnX(), farmMap.getHouseExitSpawnY()); // Example
+            // Jika sebelumnya dari city, masuk ke farm di entry dari city
+            if (prevLoc != null && prevLoc.equals(cityMap.getName())) {
+                player.setPosition(farmMap.getEntryFromCityX(), farmMap.getEntryFromCityY());
+            } else {
+                player.setPosition(farmMap.getHouseExitSpawnX(), farmMap.getHouseExitSpawnY());
+            }
         } else if (destinationMapName.equals(cityMap.getName())) {
             currentMap = cityMap;
+            String prevLoc = player.getLocation();
             player.setLocation(cityMap.getName());
-            player.setPosition(cityMap.getSize() / 2, 0); // Example
+            // Jika sebelumnya dari farm, masuk ke city di entry dari farm
+            if (prevLoc != null && prevLoc.equals(farmMap.getName())) {
+                // Entry from farm to city is always bottom center (default for your CityMap)
+                player.setPosition(cityMap.getSize() / 2, 0);
+            } else {
+                player.setPosition(cityMap.getSize() / 2, 0); // Default spawn
+            }
         } else if (houseMap != null && destinationMapName.equals(houseMap.getName())) { // Check houseMap is not null
             currentMap = houseMap;
             player.setLocation(houseMap.getName());
@@ -244,6 +258,7 @@ public class GameManager {
     }
 
     public void forcePlayerSleep() {
+<<<<<<< Updated upstream
         // This method is called for the 2 AM pass out OR -20 energy pass out.
         // The JOptionPane for 2 AM is already shown by Time.java before this is called.
         // The JOptionPane for -20 energy is shown here.
@@ -290,6 +305,31 @@ public class GameManager {
             });
         } else {
             System.err.println("GameManager.forcePlayerSleep: gameViewInstance is null, cannot switch to HouseScreen and update UI correctly.");
+=======
+        if (player.getEnergy() <= Player.MIN_ENERGY) {
+            System.out.println("GameManager: Player energy at or below minimum. Forcing sleep.");
+            // Display a message to the player via GUI and autopilot to bed if possible
+            SwingUtilities.invokeLater(() -> {
+                if (gameViewInstance != null && gameViewInstance.isVisible()) {
+                    // Only show the message if not already autopiloting
+                    if (!gameViewInstance.isAutopilotActive()) {
+                        JOptionPane.showMessageDialog(gameViewInstance,
+                            "You've exhausted all your energy and passed out!\nYou will be taken home to rest.",
+                            "Exhausted",
+                            JOptionPane.WARNING_MESSAGE);
+                        gameViewInstance.startAutopilotForceSleep();
+                    }
+                } else {
+                    // Fallback: no GUI, do instant sleep
+                    System.out.println("Player has passed out from exhaustion!");
+                    gameTime.sleep2();
+                    // Optionally, show screen if GUI available
+                    if (gameViewInstance != null) {
+                        SwingUtilities.invokeLater(() -> gameViewInstance.showScreen("GameScreen"));
+                    }
+                }
+            });
+>>>>>>> Stashed changes
         }
     }
 }

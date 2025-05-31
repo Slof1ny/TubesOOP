@@ -66,7 +66,6 @@ TubesOOP is a farming and life simulation game developed in Java using the Swing
     ```bash
     java -cp classes gui.GameView
     ```
-    *(Note: If your project structure or build process differs, adjust the classpath and main class accordingly.)*
 
 ## Key Controls
 

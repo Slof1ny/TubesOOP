@@ -1,84 +1,85 @@
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/Main.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/action/Action.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/action/NPCActions.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/cooking/Coal.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/cooking/CookingManager.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/cooking/CookingTask.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/cooking/Firewood.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/cooking/Fuel.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/cooking/FuelRegistry.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/cooking/RecipeData.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/cooking/UnlockCondition.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/house/Furniture.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/house/House.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/house/Stove.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/player/Gold.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/player/Inventory.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/player/Player.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/player/PlayerStats.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/player/RelationshipStatus.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/world/CityMap.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/world/DeployedObject.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/world/FarmMap.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/world/GameMap.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/world/HouseMap.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/world/InteractionSpot.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/world/Pond.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/world/Season.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/world/ShippingBin.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/world/Tile.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/core/world/Weather.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/fishing/FishingLocation.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/fishing/FishingManager.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/fishing/FishRegistry.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/fishing/FishType.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/fishing/FreeFishingLocation.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/fishing/SpecificFishingLocation.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/CityMapController.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/CityMapPanel.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/CookingPanel.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/EquipmentPanel.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/FarmMapController.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/FarmMapPanel.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/FishingGUIAdapter.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/GameView.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/HelpScreenPanel.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/HouseMapController.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/HouseMapPanel.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/InventoryScreenPanel.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/MainMenu.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/NPCInteractionPanel.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/PlayerCreationPanel.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/PlayerInfoPanel.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/ShippingBinPanel.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/StorePanel.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/gui/TopInfoBarPanel.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/item/Crop.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/item/CropRegistry.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/item/EdibleItem.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/item/Equipment.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/item/EquipmentManager.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/item/Fish.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/item/Food.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/item/FoodRegistry.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/item/Item.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/item/ItemRegistry.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/item/Misc.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/item/Seed.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/item/SeedRegistry.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/npc/Abigail.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/npc/Caroline.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/npc/Dasco.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/npc/Emily.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/npc/MayorTadi.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/npc/NPC.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/npc/Orenji.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/npc/Perry.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/recipe/Recipe.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/system/GameManager.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/system/PriceList.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/system/StatisticsManager.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/system/Store.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/time/GameCalendar.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/time/Time.java"
-"C:/Users/aidan/Kuliah/Institut Teknologi Bandung/Semester 4/oop/tubes/TubesOOP/src/time/TimeRange.java"
+src/cooking/CookingTask.java
+src/cooking/Coal.java
+src/cooking/RecipeData.java
+src/cooking/Firewood.java
+src/cooking/CookingManager.java
+src/cooking/FuelRegistry.java
+src/cooking/Fuel.java
+src/cooking/UnlockCondition.java
+src/fishing/FishingManager.java
+src/fishing/FishType.java
+src/fishing/FishingLocation.java
+src/fishing/FishRegistry.java
+src/fishing/SpecificFishingLocation.java
+src/fishing/FreeFishingLocation.java
+src/core/world/InteractionSpot.java
+src/core/world/FarmMap.java
+src/core/world/Tile.java
+src/core/world/ShippingBin.java
+src/core/world/Weather.java
+src/core/world/GameMap.java
+src/core/world/Pond.java
+src/core/world/HouseMap.java
+src/core/world/CityMap.java
+src/core/world/DeployedObject.java
+src/core/world/Season.java
+src/core/house/Furniture.java
+src/core/house/House.java
+src/core/house/Stove.java
+src/core/player/Inventory.java
+src/core/player/RelationshipStatus.java
+src/core/player/PlayerStats.java
+src/core/player/Player.java
+src/core/player/Gold.java
+src/recipe/Recipe.java
+src/time/TimeRange.java
+src/time/Time.java
+src/time/GameCalendar.java
+src/system/PriceList.java
+src/system/GameManager.java
+src/system/StatisticsManager.java
+src/system/Store.java
+src/action/NPCActions.java
+src/action/Action.java
+src/item/Seed.java
+src/item/Equipment.java
+src/item/EdibleItem.java
+src/item/Food.java
+src/item/EquipmentManager.java
+src/item/FoodRegistry.java
+src/item/SeedRegistry.java
+src/item/ItemRegistry.java
+src/item/Fish.java
+src/item/Crop.java
+src/item/Misc.java
+src/item/CropRegistry.java
+src/item/Item.java
+src/Main.java
+src/gui/CityMapController.java
+src/gui/HouseMapController.java
+src/gui/MainMenu.java
+src/gui/GameView.java
+src/gui/EquipmentPanel.java
+src/gui/PlayerInfoPanel.java
+src/gui/HouseMapPanel.java
+src/gui/TopInfoBarPanel.java
+src/gui/FishingGUIAdapter.java
+src/gui/PlayerCreationPanel.java
+src/gui/NPCInteractionPanel.java
+src/gui/StatisticsPanel.java
+src/gui/FarmMapController.java
+src/gui/ShippingBinPanel.java
+src/gui/FarmMapPanel.java
+src/gui/CookingPanel.java
+src/gui/CityMapPanel.java
+src/gui/HelpScreenPanel.java
+src/gui/InventoryScreenPanel.java
+src/gui/StorePanel.java
+src/npc/Emily.java
+src/npc/MayorTadi.java
+src/npc/NPC.java
+src/npc/Abigail.java
+src/npc/Caroline.java
+src/npc/Dasco.java
+src/npc/Orenji.java
+src/npc/Perry.java

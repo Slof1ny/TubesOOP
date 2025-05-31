@@ -32,15 +32,17 @@ public class FarmMapController extends KeyAdapter {
     private GameCalendar gameCalendar;
     private PlayerInfoPanel playerInfoPanel;
     private GameView gameView; // GameView reference to access GameManager and switch screens
+    private GameManager gameManager;
 
-    public FarmMapController(Player player, FarmMap farmMap, FarmMapPanel farmMapPanel, Time gameTime, GameCalendar gameCalendar, PlayerInfoPanel playerInfoPanel, GameView gameView) {
-        this.player = player;
-        this.farmMap = farmMap;
+    public FarmMapController(GameManager gameManager, FarmMapPanel farmMapPanel, GameView gameView) {
+        this.gameManager = gameManager;
+        this.player = gameManager.getPlayer();
+        this.farmMap = gameManager.getFarmMap();
         this.farmMapPanel = farmMapPanel;
-        this.gameTime = gameTime;
-        this.gameCalendar = gameCalendar;
-        this.playerInfoPanel = playerInfoPanel;
-        this.gameView = gameView; // Initialize GameView
+        this.gameTime = gameManager.getGameTime();
+        this.gameCalendar = gameManager.getGameCalendar();
+        // this.playerInfoPanel = gameManager.getPlayerInfoPanel(); // If playerInfoPanel is still managed by GameManager
+        this.gameView = gameView;
     }
 
     @Override

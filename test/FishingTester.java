@@ -36,7 +36,10 @@ public class FishingTester {
         
         // Create fish registry
         List<Fish> allFish = FishRegistry.buildAll(fishingLocations); // Pass the map here
-        
+
+        // Register all fish items in the global item registry after fishing locations are created
+        item.ItemRegistry.initializeFishItems(fishingLocations);
+
         // Add fish to locations - FIXED: Logic handled within FishRegistry.buildAll or refined here
         // setupFishInLocations(fishingLocations, allFish, time, calendar); // This method is no longer needed in its previous form
 

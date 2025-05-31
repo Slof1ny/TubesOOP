@@ -135,6 +135,16 @@ public class FarmMapPanel extends JPanel {
      * @return The loaded BufferedImage, or null if loading failed.
      */
     private BufferedImage loadImage(String path, String nameForLog) throws IOException {
+        // Try to load from absolute file path first (outside rootpath, e.g. for development override)
+        java.io.File file = new java.io.File(path);
+        if (file.exists()) {
+            try {
+                return ImageIO.read(file);
+            } catch (IOException e) {
+                System.err.println("Error loading image from file: " + path + " (" + nameForLog + "): " + e.getMessage());
+            }
+        }
+        // Fallback: try to load from classpath (inside jar/resources)
         InputStream is = getClass().getResourceAsStream(path);
         if (is == null) {
             System.err.println("Warning: Image not found: " + nameForLog + " (Path: " + path + ")");

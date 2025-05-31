@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class ItemRegistry {
     private static final Map<String, Item> ALL_ITEMS = new HashMap<>();
-    private static Map<String, FishingLocation> gameFishingLocations;
+    private static Map<String, FishingLocation> gameFishingLocations = null;
 
     static {
         // Register Misc items
@@ -37,15 +37,17 @@ public class ItemRegistry {
         for (Food food : FoodRegistry.getAllFood()) {
             ALL_ITEMS.put(food.getName(), food);
         }
+
+        // Fish items are NOT registered here, because fishing locations are not available at static init.
+        // They must be registered at runtime via initializeFishItems().
     }
 
     public static void initializeFishItems(Map<String, FishingLocation> fishingLocations) {
-        if (gameFishingLocations == null) {
-            gameFishingLocations = fishingLocations;
-            List<Fish> allFish = FishRegistry.buildAll(gameFishingLocations);
-            for (Fish fish : allFish) {
-                ALL_ITEMS.put(fish.getName(), fish);
-            }
+        // Always update fish items, even if called multiple times, to ensure registry is up to date.
+        gameFishingLocations = fishingLocations;
+        List<Fish> allFish = FishRegistry.buildAll(gameFishingLocations);
+        for (Fish fish : allFish) {
+            ALL_ITEMS.put(fish.getName(), fish);
         }
     }
 

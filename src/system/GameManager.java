@@ -89,7 +89,8 @@ public class GameManager {
         }
 
         initializeFishingLocations();
-        ItemRegistry.initializeFishItems(fishingLocations); 
+        // Register all fish items in the global item registry after fishing locations are created
+        ItemRegistry.initializeFishItems(fishingLocations);
 
         this.allNpcs = new ArrayList<>();
         this.allNpcs.add(new Abigail());

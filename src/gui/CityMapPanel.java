@@ -63,15 +63,15 @@ public class CityMapPanel extends JPanel {
             // NEW: Load specific 2-tile wide road segment images
             terrainImages.put(Tile.JALAN_COKLAT_KIRI_SYMBOL, loadImage("/resources/asset/png/jalan_coklatKiri.png", "jalan_coklatKiri.png"));
             terrainImages.put(Tile.JALAN_COKLAT_KANAN_SYMBOL, loadImage("/resources/asset/png/jalan_coklatKanan.png", "jalan_coklatKanan.png"));
-            terrainImages.put(Tile.JALAN_COKLAT_ATAS_SYMBOL, loadImage("/resources/asset/png/jalan_coklatAtas.png", "jalan_coklatAtas.png")); // Assuming you have this asset
-            terrainImages.put(Tile.JALAN_COKLAT_BAWAH_SYMBOL, loadImage("/resources/asset/png/jalan_coklatBawah.png", "jalan_coklatBawah.png")); // Assuming you have this asset
-
+            terrainImages.put(Tile.JALAN_COKLAT_ATAS_SYMBOL, loadImage("/resources/asset/png/jalan_coklatAtas.png", "jalan_coklatAtas.png")); 
+            terrainImages.put(Tile.JALAN_COKLAT_BAWAH_SYMBOL, loadImage("/resources/asset/png/jalan_coklatBawah.png", "jalan_coklatBawah.png"));
+            terrainImages.put(Tile.JALAN_TENGAH_SYMBOL, loadImage("/resources/asset/png/jalan_coklatTengah.png", "jalan_coklatTengah.png"));
 
             // Provide fallbacks if any terrain image is missing:
             for (char key : new char[]{Tile.DEFAULT_UNTILLED_CHAR, Tile.RUMPUT_HIJAU_SYMBOL, Tile.BATU_SYMBOL, Tile.AIR_SYMBOL,
                                        Tile.BUNGA_PINK_SYMBOL, Tile.TANAH_SYMBOL, Tile.TILLED_CHAR, Tile.PLANTED_CHAR,
                                        Tile.JALAN_COKLAT_KIRI_SYMBOL, Tile.JALAN_COKLAT_KANAN_SYMBOL,
-                                       Tile.JALAN_COKLAT_ATAS_SYMBOL, Tile.JALAN_COKLAT_BAWAH_SYMBOL}) {
+                                       Tile.JALAN_COKLAT_ATAS_SYMBOL, Tile.JALAN_COKLAT_BAWAH_SYMBOL, }) {
                 if (!terrainImages.containsKey(key) || terrainImages.get(key) == null) {
                     terrainImages.put(key, createFallbackImage(getFallbackColorForSymbol(key)));
                 }

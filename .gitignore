@@ -1,0 +1,21 @@
+# Ignore compiled class files and build output
+target/
+classes/
+
+# Ignore IDE and OS files
+*.iml
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+
+# Ignore sources.txt (build/classpath list)
+sources.txt
+
+# Ignore log files
+*.log
+
+# Ignore backup files
+*~

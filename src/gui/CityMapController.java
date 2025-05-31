@@ -118,9 +118,45 @@ public class CityMapController extends KeyAdapter {
                         System.out.println("Interacting with building: " + buildingName); // Debug print
 
                         if ("Emily's Store".equals(buildingName)) {
-                            gameView.showScreen("StoreScreen");
-                            if (player.getEnergy() >= 5) {
-                                player.setEnergy(player.getEnergy() - 5);
+                            NPC emilyNpc = gameManager.getNpcByName("Emily");
+
+                            if (emilyNpc != null) {
+                                Object[] options = {"Talk to Emily", "Shop", "Cancel"};
+                                int choice = JOptionPane.showOptionDialog(cityMapPanel,
+                                        "What would you like to do at " + buildingName + "?",
+                                        "Emily's Store",
+                                        JOptionPane.YES_NO_CANCEL_OPTION,
+                                        JOptionPane.QUESTION_MESSAGE,
+                                        null,
+                                        options,
+                                        options[0]);
+
+                                if (choice == JOptionPane.YES_OPTION) { // Talk to Emily
+                                    System.out.println("Player chose to talk to Emily.");
+                                    gameView.showNPCInteractionScreen(emilyNpc);
+                                    // Apply energy cost for interaction
+                                    if (player.getEnergy() >= 5) {
+                                        player.setEnergy(player.getEnergy() - 5);
+                                    } else {
+                                        JOptionPane.showMessageDialog(cityMapPanel, "Not enough energy to interact with Emily.", "Energy Low", JOptionPane.WARNING_MESSAGE);
+                                        actionTaken = false;
+                                    }
+                                } else if (choice == JOptionPane.NO_OPTION) { // Shop
+                                    System.out.println("Player chose to shop at Emily's Store.");
+                                    gameView.showScreen("StoreScreen");
+                                    if (player.getEnergy() >= 5) { // Cost for entering store to shop
+                                        player.setEnergy(player.getEnergy() - 5);
+                                    }
+                                } else { // Cancel or closed dialog
+                                    actionTaken = false;
+                                }
+                            } else {
+                                // Fallback if Emily NPC somehow not found, just open store
+                                System.out.println("Emily NPC object not found, defaulting to store screen for: " + buildingName);
+                                gameView.showScreen("StoreScreen");
+                                if (player.getEnergy() >= 5) {
+                                    player.setEnergy(player.getEnergy() - 5);
+                                }
                             }
                         } else {
                             String baseNpcName = buildingName;

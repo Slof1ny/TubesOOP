@@ -192,7 +192,7 @@ public class NPCTester {
                     
                     // If proposal is successful, daysSinceLastProposal is set to 0.
                     if (npc.getRelationshipStatus() == RelationshipStatus.FIANCE) {
-                        npcActions.setDaysSinceLastProposalForTesting(1);
+                        //npcActions.setDaysSinceLastProposalForTesting(1);
                         System.out.println("DEBUG: Days since last proposal set to 1 for marriage test.");
                     }
                     break;

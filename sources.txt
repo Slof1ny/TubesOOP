@@ -1,85 +1,85 @@
-src/cooking/CookingTask.java
-src/cooking/Coal.java
-src/cooking/RecipeData.java
-src/cooking/Firewood.java
-src/cooking/CookingManager.java
-src/cooking/FuelRegistry.java
-src/cooking/Fuel.java
-src/cooking/UnlockCondition.java
-src/fishing/FishingManager.java
-src/fishing/FishType.java
-src/fishing/FishingLocation.java
-src/fishing/FishRegistry.java
-src/fishing/SpecificFishingLocation.java
-src/fishing/FreeFishingLocation.java
-src/core/world/InteractionSpot.java
-src/core/world/FarmMap.java
-src/core/world/Tile.java
-src/core/world/ShippingBin.java
-src/core/world/Weather.java
-src/core/world/GameMap.java
-src/core/world/Pond.java
-src/core/world/HouseMap.java
-src/core/world/CityMap.java
-src/core/world/DeployedObject.java
-src/core/world/Season.java
-src/core/house/Furniture.java
-src/core/house/House.java
-src/core/house/Stove.java
-src/core/player/Inventory.java
-src/core/player/RelationshipStatus.java
-src/core/player/PlayerStats.java
-src/core/player/Player.java
-src/core/player/Gold.java
-src/recipe/Recipe.java
-src/time/TimeRange.java
-src/time/Time.java
-src/time/GameCalendar.java
-src/system/PriceList.java
-src/system/GameManager.java
-src/system/StatisticsManager.java
-src/system/Store.java
-src/action/NPCActions.java
-src/action/Action.java
-src/item/Seed.java
-src/item/Equipment.java
-src/item/EdibleItem.java
-src/item/Food.java
-src/item/EquipmentManager.java
-src/item/FoodRegistry.java
-src/item/SeedRegistry.java
-src/item/ItemRegistry.java
-src/item/Fish.java
-src/item/Crop.java
-src/item/Misc.java
-src/item/CropRegistry.java
-src/item/Item.java
-src/Main.java
-src/gui/CityMapController.java
-src/gui/HouseMapController.java
-src/gui/MainMenu.java
-src/gui/GameView.java
-src/gui/EquipmentPanel.java
-src/gui/PlayerInfoPanel.java
-src/gui/HouseMapPanel.java
-src/gui/TopInfoBarPanel.java
-src/gui/FishingGUIAdapter.java
-src/gui/PlayerCreationPanel.java
-src/gui/NPCInteractionPanel.java
-src/gui/StatisticsPanel.java
-src/gui/FarmMapController.java
-src/gui/ShippingBinPanel.java
-src/gui/FarmMapPanel.java
-src/gui/CookingPanel.java
-src/gui/CityMapPanel.java
-src/gui/HelpScreenPanel.java
-src/gui/InventoryScreenPanel.java
-src/gui/StorePanel.java
-src/npc/Emily.java
-src/npc/MayorTadi.java
-src/npc/NPC.java
-src/npc/Abigail.java
-src/npc/Caroline.java
-src/npc/Dasco.java
-src/npc/Orenji.java
-src/npc/Perry.java
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/Main.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/action/Action.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/action/NPCActions.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/cooking/Coal.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/cooking/CookingManager.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/cooking/CookingTask.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/cooking/Firewood.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/cooking/Fuel.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/cooking/FuelRegistry.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/cooking/RecipeData.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/cooking/UnlockCondition.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/house/Furniture.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/house/House.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/house/Stove.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/player/Gold.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/player/Inventory.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/player/Player.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/player/PlayerStats.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/player/RelationshipStatus.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/world/CityMap.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/world/DeployedObject.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/world/FarmMap.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/world/GameMap.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/world/HouseMap.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/world/InteractionSpot.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/world/Pond.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/world/Season.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/world/ShippingBin.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/world/Tile.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/world/Weather.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/fishing/FishingLocation.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/fishing/FishingManager.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/fishing/FishRegistry.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/fishing/FishType.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/fishing/FreeFishingLocation.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/fishing/SpecificFishingLocation.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/CityMapController.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/CityMapPanel.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/CookingPanel.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/EquipmentPanel.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/FarmMapController.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/FarmMapPanel.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/FishingGUIAdapter.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/GameView.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/HelpScreenPanel.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/HouseMapController.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/HouseMapPanel.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/InventoryScreenPanel.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/MainMenu.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/NPCInteractionPanel.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/PlayerCreationPanel.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/PlayerInfoPanel.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/ShippingBinPanel.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/StatisticsPanel.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/StorePanel.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/gui/TopInfoBarPanel.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/item/Crop.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/item/CropRegistry.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/item/EdibleItem.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/item/Equipment.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/item/EquipmentManager.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/item/Fish.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/item/Food.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/item/FoodRegistry.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/item/Item.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/item/ItemRegistry.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/item/Misc.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/item/Seed.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/item/SeedRegistry.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/npc/Abigail.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/npc/Caroline.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/npc/Dasco.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/npc/Emily.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/npc/MayorTadi.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/npc/NPC.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/npc/Orenji.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/npc/Perry.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/recipe/Recipe.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/system/GameManager.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/system/PriceList.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/system/StatisticsManager.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/system/Store.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/time/GameCalendar.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/time/Time.java"
+"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/time/TimeRange.java"

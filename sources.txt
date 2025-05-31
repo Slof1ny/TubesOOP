@@ -18,7 +18,6 @@
 "D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/player/PlayerStats.java"
 "D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/player/RelationshipStatus.java"
 "D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/world/CityMap.java"
-"D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/world/CityTile.java"
 "D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/world/DeployedObject.java"
 "D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/world/FarmMap.java"
 "D:/Uni/Semester 4/Pemrograman Berorientasi Objek/Tugas Besar/Milestone 2/TubesOOP/src/core/world/GameMap.java"

@@ -238,13 +238,17 @@ public class CityMapController extends KeyAdapter {
         }
     }
 
+    /**
+     * Helper method to check if the player is adjacent to any deployed object on the given map.
+     * Fences are explicitly filtered out.
+     */
     private DeployedObject getAdjacentDeployedObject(GameMap map, Player player) {
         int px = player.getX();
         int py = player.getY();
 
         int[][] adjacentOffsets = {
-            {0, -1}, {0, 1}, {-1, 0}, {1, 0},   
-            {-1, -1}, {-1, 1}, {1, -1}, {1, 1}  
+            {0, -1}, {0, 1}, {-1, 0}, {1, 0},    // Cardinal directions
+            {-1, -1}, {-1, 1}, {1, -1}, {1, 1}   // Diagonals (optional)
         };
 
         for (int[] offset : adjacentOffsets) {
@@ -254,22 +258,23 @@ public class CityMapController extends KeyAdapter {
             if (checkX >= 0 && checkX < map.getSize() && checkY >= 0 && checkY < map.getSize()) {
                 for (DeployedObject obj : map.getDeployedObjects()) {
                     if (obj.occupies(checkX, checkY)) {
+                        // Always allow the exit object (symbol 'X')
                         if (obj.getSymbol() == 'X') {
                             return obj;
                         }
-
+                        // Skip fences
                         if (obj instanceof CityMap.Building) {
                             CityMap.Building building = (CityMap.Building) obj;
                             if ("Fence".equals(building.getBuildingName())) {
-                                continue; 
+                                continue;
                             }
                         }
-
+                        // Return any other non-fence object
                         return obj;
                     }
                 }
             }
         }
-        return null;
+        return null; // No adjacent, non-fence, interactable object found
     }
 }

@@ -71,7 +71,7 @@ public class FarmMapPanel extends JPanel {
             // ---------------------
             // Player image: (16x16)
             // ---------------------
-            // Assuming PlayerBoy_idle.png as default for now. You might want to load based on player.getGender()
+            // Use the same logic as CityMapPanel for player asset
             playerImage = loadImage("resources/asset/png/PlayerBoy_idle.png", "PlayerBoy_idle.png");
             if (playerImage == null) {
                 playerImage = createFallbackImage(Color.RED);
@@ -239,26 +239,52 @@ public class FarmMapPanel extends JPanel {
         int offsetY = (panelHeight - totalMapRenderHeight) / 2;
 
         // 1) Draw every tile’s base terrain or object image
+        // --- Pass 1: Draw terrain and all non-multi-tile objects ---
+        // We'll skip drawing the house and shipping bin here, and draw them in a separate pass as a single image
         for (int y = 0; y < mapSize; y++) {
             for (int x = 0; x < mapSize; x++) {
                 int drawX = offsetX + x * tileSize;
                 int drawY = offsetY + y * tileSize;
 
                 Tile tile = currentFarmMap.getTileAt(x, y);
-                if (tile == null) { // Should not happen if map is properly initialized
-                    g2d.setColor(Color.MAGENTA); // Debug color for null tiles
+                if (tile == null) {
+                    g2d.setColor(Color.MAGENTA);
                     g2d.fillRect(drawX, drawY, tileSize, tileSize);
                     continue;
                 }
 
-                BufferedImage imageToDraw = null;
                 char tileChar = tile.displayChar();
+                boolean isHouseOrigin = false;
+                boolean isShippingBinOrigin = false;
+                // Find house and shipping bin origin (top-left)
+                for (DeployedObject obj : farmMap.getDeployedObjects()) {
+                    if (obj.getSymbol() == Tile.FARM_HOUSE_SYMBOL && obj.getX() == x && obj.getY() == y) {
+                        isHouseOrigin = true;
+                    }
+                    if (obj.getSymbol() == Tile.SHIPPING_BIN_SYMBOL && obj.getX() == x && obj.getY() == y) {
+                        isShippingBinOrigin = true;
+                    }
+                }
 
+                // Skip drawing house/shipping bin tiles except at their origin
+                if ((tileChar == Tile.FARM_HOUSE_SYMBOL && !isHouseOrigin) || (tileChar == Tile.SHIPPING_BIN_SYMBOL && !isShippingBinOrigin)) {
+                    // Draw nothing, will be covered by the multi-tile image
+                    continue;
+                }
+
+                BufferedImage imageToDraw = null;
                 if (tile.getType() == Tile.TileType.DEPLOYED) {
-                    // For deployed objects (house, pond, shipping bin, fence, exit)
-                    imageToDraw = objectImages.get(tileChar);
+                    if (tileChar == Tile.FARM_HOUSE_SYMBOL && isHouseOrigin) {
+                        // Will draw in pass 2
+                        continue;
+                    } else if (tileChar == Tile.SHIPPING_BIN_SYMBOL && isShippingBinOrigin) {
+                        // Will draw in pass 2
+                        continue;
+                    } else {
+                        imageToDraw = objectImages.get(tileChar);
+                    }
                 } else if (tile.getType() == Tile.TileType.PLANTED && tile.getPlantedCrop() != null) {
-                    // For planted crops, draw the tilled soil first, then the crop image
+                    // Draw tilled soil as background
                     BufferedImage tilledSoil = terrainImages.get(Tile.TILLED_CHAR);
                     if (tilledSoil != null) {
                         g2d.drawImage(tilledSoil, drawX, drawY, tileSize, tileSize, null);
@@ -266,30 +292,98 @@ public class FarmMapPanel extends JPanel {
                         g2d.setColor(getFallbackColorForSymbol(Tile.TILLED_CHAR));
                         g2d.fillRect(drawX, drawY, tileSize, tileSize);
                     }
-                    
-                    // Now draw the actual crop image on top
                     Crop plantedCrop = tile.getPlantedCrop();
-                    imageToDraw = cropImages.get(plantedCrop.getName()); // Get image by crop name
-                    // If crop image is null, fall back to generic planted soil image
+                    imageToDraw = cropImages.get(plantedCrop.getName());
                     if (imageToDraw == null) {
                         imageToDraw = terrainImages.get(Tile.PLANTED_CHAR);
                     }
-
+                } else if (tile.getType() == Tile.TileType.TILLED) {
+                    // Draw tilled soil for tilled tiles
+                    imageToDraw = terrainImages.get(Tile.TILLED_CHAR);
                 } else {
-                    // For UNTILLED, TILLED (if not planted), and other terrain types
                     imageToDraw = terrainImages.get(tileChar);
                 }
 
                 if (imageToDraw != null) {
                     g2d.drawImage(imageToDraw, drawX, drawY, tileSize, tileSize, null);
-                } else { // Fallback if image not found for any reason
+                } else {
                     g2d.setColor(getFallbackColorForSymbol(tileChar));
                     g2d.fillRect(drawX, drawY, tileSize, tileSize);
                 }
-                
-                // Draw a border for all tiles for grid visibility
                 g2d.setColor(Color.BLACK);
                 g2d.drawRect(drawX, drawY, tileSize, tileSize);
+            }
+        }
+
+        // --- Pass 2: Draw house and shipping bin as a single image for their full size, with context-aware background ---
+        for (DeployedObject obj : farmMap.getDeployedObjects()) {
+            if (obj.getSymbol() == Tile.FARM_HOUSE_SYMBOL || obj.getSymbol() == Tile.SHIPPING_BIN_SYMBOL) {
+                BufferedImage img = objectImages.get(obj.getSymbol());
+                if (img != null) {
+                    int drawX = offsetX + obj.getX() * tileSize;
+                    int drawY = offsetY + obj.getY() * tileSize;
+                    // For each tile under the object, draw the background based on the nearest outside tile
+                    for (int dx = 0; dx < obj.getWidth(); dx++) {
+                        for (int dy = 0; dy < obj.getHeight(); dy++) {
+                            int tx = obj.getX() + dx;
+                            int ty = obj.getY() + dy;
+                            int tileDrawX = offsetX + tx * tileSize;
+                            int tileDrawY = offsetY + ty * tileSize;
+
+                            // Find the nearest outside tile (left, right, up, down)
+                            Tile neighbor = null;
+                            // Prefer left, then right, then up, then down
+                            if (tx - 1 >= 0 && (dx == 0)) {
+                                neighbor = farmMap.getTileAt(tx - 1, ty);
+                            }
+                            if (neighbor == null && tx + 1 < mapSize && (dx == obj.getWidth() - 1)) {
+                                neighbor = farmMap.getTileAt(tx + 1, ty);
+                            }
+                            if (neighbor == null && ty - 1 >= 0 && (dy == 0)) {
+                                neighbor = farmMap.getTileAt(tx, ty - 1);
+                            }
+                            if (neighbor == null && ty + 1 < mapSize && (dy == obj.getHeight() - 1)) {
+                                neighbor = farmMap.getTileAt(tx, ty + 1);
+                            }
+                            // If still null, try corners (diagonals)
+                            if (neighbor == null && tx - 1 >= 0 && ty - 1 >= 0 && dx == 0 && dy == 0) {
+                                neighbor = farmMap.getTileAt(tx - 1, ty - 1);
+                            }
+                            if (neighbor == null && tx + 1 < mapSize && ty - 1 >= 0 && dx == obj.getWidth() - 1 && dy == 0) {
+                                neighbor = farmMap.getTileAt(tx + 1, ty - 1);
+                            }
+                            if (neighbor == null && tx - 1 >= 0 && ty + 1 < mapSize && dx == 0 && dy == obj.getHeight() - 1) {
+                                neighbor = farmMap.getTileAt(tx - 1, ty + 1);
+                            }
+                            if (neighbor == null && tx + 1 < mapSize && ty + 1 < mapSize && dx == obj.getWidth() - 1 && dy == obj.getHeight() - 1) {
+                                neighbor = farmMap.getTileAt(tx + 1, ty + 1);
+                            }
+
+                            char bgChar = Tile.RUMPUT_HIJAU_SYMBOL; // Default to grass
+                            if (neighbor != null) {
+                                // Use terrain for deployed/terrain/crop
+                                if (neighbor.getType() == Tile.TileType.DEPLOYED) {
+                                    // If neighbor is a fence, pond, etc, use its image
+                                    bgChar = neighbor.displayChar();
+                                } else if (neighbor.getType() == Tile.TileType.PLANTED && neighbor.getPlantedCrop() != null) {
+                                    // Use tilled soil as background for crops
+                                    bgChar = Tile.TILLED_CHAR;
+                                } else {
+                                    bgChar = neighbor.displayChar();
+                                }
+                            }
+                            BufferedImage bgImg = terrainImages.get(bgChar);
+                            if (bgImg != null) {
+                                g2d.drawImage(bgImg, tileDrawX, tileDrawY, tileSize, tileSize, null);
+                            } else {
+                                g2d.setColor(getFallbackColorForSymbol(bgChar));
+                                g2d.fillRect(tileDrawX, tileDrawY, tileSize, tileSize);
+                            }
+                        }
+                    }
+                    // Now draw the object image on top
+                    g2d.drawImage(img, drawX, drawY, obj.getWidth() * tileSize, obj.getHeight() * tileSize, null);
+                }
             }
         }
 

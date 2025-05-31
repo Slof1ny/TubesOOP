@@ -16,10 +16,10 @@ import java.util.Map;
 
 public class HouseMapPanel extends JPanel {
     private GameManager gameManager;
-    private static final Color PLAYER_COLOR = Color.RED;
     private Map<Character, BufferedImage> assetImages = new HashMap<>();
     private BufferedImage floorImage;
     private BufferedImage borderImage;
+    private BufferedImage playerImage;
 
     public HouseMapPanel(GameManager gameManager, GameView gameView) {
         this.gameManager = gameManager;
@@ -30,13 +30,13 @@ public class HouseMapPanel extends JPanel {
     }
 
     private void loadAssetImages() {
-        // Use absolute Windows paths as provided by user
         floorImage = loadImage("resources/asset/png/WoodFloor.png", "Floor");
         borderImage = loadImage("resources/asset/png/WoodFloor_type2.png", "Border");
         assetImages.put('B', loadImage("resources/asset/png/Bed.png", "Bed"));
         assetImages.put('S', loadImage("resources/asset/png/Stove.png", "Stove"));
         assetImages.put('T', loadImage("resources/asset/png/TV.png", "TV"));
-        // You can add more assets here if needed
+        // Player asset (same as CityMapPanel/FarmMapPanel)
+        playerImage = loadImage("resources/asset/png/PlayerBoy_idle.png", "PlayerBoy_idle.png");
     }
 
     @Override
@@ -147,13 +147,16 @@ public class HouseMapPanel extends JPanel {
 
         // Draw player
         if (currentPlayer.getLocation().equals(currentHouseMap.getName())) {
-            g2d.setColor(PLAYER_COLOR);
-            int playerOvalSize = actualTileSize * 3 / 4;
-            int playerOffsetX = (actualTileSize - playerOvalSize) / 2;
-            int playerOffsetY = (actualTileSize - playerOvalSize) / 2;
-            g2d.fillOval(offsetX + currentPlayer.getX() * actualTileSize + playerOffsetX,
-                         offsetY + currentPlayer.getY() * actualTileSize + playerOffsetY,
-                         playerOvalSize, playerOvalSize);
+            int px = currentPlayer.getX();
+            int py = currentPlayer.getY();
+            int drawX = offsetX + px * actualTileSize;
+            int drawY = offsetY + py * actualTileSize;
+            if (playerImage != null) {
+                g2d.drawImage(playerImage, drawX, drawY, actualTileSize, actualTileSize, null);
+            } else {
+                g2d.setColor(Color.RED);
+                g2d.fillOval(drawX, drawY, actualTileSize, actualTileSize);
+            }
         }
     }
 

@@ -56,7 +56,7 @@ public class FarmMap implements GameMap {
             px = Math.max(0, Math.min(px, SIZE - 4));
             py = Math.max(0, Math.min(py, SIZE - 3));
 
-            if (areaFree(px, py, 4, 3) && py != hy + 6) break;
+            if (areaFree(px, py, 4, 3) && (py > hy + 6 || py < hy - 3) && (px > hx + 10 || px < hx - 4)) break;
         }
         Pond pond = new Pond(px, py, 4, 3, 'o');
         deployObject(pond);

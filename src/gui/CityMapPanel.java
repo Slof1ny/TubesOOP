@@ -20,133 +20,131 @@ import core.world.CityMap;
 
 public class CityMapPanel extends JPanel {
     private GameManager gameManager;
-    private CityMap cityMap;
-    private Player player;
+    // private CityMap cityMap; // Fetched from gameManager in paintComponent
+    // private Player player;  // Fetched from gameManager in paintComponent
 
     private Map<Character, BufferedImage> terrainImages;
-    private Map<Character, BufferedImage> objectImages;
+    private Map<Character, BufferedImage> objectImages; // For single-tile representations or keys
+    private Map<String, BufferedImage> buildingImages; // For multi-tile buildings by name/path
     private BufferedImage playerImage;
 
-    private final int TILE_SIZE = 16;
+    // This can be a default or minimum size for assets if needed,
+    // but actual drawing will use dynamically calculated tile size.
+    private static final int BASE_ASSET_SIZE = 16; // Assuming your assets are designed for 16x16 tiles
 
     public CityMapPanel(GameManager gameManager, GameView gameView) {
         this.gameManager = gameManager;
-        this.cityMap = gameManager.getCityMap();
-        this.player = gameManager.getPlayer();
+        // this.cityMap = gameManager.getCityMap(); // No longer storing as a direct field
+        // this.player = gameManager.getPlayer();   // No longer storing as a direct field
 
-        setPreferredSize(new Dimension(cityMap.getSize() * TILE_SIZE, cityMap.getSize() * TILE_SIZE));
-        setBackground(Color.BLACK);
+        // Remove setPreferredSize to allow panel to expand
+        // setPreferredSize(new Dimension(gameManager.getCityMap().getSize() * BASE_ASSET_SIZE, gameManager.getCityMap().getSize() * BASE_ASSET_SIZE));
+        setBackground(Color.BLACK); //
 
         loadImages();
 
-        setFocusable(true);
-        addKeyListener(new CityMapController(gameManager, this, gameView));
+        setFocusable(true); //
+        addKeyListener(new CityMapController(gameManager, this, gameView)); //
     }
 
     private void loadImages() {
-        terrainImages = new HashMap<>();
-        objectImages = new HashMap<>();
+        terrainImages = new HashMap<>(); //
+        objectImages = new HashMap<>(); //
+        buildingImages = new HashMap<>(); // For storing images of uniquely named buildings
+
+        CityMap currentCityMap = gameManager.getCityMap(); // Get instance for loading
+
         try {
-            // Load specific terrain images from your provided assets
-            terrainImages.put('.', loadImage("/resources/asset/png/Jalan-16px.png", "Jalan-16px.png"));
-            terrainImages.put('1', loadImage("/resources/asset/png/JalanHijau-16px.png", "JalanHijau-16px.png")); // Grass asset
-            terrainImages.put('2', loadImage("/resources/asset/png/Stone_Round.png", "Stone_Round.png"));       // Stone asset
-            terrainImages.put('3', loadImage("/resources/asset/png/Kolam_air.png", "Kolam_air.png"));            // Water asset
-            terrainImages.put('4', loadImage("/resources/asset/png/BungaPink.png", "BungaPink.png"));            // Flower asset
-            terrainImages.put('5', loadImage("/resources/asset/png/Tanah-16px.png", "Tanah-16px.png"));          // Tanah asset
+            terrainImages.put('.', loadImage("/resources/asset/png/Jalan-16px.png", "Jalan-16px.png")); //
+            terrainImages.put('1', loadImage("/resources/asset/png/JalanHijau-16px.png", "JalanHijau-16px.png")); //
+            terrainImages.put('2', loadImage("/resources/asset/png/Stone_Round.png", "Stone_Round.png")); //
+            terrainImages.put('3', loadImage("/resources/asset/png/Kolam_air.png", "Kolam_air.png")); //
+            terrainImages.put('4', loadImage("/resources/asset/png/BungaPink.png", "BungaPink.png")); //
+            terrainImages.put('5', loadImage("/resources/asset/png/Tanah-16px.png", "Tanah-16px.png")); //
 
-            // Fallback for terrain images if not found (shouldn't be needed if paths are perfect)
-            if (!terrainImages.containsKey('.')) terrainImages.put('.', createFallbackImage(new Color(128, 128, 128)));
-            if (!terrainImages.containsKey('1')) terrainImages.put('1', createFallbackImage(new Color(100, 200, 100)));
-            if (!terrainImages.containsKey('2')) terrainImages.put('2', createFallbackImage(new Color(150, 150, 150)));
-            if (!terrainImages.containsKey('3')) terrainImages.put('3', createFallbackImage(new Color(50, 50, 200)));
-            if (!terrainImages.containsKey('4')) terrainImages.put('4', createFallbackImage(new Color(200, 100, 200)));
-            if (!terrainImages.containsKey('5')) terrainImages.put('5', createFallbackImage(new Color(139, 69, 19)));
+            if (!terrainImages.containsKey('.')) terrainImages.put('.', createFallbackImage(new Color(128, 128, 128), BASE_ASSET_SIZE)); //
+            // ... (add other fallbacks for terrain if desired, using BASE_ASSET_SIZE)
 
+            playerImage = loadImage("/resources/asset/png/PlayerBoy_idle.png", "PlayerBoy_idle.png"); //
+            if (playerImage == null) playerImage = createFallbackImage(new Color(255, 0, 0), BASE_ASSET_SIZE); //
 
-            playerImage = loadImage("/resources/asset/png/PlayerBoy_idle.png", "PlayerBoy_idle.png"); // Assuming male player for now
-            if (playerImage == null) playerImage = createFallbackImage(new Color(255, 0, 0));
-
-            // Load specific object/building images
-            for (DeployedObject obj : cityMap.getDeployedObjects()) {
+            for (DeployedObject obj : currentCityMap.getDeployedObjects()) { //
                 BufferedImage img = null;
                 String imagePath = null;
+                String objectKey = String.valueOf(obj.getSymbol()); // Default key
 
-                if (obj instanceof CityMap.Building) {
-                    CityMap.Building building = (CityMap.Building) obj;
-                    imagePath = building.getImagePath();
-                } else if (obj.getSymbol() == 'X') {
-                    imagePath = "/resources/asset/png/Door.png";
-                } else if (obj.getSymbol() == 'F') { // Load Fence image
-                    imagePath = "/resources/asset/png/Fence.png";
+                if (obj instanceof CityMap.Building) { //
+                    CityMap.Building building = (CityMap.Building) obj; //
+                    imagePath = building.getImagePath(); //
+                    objectKey = building.getBuildingName(); // Use building name as a key for specific building images
+                    if (imagePath != null && !imagePath.isEmpty()) { //
+                        img = loadImage(imagePath, "Building: " + building.getBuildingName()); //
+                        if (img != null) {
+                            buildingImages.put(objectKey, img);
+                            continue; // Skip adding to generic objectImages if specific building image loaded
+                        }
+                    }
+                } else if (obj.getSymbol() == 'X') { //
+                    imagePath = "/resources/asset/png/Door.png"; //
+                } else if (obj.getSymbol() == 'F') { //
+                    imagePath = "/resources/asset/png/Fence.png"; //
                 }
 
-                if (imagePath != null && !imagePath.isEmpty()) {
-                    img = loadImage(imagePath, "Object for symbol '" + obj.getSymbol() + "'");
+                if (img == null && imagePath != null && !imagePath.isEmpty()) { // Try loading generic symbol if not a specific building
+                     img = loadImage(imagePath, "Object for symbol '" + obj.getSymbol() + "'");
                 }
-
-                if (img == null) {
-                    img = createFallbackImage(getFallbackColorForSymbol(obj.getSymbol()));
+                
+                if (img == null) { //
+                    img = createFallbackImage(getFallbackColorForSymbol(obj.getSymbol()), BASE_ASSET_SIZE); //
                 }
-                objectImages.put(obj.getSymbol(), img);
+                objectImages.put(obj.getSymbol(), img); //
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Critical Error loading images for CityMapPanel: " + e.getMessage());
-            // Fallback if loading fails catastrophically
-            terrainImages.clear(); terrainImages.put('.', createFallbackImage(Color.GRAY));
-            objectImages.clear(); objectImages.put('?', createFallbackImage(Color.RED));
-            playerImage = createFallbackImage(Color.RED);
+            e.printStackTrace(); //
+            System.err.println("Critical Error loading images for CityMapPanel: " + e.getMessage()); //
+            terrainImages.clear(); terrainImages.put('.', createFallbackImage(Color.GRAY, BASE_ASSET_SIZE)); //
+            objectImages.clear(); objectImages.put('?', createFallbackImage(Color.RED, BASE_ASSET_SIZE)); //
+            playerImage = createFallbackImage(Color.RED, BASE_ASSET_SIZE); //
         }
     }
 
-    private BufferedImage loadImage(String path, String nameForWarning) throws IOException {
-        InputStream is = getClass().getResourceAsStream(path);
-        if (is != null) {
+    private BufferedImage loadImage(String path, String nameForWarning) throws IOException { //
+        InputStream is = getClass().getResourceAsStream(path); //
+        if (is != null) { //
             try {
-                return ImageIO.read(is);
+                return ImageIO.read(is); //
             } catch (IOException e) {
-                System.err.println("Error reading image '" + nameForWarning + "' from stream: " + e.getMessage());
-                return null;
+                System.err.println("Error reading image '" + nameForWarning + "' from stream: " + e.getMessage()); //
+                return null; //
             } finally {
-                try { is.close(); } catch (IOException e) { System.err.println("Error closing stream for " + nameForWarning + ": " + e.getMessage()); }
+                try { is.close(); } catch (IOException e) { System.err.println("Error closing stream for " + nameForWarning + ": " + e.getMessage());} //
             }
         } else {
-            System.err.println("Warning: Image '" + nameForWarning + "' not found at path: " + path + ". Using fallback color.");
-            return null;
+            System.err.println("Warning: Image '" + nameForWarning + "' not found at path: " + path); //
+            return null; //
         }
     }
 
-    private BufferedImage createFallbackImage(Color color) {
-        BufferedImage img = new BufferedImage(TILE_SIZE, TILE_SIZE, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = img.createGraphics();
-        g2d.setColor(color);
-        g2d.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
-        g2d.setColor(Color.BLACK);
-        g2d.drawRect(0, 0, TILE_SIZE - 1, TILE_SIZE - 1);
-        g2d.dispose();
-        return img;
+    // Modified to accept a size parameter
+    private BufferedImage createFallbackImage(Color color, int size) { //
+        BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB); //
+        Graphics2D g2d = img.createGraphics(); //
+        g2d.setColor(color); //
+        g2d.fillRect(0, 0, size, size); //
+        g2d.setColor(Color.BLACK); //
+        g2d.drawRect(0, 0, size - 1, size - 1); //
+        g2d.dispose(); //
+        return img; //
     }
 
-    private Color getFallbackColorForSymbol(char symbol) {
+    private Color getFallbackColorForSymbol(char symbol) { //
+        // This method remains largely the same, used if an image fails to load.
         switch (symbol) {
-            case 'S': return new Color(255, 165, 0); // Store color
-            case 'M': return new Color(139, 0, 0); // Mayor color
-            case 'C': return new Color(100, 50, 0); // Carpentry (brown)
-            case 'R': return new Color(150, 150, 200); // Perry (light blue)
-            case 'G': return new Color(80, 0, 80); // Dasco (purple)
-            case 'A': return new Color(255, 192, 203); // Abigail (pink)
-            case 'O': return new Color(255, 140, 0); // Orenji (dark orange)
-            case 'F': return new Color(100, 100, 100); // Fence (dark grey)
-            case 'X': return new Color(0, 150, 0); // Exit (green)
-            // Fallback for terrain symbols if they somehow end up in objectImages map
-            case '.': return new Color(128, 128, 128); // Default road
-            case '1': return new Color(100, 200, 100); // Grass
-            case '2': return new Color(150, 150, 150); // Stone
-            case '3': return new Color(50, 50, 200); // Water
-            case '4': return new Color(200, 100, 200); // Flower
-            case '5': return new Color(139, 69, 19); // Tanah (brown)
-            default:  return new Color(160, 82, 45); // Generic building color
+            case 'S': return new Color(255, 165, 0); //
+            case 'M': return new Color(139, 0, 0);   //
+            // ... (other cases from your file) ...
+            case 'F': return new Color(100,100,100); //
+            default:  return new Color(160, 82, 45); //
         }
     }
 
@@ -156,62 +154,99 @@ public class CityMapPanel extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        if (!gameManager.getCurrentMap().getName().equals(cityMap.getName())) {
+        CityMap currentCityMap = gameManager.getCityMap();
+        Player currentPlayer = gameManager.getPlayer();
+
+        if (!gameManager.getCurrentMap().getName().equals(currentCityMap.getName())) { //
             return;
         }
 
-        Set<DeployedObject> drawnObjects = new HashSet<>(); // To ensure large objects are drawn once
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
+        int mapSize = currentCityMap.getSize();
 
-        // 1. Draw base terrain tiles (roads, grass, stone, water, flowers)
-        for (int y = 0; y < cityMap.getSize(); y++) {
-            for (int x = 0; x < cityMap.getSize(); x++) {
-                int drawX = x * TILE_SIZE;
-                int drawY = y * TILE_SIZE;
+        if (mapSize == 0) return;
 
-                Tile tile = cityMap.getTileAt(x, y);
-                BufferedImage terrainImg = terrainImages.get(tile.displayChar()); // Get image based on terrain char
+        int tileW = panelWidth / mapSize;
+        int tileH = panelHeight / mapSize;
+        int actualTileSize = Math.min(tileW, tileH); // Keep tiles square
+        if (actualTileSize < 1) actualTileSize = 1; // Prevent size 0
+
+        int totalMapRenderWidth = actualTileSize * mapSize;
+        int totalMapRenderHeight = actualTileSize * mapSize;
+        int offsetX = (panelWidth - totalMapRenderWidth) / 2;
+        int offsetY = (panelHeight - totalMapRenderHeight) / 2;
+
+        // 1. Draw base terrain tiles
+        for (int y = 0; y < mapSize; y++) {
+            for (int x = 0; x < mapSize; x++) {
+                int drawX = offsetX + x * actualTileSize;
+                int drawY = offsetY + y * actualTileSize;
+
+                Tile tile = currentCityMap.getTileAt(x, y); //
+                // Default to road if no specific terrain char or image
+                char terrainChar = (tile != null) ? tile.displayChar() : '.'; 
+                BufferedImage terrainImg = terrainImages.get(terrainChar); //
 
                 if (terrainImg != null) {
-                    g2d.drawImage(terrainImg, drawX, drawY, TILE_SIZE, TILE_SIZE, null);
-                } else {
-                    g2d.setColor(getFallbackColorForSymbol(tile.displayChar()));
-                    g2d.fillRect(drawX, drawY, TILE_SIZE, TILE_SIZE);
+                    g2d.drawImage(terrainImg, drawX, drawY, actualTileSize, actualTileSize, null); //
+                } else { // Fallback if image not found
+                    g2d.setColor(getFallbackColorForSymbol(terrainChar)); //
+                    g2d.fillRect(drawX, drawY, actualTileSize, actualTileSize); //
                 }
-                g2d.setColor(Color.BLACK);
-                g2d.drawRect(drawX, drawY, TILE_SIZE, TILE_SIZE);
+                // Optional: draw grid lines
+                // g2d.setColor(Color.DARK_GRAY);
+                // g2d.drawRect(drawX, drawY, actualTileSize, actualTileSize);
             }
         }
 
-        // 2. Draw deployed objects (buildings, exits, fences) once, on top of the terrain tiles
-        for (DeployedObject obj : cityMap.getDeployedObjects()) {
-            if (!drawnObjects.contains(obj)) {
-                BufferedImage objImage = objectImages.get(obj.getSymbol());
-                if (objImage != null) {
-                    int objWidthPixels = obj.getWidth() * TILE_SIZE;
-                    int objHeightPixels = obj.getHeight() * TILE_SIZE;
-                    g2d.drawImage(objImage, obj.getX() * TILE_SIZE, obj.getY() * TILE_SIZE, objWidthPixels, objHeightPixels, null);
-                } else {
-                    g2d.setColor(getFallbackColorForSymbol(obj.getSymbol()));
-                    g2d.fillRect(obj.getX() * TILE_SIZE, obj.getY() * TILE_SIZE, obj.getWidth() * TILE_SIZE, obj.getHeight() * TILE_SIZE);
-                    g2d.setColor(Color.BLACK);
-                    g2d.drawRect(obj.getX() * TILE_SIZE, obj.getY() * TILE_SIZE, obj.getWidth() * TILE_SIZE -1, obj.getHeight() * TILE_SIZE -1);
+        // 2. Draw deployed objects
+        Set<DeployedObject> drawnObjects = new HashSet<>(); //
+        for (DeployedObject obj : currentCityMap.getDeployedObjects()) { //
+            if (!drawnObjects.contains(obj)) { //
+                BufferedImage objImageToDraw = null;
+                String buildingNameKey = null;
+
+                if (obj instanceof CityMap.Building) {
+                    buildingNameKey = ((CityMap.Building) obj).getBuildingName();
+                    objImageToDraw = buildingImages.get(buildingNameKey);
                 }
-                drawnObjects.add(obj);
+                
+                if (objImageToDraw == null) { // Fallback to symbol-based image if specific building image not found
+                    objImageToDraw = objectImages.get(obj.getSymbol());
+                }
+
+                int objOriginX = offsetX + obj.getX() * actualTileSize;
+                int objOriginY = offsetY + obj.getY() * actualTileSize;
+                int objRenderWidth = obj.getWidth() * actualTileSize;
+                int objRenderHeight = obj.getHeight() * actualTileSize;
+
+                if (objImageToDraw != null) { //
+                    g2d.drawImage(objImageToDraw, objOriginX, objOriginY, objRenderWidth, objRenderHeight, null);
+                } else { // Fallback drawing for objects
+                    g2d.setColor(getFallbackColorForSymbol(obj.getSymbol())); //
+                    g2d.fillRect(objOriginX, objOriginY, objRenderWidth, objRenderHeight); //
+                    g2d.setColor(Color.BLACK); //
+                    g2d.drawRect(objOriginX, objOriginY, objRenderWidth -1, objRenderHeight -1); //
+                }
+                drawnObjects.add(obj); //
             }
         }
 
-        // 3. Draw the player on top of everything else
-        if (player.getLocation().equals(cityMap.getName())) {
-            if (playerImage != null) {
-                g2d.drawImage(playerImage, player.getX() * TILE_SIZE, player.getY() * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-            } else {
-                g2d.setColor(new Color(255, 0, 0));
-                g2d.fillOval(player.getX() * TILE_SIZE, player.getY() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        // 3. Draw the player
+        if (currentPlayer.getLocation().equals(currentCityMap.getName())) { //
+            int playerDrawX = offsetX + currentPlayer.getX() * actualTileSize;
+            int playerDrawY = offsetY + currentPlayer.getY() * actualTileSize;
+            if (playerImage != null) { //
+                g2d.drawImage(playerImage, playerDrawX, playerDrawY, actualTileSize, actualTileSize, null);
+            } else { // Fallback for player
+                g2d.setColor(new Color(255, 0, 0)); //
+                g2d.fillOval(playerDrawX, playerDrawY, actualTileSize, actualTileSize); //
             }
         }
     }
 
     public void refreshMap() {
-        repaint();
+        repaint(); //
     }
 }

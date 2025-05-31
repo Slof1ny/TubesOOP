@@ -58,7 +58,7 @@ public class GameView extends JFrame {
         mainMenuPanel.setGameView(this);
 
         playerCreationPanel = new PlayerCreationPanel(this, gameManager);
-        farmMapPanel = new FarmMapPanel(gameManager.getFarmMap(), gameManager.getPlayer(), gameManager.getGameTime(), gameManager.getGameCalendar(), null, this);
+        farmMapPanel = new FarmMapPanel(gameManager, this);
         cityMapPanel = new CityMapPanel(gameManager, this);
         storePanel = new StorePanel(this, gameManager.getGameStore(), gameManager);
         shippingBinPanel = new ShippingBinPanel(this, gameManager);

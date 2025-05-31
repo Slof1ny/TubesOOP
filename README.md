@@ -1,10 +1,10 @@
 # TubesOOP
 
 ## CREATOR
-Muhammad Aidan Fathullah 	18223002
-Henrycus Hugatama Risaldy 	18223008
-Nathan Priandi Lesmana 	    18223032
-Farella Kamala Budianto 	18223046
+* Muhammad Aidan Fathullah 	    18223002
+* Henrycus Hugatama Risaldy 	18223008
+* Nathan Priandi Lesmana 	    18223032
+* Farella Kamala Budianto 	    18223046
 
 ## Overview
 

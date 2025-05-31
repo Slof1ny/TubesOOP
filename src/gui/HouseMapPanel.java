@@ -36,7 +36,44 @@ public class HouseMapPanel extends JPanel {
         assetImages.put('S', loadImage("resources/asset/png/Stove.png", "Stove"));
         assetImages.put('T', loadImage("resources/asset/png/TV.png", "TV"));
         // Player asset (same as CityMapPanel/FarmMapPanel)
-        playerImage = loadImage("resources/asset/png/PlayerBoy_idle.png", "PlayerBoy_idle.png");
+        String gender = gameManager.getPlayer().getGender();
+        String playerImgPath;
+        String playerImgLog;
+        if ("Female".equalsIgnoreCase(gender)) {
+            playerImgPath = "resources/asset/png/PlayerGirl_idle.png";
+            playerImgLog = "PlayerGirl_idle.png";
+        } else if ("Other".equalsIgnoreCase(gender)) {
+            playerImgPath = "resources/asset/png/Orenji.png";
+            playerImgLog = "Orenji.png";
+        } else {
+            playerImgPath = "resources/asset/png/PlayerBoy_idle.png";
+            playerImgLog = "PlayerBoy_idle.png";
+        }
+        playerImage = loadImage(playerImgPath, playerImgLog);
+        if (playerImage == null) {
+            playerImage = null;
+        }
+    }
+
+    /**
+     * Reloads the player image based on the current gender (call after gender change).
+     */
+    public void reloadPlayerImage() {
+        String gender = gameManager.getPlayer().getGender();
+        String playerImgPath;
+        String playerImgLog;
+        if ("Female".equalsIgnoreCase(gender)) {
+            playerImgPath = "resources/asset/png/PlayerGirl_idle.png";
+            playerImgLog = "PlayerGirl_idle.png";
+        } else if ("Other".equalsIgnoreCase(gender)) {
+            playerImgPath = "resources/asset/png/Orenji.png";
+            playerImgLog = "Orenji.png";
+        } else {
+            playerImgPath = "resources/asset/png/PlayerBoy_idle.png";
+            playerImgLog = "PlayerBoy_idle.png";
+        }
+        playerImage = loadImage(playerImgPath, playerImgLog);
+        repaint();
     }
 
     @Override

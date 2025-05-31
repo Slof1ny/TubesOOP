@@ -47,11 +47,10 @@ public class GameManager {
     private boolean statisticsScreenShown = false;
 
     public GameManager() {
-        // Player initialization might be deferred or updated by PlayerCreationPanel
-        player = new Player("Dr. Asep Spakbor", "Male"); // Default, will be changed
-        player.getGold().add(3500); //
-        player.getInventory().addItem(item.SeedRegistry.getSeedByName("Wheat Seeds"), 5); //
-        player.getInventory().addItem(new item.Food("Fish n' Chips", 150, 135, 50), 2); //
+        player = new Player("Dr. Asep Spakbor", "Male");
+        player.getGold().add(500);
+        player.getInventory().addItem(item.SeedRegistry.getSeedByName("Wheat Seeds"), 5);
+        player.getInventory().addItem(new item.Food("Fish n' Chips", 150, 135, 50), 2);
         Item coalFromRegistry = ItemRegistry.getItemByName("Coal");
         if (coalFromRegistry != null) {
             player.getInventory().addItem(coalFromRegistry, 10);
@@ -59,7 +58,6 @@ public class GameManager {
             System.err.println("WARN: GameManager constructor - Coal not found in ItemRegistry. Initial Coal not added.");
         }
         
-        // Equip tools - ensure equipment added by Player constructor is accessible by name
         player.equipItem("Hoe"); //
         player.equipItem("Watering Can"); //
         player.equipItem("Pickaxe"); //

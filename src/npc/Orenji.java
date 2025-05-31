@@ -7,7 +7,7 @@ import java.util.Set;
 public class Orenji extends NPC {
     public Orenji() {
         super(
-            "Orenji si Kucing Barista",
+            "Orenji",
             "Warung Kopi Orenji (Tersembunyi)",
             Set.of("Premium Coffee Bean", "Catnip Supreme"),
             Set.of("Baguette", "Warm Milk"), 

@@ -112,38 +112,40 @@ public class CityMapController extends KeyAdapter {
                             actionTaken = false; // Player cancelled
                         }
                     }
-                    else if (interactedObject instanceof CityMap.Building) {
+                     else if (interactedObject instanceof CityMap.Building) {
                         CityMap.Building building = (CityMap.Building) interactedObject;
                         String buildingName = building.getBuildingName();
+                        System.out.println("Interacting with building: " + buildingName); // Debug print
 
-                        // Handle specific building interactions (Store, NPC homes)
                         if ("Emily's Store".equals(buildingName)) {
                             gameView.showScreen("StoreScreen");
-                            if (player.getEnergy() >= 5) { // Assuming a cost for entering store
+                            if (player.getEnergy() >= 5) {
                                 player.setEnergy(player.getEnergy() - 5);
-                            } else {
-                                JOptionPane.showMessageDialog(
-                                    cityMapPanel,
-                                    "Not enough energy to enter " + buildingName + ".",
-                                    "Energy Low",
-                                    JOptionPane.WARNING_MESSAGE
-                                );
-                                actionTaken = false; // Failed due to low energy
                             }
                         } else {
-                            // Try to find an NPC associated with this building
-                            String baseNpcName = buildingName
+                            String baseNpcName = buildingName;
+                            if ("Mayor's Manor".equals(buildingName)) {
+                                baseNpcName = "Mayor Tadi";
+                            }
+                            else if ("Orenji si Kucing Barista".equals(buildingName)) {
+                                baseNpcName = "Orenji";
+                            }
+                            else {
+                                // Generic parsing for other NPC names from building names
+                                baseNpcName = buildingName
                                     .replace("'s Manor", "")
                                     .replace("'s Carpentry", "")
                                     .replace("'s Cabin", "")
                                     .replace("'s Gambling Den", "")
                                     .replace("'s Tent", "")
-                                    .replace("si Kucing Barista", "")
+                                    .replace("si Kucing Barista", "") // Ensure this is also removed if not caught by specific if
                                     .trim();
-
+                            }
+                            System.out.println("Attempting to find NPC with name: " + baseNpcName); // Debug print
                             NPC targetNpc = gameManager.getNpcByName(baseNpcName);
 
                             if (targetNpc != null) {
+                                System.out.println("NPC found: " + targetNpc.getName() + ". Showing interaction screen."); // Debug print
                                 gameView.showNPCInteractionScreen(targetNpc);
                                 if (player.getEnergy() >= 5) { // Assuming a cost for meeting NPC
                                     player.setEnergy(player.getEnergy() - 5);
@@ -157,10 +159,11 @@ public class CityMapController extends KeyAdapter {
                                     actionTaken = false;
                                 }
                             } else {
+                                System.out.println("NPC not found for building: " + buildingName + ". Looked for NPC named: " + baseNpcName); // Debug print
                                 // Generic message for other buildings that don't have special screens or recognized NPCs
                                 JOptionPane.showMessageDialog(
                                     cityMapPanel,
-                                    "You are interacting with " + buildingName + "!",
+                                    "You are interacting with " + buildingName + ", but no NPC found for interaction.",
                                     "Interact",
                                     JOptionPane.INFORMATION_MESSAGE
                                 );

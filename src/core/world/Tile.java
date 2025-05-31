@@ -55,7 +55,7 @@ public class Tile {
     public static final char JALAN_COKLAT_KANAN_SYMBOL = 'R'; // Custom symbol for Jalan_coklatKanan.png
     public static final char JALAN_COKLAT_ATAS_SYMBOL = 'U'; // Custom symbol for Jalan_coklatAtas.png
     public static final char JALAN_COKLAT_BAWAH_SYMBOL = 'D'; // Custom symbol for Jalan_coklatBawah.png
-
+    public static final char JALAN_TENGAH_SYMBOL = 'T'; // Custom symbol for Jalan_coklatTengah.png
 
     // Farm-specific terrain/state symbols (often used by `displayChar()` directly)
     public static final char TILLED_CHAR = 't';

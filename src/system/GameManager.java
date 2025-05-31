@@ -49,7 +49,7 @@ public class GameManager {
     public GameManager() {
         // Player initialization might be deferred or updated by PlayerCreationPanel
         player = new Player("Dr. Asep Spakbor", "Male"); // Default, will be changed
-        player.getGold().add(500); //
+        player.getGold().add(3500); //
         player.getInventory().addItem(item.SeedRegistry.getSeedByName("Wheat Seeds"), 5); //
         player.getInventory().addItem(new item.Food("Fish n' Chips", 150, 135, 50), 2); //
         Item coalFromRegistry = ItemRegistry.getItemByName("Coal");
@@ -100,7 +100,7 @@ public class GameManager {
         this.allNpcs.add(new Orenji());
         this.allNpcs.add(new Perry());
 
-        gameTime.runTime2(); //
+        //gameTime.runTime2(); //
     }
 
     private void initializeFishingLocations() {

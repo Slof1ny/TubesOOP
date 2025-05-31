@@ -12,13 +12,12 @@ import time.Time;
 public class NPCActions {
     private Player player;
     // private GameManager gameManager; // Untuk mengelola waktu, hari, musim, dll.
-    private int daysSinceLastProposal; // Untuk melacak syarat menikah
+
     private Time time;
 
     public NPCActions(Player player, Time time) {
         this.player = player;
         this.time = time;
-        this.daysSinceLastProposal = -1; // Belum ada proposal yang aktif
     }
 
     /**
@@ -108,116 +107,92 @@ public class NPCActions {
         if (!hasProposalRing) {
             return "Kamu membutuhkan Proposal Ring untuk melamar!";
         }
-        if (player.getEnergy() < (Player.MIN_ENERGY + 10)) {
+        if (player.getEnergy() < (Player.MIN_ENERGY + 10)) { // Ensure player can afford the energy cost
             return "Energi tidak cukup untuk melamar.";
         }
-
-        if (!player.isSingle()) {
-            return "Kamu sudah bertunangan atau menikah dengan " + player.getPartner().getName() + ". Kamu tidak bisa melamar NPC lain.";
+        // Check if player is already committed, using the relationship status with their current partner
+        if (player.getPartner() != null && player.getRelationshipStatus(player.getPartner()) != RelationshipStatus.SINGLE) {
+             return "Kamu sudah memiliki komitmen dengan " + player.getPartner().getName() + ". Kamu tidak bisa melamar NPC lain.";
         }
-        time.advanceGameMinutes(60); 
+        
+        time.advanceGameMinutes(60);
 
-        if (npc.getHeartPoints() >= NPC.MAX_HEART_POINTS) {
-            player.setEnergy(player.getEnergy() - 10); 
-            npc.setRelationshipStatus(RelationshipStatus.FIANCE);
-            player.setRelationshipStatus(npc, RelationshipStatus.FIANCE);
-            player.setPartner(npc); 
-            this.daysSinceLastProposal = 0;
+        if (npc.getHeartPoints() >= NPC.MAX_HEART_POINTS && npc.getRelationshipStatus() == RelationshipStatus.SINGLE) { // NPC must also be single
+            player.setEnergy(player.getEnergy() - 10);
+            npc.setRelationshipStatus(RelationshipStatus.FIANCE); // Set NPC's status
+            player.setRelationshipStatus(npc, RelationshipStatus.FIANCE); // Sets player's status and partner
+            player.setDaysSinceProposalWithPartner(0); // MODIFIED: Set on player object
             return npc.getName() + " menerima lamaranmu! Kalian sekarang bertunangan.\n" +
                    "Energi pemain: " + player.getEnergy() + ". (Waktu +1 jam)";
         } else {
-            player.setEnergy(player.getEnergy() - 20); 
-            return npc.getName() + " menolak lamaranmu. Mungkin kamu perlu lebih dekat dengannya ("+ npc.getHeartPoints() + "/" + NPC.MAX_HEART_POINTS + " hati).\n" +
+            player.setEnergy(player.getEnergy() - 20);
+             String reason = npc.getHeartPoints() < NPC.MAX_HEART_POINTS ? "hatimu belum cukup dekat ("+ npc.getHeartPoints() + "/" + NPC.MAX_HEART_POINTS + " hati)." : "NPC tersebut tidak lajang.";
+            return npc.getName() + " menolak lamaranmu. Mungkin " + reason + "\n" +
                    "Energi pemain: " + player.getEnergy() + ". (Waktu +1 jam)";
         }
     }
 
-    /**
-     * Aksi Marry dengan NPC.
-     * Syarat: NPC status Fiance, minimal 1 hari setelah proposal, player punya Proposal Ring.
-     * Efek: -80 energi, waktu skip ke 22.00 (konseptual), NPC jadi Spouse.
-     * @param npc NPC yang akan dinikahi.
-     * @param hasProposalRing Apakah player memiliki Proposal Ring.
-     * @return Pesan hasil interaksi.
-     */
     public String marryNPC(NPC npc, boolean hasProposalRing) {
         if (npc == null) return "NPC tidak valid untuk dinikahi.";
         
-        if (player.getPartner() != npc || npc.getRelationshipStatus() != RelationshipStatus.FIANCE) {
+        // Check if the NPC is the player's current partner and their status with the player is FIANCE
+        if (player.getPartner() != npc || player.getRelationshipStatus(npc) != RelationshipStatus.FIANCE) {
             return "Kamu hanya bisa menikahi " + npc.getName() + " jika dia adalah tunanganmu.";
         }
-
-        if (daysSinceLastProposal < 1) { 
+        
+        // MODIFIED: Check player's daysSinceProposalWithPartner
+        if (player.getDaysSinceProposalWithPartner() < 1) {
             return "Kamu baru saja bertunangan dengan " + npc.getName() + ". Pernikahan bisa dilakukan paling cepat besok.";
         }
-        
         if (!hasProposalRing) {
             return "Kamu membutuhkan Proposal Ring untuk menikah!";
         }
-        if (player.getEnergy() < (Player.MIN_ENERGY + 80)) { 
+        if (player.getEnergy() < (Player.MIN_ENERGY + 80)) { // Ensure player can afford energy
             return "Energi tidak cukup untuk upacara pernikahan.";
         }
 
-        player.setEnergy(player.getEnergy() - 80); 
+        player.setEnergy(player.getEnergy() - 80);
         time.skipTo(22, 0);
-        player.setLocation("House");
+        // Player location might change based on game design, e.g., to HouseMap
+        // For now, assuming the caller or GameManager handles location change post-marriage event.
+        // player.setLocation("House"); // Example if they auto-move to house
 
-        npc.setRelationshipStatus(RelationshipStatus.MARRIED);
+        // This will set NPC's status to MARRIED, player's status with NPC to MARRIED,
+        // confirm NPC as partner, and reset daysSinceProposalWithPartner in Player.
         player.setRelationshipStatus(npc, RelationshipStatus.MARRIED); 
-
-        this.daysSinceLastProposal = -1; 
-        player.setPartner(npc); 
+        npc.setRelationshipStatus(RelationshipStatus.MARRIED); // Also ensure NPC's own status is updated
 
         return "Selamat! Kamu dan " + npc.getName() + " sekarang resmi menikah!\n" +
-               "Hari ini dihababiskan untuk merayakannya. (Waktu melompat ke 22.00)\n" +
+               "Hari ini dihabiskan untuk merayakannya. (Waktu melompat ke 22.00)\n" +
                "Energi pemain: " + player.getEnergy() + ".";
     }
-
-    /**
-     * Aksi untuk bercerai dengan pasangan saat ini.
-     * Syarat: Player harus sudah menikah.
-     * Efek:
-     * - Mengurangi heartPoints pasangan secara drastis.
-     * - Mengubah status hubungan pasangan menjadi SINGLE.
-     * - Mengubah status hubungan player dengan pasangan menjadi SINGLE.
-     * - Menghapus referensi pasangan dari player.
-     * - Mengembalikan Proposal Ring ke inventory player (jika ada, atau diasumsikan player selalu memilikinya).
-     * @return Pesan hasil interaksi.
-     */
+    
     public String divorceNPC() {
         if (player.getPartner() == null || player.getRelationshipStatus(player.getPartner()) != RelationshipStatus.MARRIED) {
             return "Kamu tidak memiliki pasangan untuk diceraikan.";
         }
-
         NPC formerPartner = player.getPartner();
-
-        formerPartner.addHeartPoints(-NPC.MAX_HEART_POINTS);
+        formerPartner.addHeartPoints(-NPC.MAX_HEART_POINTS); // Drastically reduce hearts
         System.out.println(formerPartner.getName() + "'s heart points drastically reduced due to divorce.");
-        formerPartner.setRelationshipStatus(RelationshipStatus.SINGLE);
-        player.setRelationshipStatus(formerPartner, RelationshipStatus.SINGLE);
-        player.setPartner(null);
+        
+        // Player.setRelationshipStatus handles resetting player's partner and daysSinceProposal counter
+        player.setRelationshipStatus(formerPartner, RelationshipStatus.SINGLE); 
+        formerPartner.setRelationshipStatus(RelationshipStatus.SINGLE); // NPC also becomes single
 
-
-        time.advanceGameMinutes(30);
+        time.advanceGameMinutes(30); // Time passes for the divorce proceedings
         return "Kamu telah resmi bercerai dengan " + formerPartner.getName() + ".\n" +
                "Hubunganmu dengannya kini kembali ke awal.";
     }
 
-    /**
-     * Metode ini seharusnya dipanggil oleh GameManager setiap kali hari berganti
-     * untuk mengupdate status penantian pernikahan.
-     */
     public void incrementDayForMarriageCheck() {
-        if (daysSinceLastProposal != -1) { // Hanya jika ada proposal yang aktif (status FIANCE)
-            daysSinceLastProposal++;
+        // MODIFY: Check and increment player's daysSinceProposalWithPartner
+        // This should only increment if the player is engaged (FIANCE) to their current partner.
+        if (player.getPartner() != null && player.getRelationshipStatus(player.getPartner()) == RelationshipStatus.FIANCE) {
+            int currentDays = player.getDaysSinceProposalWithPartner();
+            if (currentDays != -1) { // Only if a proposal is effectively active (0 or more)
+                player.setDaysSinceProposalWithPartner(currentDays + 1);
+                System.out.println("DEBUG: Days since proposal with " + player.getPartner().getName() + " incremented to: " + player.getDaysSinceProposalWithPartner());
+            }
         }
-    }
-
-    /**
-     * Untuk keperluan testing atau debugging, memungkinkan set manual.
-     * @param days Jumlah hari sejak proposal terakhir.
-     */
-    public void setDaysSinceLastProposalForTesting(int days) {
-        this.daysSinceLastProposal = days;
     }
 }

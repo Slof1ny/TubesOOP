@@ -24,6 +24,7 @@ public class Player {
     private HashMap<NPC, RelationshipStatus> relationships = new HashMap<>();
     private ShippingBin shippingBin;
     private String currentLocation;
+    private int daysSinceProposalWithPartner = -1;
 
     public Player(String name, String gender) {
         this.name = name;
@@ -146,8 +147,22 @@ public class Player {
         return partner;
     }
 
+    public int getDaysSinceProposalWithPartner() {
+        return daysSinceProposalWithPartner;
+    }
+
+    public void setDaysSinceProposalWithPartner(int days) {
+        this.daysSinceProposalWithPartner = days;
+    }
+
+    // MODIFIED setPartner
     public void setPartner(NPC partner) {
         this.partner = partner;
+        if (this.partner == null) { // If unsetting partner
+            this.daysSinceProposalWithPartner = -1; // Reset proposal counter
+        }
+        // If setting a new partner, the proposal counter should be managed by the proposal logic itself
+        // or when relationship status changes.
     }
 
     public RelationshipStatus getRelationshipStatus(NPC npc) {
@@ -155,20 +170,40 @@ public class Player {
     }
 
     public void setRelationshipStatus(NPC npc, RelationshipStatus status) {
-    if (status == RelationshipStatus.FIANCE || status == RelationshipStatus.MARRIED) {
-        if (partner != null && partner != npc) {
-            System.out.println("You already have a partner.");
-            return;
-        }
-        relationships.put(npc, status);
-        partner = npc;
-    } else {
-        relationships.remove(npc);
-        if (partner == npc) {
-            partner = null;
+        if (npc == null) return;
+
+        RelationshipStatus oldStatusWithNpc = relationships.getOrDefault(npc, RelationshipStatus.SINGLE);
+
+        if (status == RelationshipStatus.FIANCE) {
+            if (partner != null && partner != npc && getRelationshipStatus(partner) != RelationshipStatus.SINGLE) { // Check current partner's status with player
+                System.out.println("Kamu sudah memiliki komitmen dengan " + partner.getName() + ". Tidak bisa bertunangan dengan " + npc.getName());
+                return;
+            }
+            partner = npc; // Set this NPC as the current partner
+            relationships.put(npc, RelationshipStatus.FIANCE);
+            // daysSinceProposalWithPartner will be set to 0 by NPCActions.proposeToNPC when a proposal is made
+            System.out.println(name + " is now FIANCE with " + npc.getName());
+        } else if (status == RelationshipStatus.MARRIED) {
+            if (partner != npc || oldStatusWithNpc != RelationshipStatus.FIANCE) {
+                System.out.println("Tidak bisa menikah dengan " + npc.getName() + " kecuali dia adalah tunanganmu saat ini.");
+                return;
+            }
+            relationships.put(npc, RelationshipStatus.MARRIED);
+            // partner remains npc
+            daysSinceProposalWithPartner = -1; // Reset counter upon marriage
+            System.out.println(name + " is now MARRIED to " + npc.getName());
+        } else if (status == RelationshipStatus.SINGLE) {
+            relationships.put(npc, RelationshipStatus.SINGLE); // Set this NPC to single in player's map
+            if (partner == npc) { // If this NPC *was* the current partner
+                NPC tempPartner = partner; // for logging
+                partner = null;
+                daysSinceProposalWithPartner = -1;
+                System.out.println(name + " is now SINGLE from " + (tempPartner != null ? tempPartner.getName() : "Unknown") + ". Partner and proposal counter reset.");
+            } else {
+                System.out.println(name + "'s relationship with " + npc.getName() + " is now SINGLE.");
+            }
         }
     }
-}
 
     public HashMap<NPC, RelationshipStatus> getAllRelationships() {
         return relationships;

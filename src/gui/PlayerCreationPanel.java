@@ -157,6 +157,14 @@ public class PlayerCreationPanel extends JPanel {
                     gameManager.getTopInfoBarPanel().refreshInfo();
                 }
                 
+                // ADD THIS LINE TO START THE GAME TIME:
+                if (gameManager.getGameTime() != null) {
+                    gameManager.getGameTime().runTime2(); // Start the time progression
+                    System.out.println("PlayerCreationPanel: Game time started.");
+                } else {
+                    System.err.println("PlayerCreationPanel: Error - gameTime is null in GameManager. Time not started.");
+                }
+                
                 gameManager.transitionMap(gameManager.getFarmMap().getName());
                 gameView.showScreen("GameScreen");
             }

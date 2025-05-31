@@ -120,35 +120,35 @@ public class HouseMapPanel extends JPanel {
     public void refreshMap() {
         repaint(); //
     }
-        /**
-     * Helper to load a PNG from an absolute file path first, then fallback to classpath resource.
-     * @param path The file path or resource path (e.g., "resources/asset/png/image.png").
-     * @param nameForLog A descriptive name for logging purposes.
-     * @return The loaded BufferedImage, or null if loading failed.
-     */
-    private BufferedImage loadImage(String path, String nameForLog) {
-        // Try to load from absolute file path first (outside rootpath, e.g. for development override)
-        java.io.File file = new java.io.File(path);
-        if (file.exists()) {
-            try {
-                return javax.imageio.ImageIO.read(file);
-            } catch (Exception e) {
-                System.err.println("Error loading image from file: " + path + " (" + nameForLog + "): " + e.getMessage());
-            }
-        }
-        // Fallback: try to load from classpath (inside jar/resources)
-        java.io.InputStream is = getClass().getResourceAsStream(path);
-        if (is == null) {
-            System.err.println("Warning: Image not found: " + nameForLog + " (Path: " + path + ")");
-            return null;
-        }
-        try {
-            return javax.imageio.ImageIO.read(is);
-        } catch (Exception e) {
-            System.err.println("Error loading image from resource: " + path + " (" + nameForLog + "): " + e.getMessage());
-            return null;
-        } finally {
-            try { is.close(); } catch (Exception e) { System.err.println("Error closing stream for " + nameForLog + ": " + e.getMessage()); }
-        }
-    }
+    //     /**
+    //  * Helper to load a PNG from an absolute file path first, then fallback to classpath resource.
+    //  * @param path The file path or resource path (e.g., "resources/asset/png/image.png").
+    //  * @param nameForLog A descriptive name for logging purposes.
+    //  * @return The loaded BufferedImage, or null if loading failed.
+    //  */
+    // private BufferedImage loadImage(String path, String nameForLog) {
+    //     // Try to load from absolute file path first (outside rootpath, e.g. for development override)
+    //     java.io.File file = new java.io.File(path);
+    //     if (file.exists()) {
+    //         try {
+    //             return javax.imageio.ImageIO.read(file);
+    //         } catch (Exception e) {
+    //             System.err.println("Error loading image from file: " + path + " (" + nameForLog + "): " + e.getMessage());
+    //         }
+    //     }
+    //     // Fallback: try to load from classpath (inside jar/resources)
+    //     java.io.InputStream is = getClass().getResourceAsStream(path);
+    //     if (is == null) {
+    //         System.err.println("Warning: Image not found: " + nameForLog + " (Path: " + path + ")");
+    //         return null;
+    //     }
+    //     try {
+    //         return javax.imageio.ImageIO.read(is);
+    //     } catch (Exception e) {
+    //         System.err.println("Error loading image from resource: " + path + " (" + nameForLog + "): " + e.getMessage());
+    //         return null;
+    //     } finally {
+    //         try { is.close(); } catch (Exception e) { System.err.println("Error closing stream for " + nameForLog + ": " + e.getMessage()); }
+    //     }
+    // }
 }

@@ -51,21 +51,22 @@ public class CityMapPanel extends JPanel {
             // ---------------------
             // Terrain images: (16x16)
             // ---------------------
-            terrainImages.put(Tile.DEFAULT_UNTILLED_CHAR, loadImage("/resources/asset/png/Jalan-16px.png", "Jalan-16px.png"));
-            terrainImages.put(Tile.RUMPUT_HIJAU_SYMBOL, loadImage("/resources/asset/png/JalanHijau-16px.png", "JalanHijau-16px.png"));
-            terrainImages.put(Tile.BATU_SYMBOL, loadImage("/resources/asset/png/Stone_Round.png", "Stone_Round.png"));
-            terrainImages.put(Tile.AIR_SYMBOL, loadImage("/resources/asset/png/Kolam_air.png", "Kolam_air.png"));
-            terrainImages.put(Tile.BUNGA_PINK_SYMBOL, loadImage("/resources/asset/png/BungaPink.png", "BungaPink.png"));
-            terrainImages.put(Tile.TANAH_SYMBOL, loadImage("/resources/asset/png/Tanah-16px.png", "Tanah-16px.png"));
-            terrainImages.put(Tile.TILLED_CHAR, loadImage("/resources/asset/png/Soil_TILLED.png", "Soil_TILLED.png"));
-            terrainImages.put(Tile.PLANTED_CHAR, loadImage("/resources/asset/png/Soil_ThrownSeeds.png", "Soil_ThrownSeeds.png")); // For planted (generic)
+
+            terrainImages.put(Tile.DEFAULT_UNTILLED_CHAR, loadImage("resources/asset/png/Jalan-16px.png", "Jalan-16px.png"));
+            terrainImages.put(Tile.RUMPUT_HIJAU_SYMBOL, loadImage("resources/asset/png/JalanHijau-16px.png", "JalanHijau-16px.png"));
+            terrainImages.put(Tile.BATU_SYMBOL, loadImage("resources/asset/png/Stone_Round.png", "Stone_Round.png"));
+            terrainImages.put(Tile.AIR_SYMBOL, loadImage("resources/asset/png/Kolam_air.png", "Kolam_air.png"));
+            terrainImages.put(Tile.BUNGA_PINK_SYMBOL, loadImage("resources/asset/png/BungaPink.png", "BungaPink.png"));
+            terrainImages.put(Tile.TANAH_SYMBOL, loadImage("resources/asset/png/Tanah-16px.png", "Tanah-16px.png"));
+            terrainImages.put(Tile.TILLED_CHAR, loadImage("resources/asset/png/Soil_TILLED.png", "Soil_TILLED.png"));
+            terrainImages.put(Tile.PLANTED_CHAR, loadImage("resources/asset/png/Soil_ThrownSeeds.png", "Soil_ThrownSeeds.png")); // For planted (generic)
 
             // NEW: Load specific 2-tile wide road segment images
-            terrainImages.put(Tile.JALAN_COKLAT_KIRI_SYMBOL, loadImage("/resources/asset/png/jalan_coklatKiri.png", "jalan_coklatKiri.png"));
-            terrainImages.put(Tile.JALAN_COKLAT_KANAN_SYMBOL, loadImage("/resources/asset/png/jalan_coklatKanan.png", "jalan_coklatKanan.png"));
-            terrainImages.put(Tile.JALAN_COKLAT_ATAS_SYMBOL, loadImage("/resources/asset/png/jalan_coklatAtas.png", "jalan_coklatAtas.png")); 
-            terrainImages.put(Tile.JALAN_COKLAT_BAWAH_SYMBOL, loadImage("/resources/asset/png/jalan_coklatBawah.png", "jalan_coklatBawah.png"));
-            terrainImages.put(Tile.JALAN_TENGAH_SYMBOL, loadImage("/resources/asset/png/jalan_coklatTengah.png", "jalan_coklatTengah.png"));
+            terrainImages.put(Tile.JALAN_COKLAT_KIRI_SYMBOL, loadImage("resources/asset/png/jalan_coklatKiri.png", "jalan_coklatKiri.png"));
+            terrainImages.put(Tile.JALAN_COKLAT_KANAN_SYMBOL, loadImage("resources/asset/png/jalan_coklatKanan.png", "jalan_coklatKanan.png"));
+            terrainImages.put(Tile.JALAN_COKLAT_ATAS_SYMBOL, loadImage("resources/asset/png/jalan_coklatAtas.png", "jalan_coklatAtas.png")); 
+            terrainImages.put(Tile.JALAN_COKLAT_BAWAH_SYMBOL, loadImage("resources/asset/png/jalan_coklatBawah.png", "jalan_coklatBawah.png"));
+            terrainImages.put(Tile.JALAN_TENGAH_SYMBOL, loadImage("resources/asset/png/jalan_coklatTengah.png", "jalan_coklatTengah.png"));
 
             // Provide fallbacks if any terrain image is missing:
             for (char key : new char[]{Tile.DEFAULT_UNTILLED_CHAR, Tile.RUMPUT_HIJAU_SYMBOL, Tile.BATU_SYMBOL, Tile.AIR_SYMBOL,
@@ -80,7 +81,7 @@ public class CityMapPanel extends JPanel {
             // ---------------------
             // Player image: (16x16)
             // ---------------------
-            playerImage = loadImage("/resources/asset/png/PlayerBoy_idle.png", "PlayerBoy_idle.png");
+            playerImage = loadImage("resources/asset/png/PlayerBoy_idle.png", "PlayerBoy_idle.png");
             if (playerImage == null) {
                 playerImage = createFallbackImage(Color.RED);
             }
@@ -89,22 +90,22 @@ public class CityMapPanel extends JPanel {
             // Deployed objects (Fence, Exit, etc.): (16x16)
             // ---------------------
             // Load specific 1x1 object images directly into objectImages map
-            BufferedImage fenceImg = loadImage("/resources/asset/png/Fence.png", "Fence.png");
+            BufferedImage fenceImg = loadImage("resources/asset/png/Fence.png", "Fence.png");
             if (fenceImg == null) {
                 fenceImg = createFallbackImage(new Color(100, 100, 100));
             }
             objectImages.put(Tile.FENCE_SYMBOL, fenceImg); // Store by symbol
             
-            BufferedImage doorImg = loadImage("/resources/asset/png/Door.png", "Door.png"); // The Exit image
+            BufferedImage doorImg = loadImage("resources/asset/png/Door.png", "Door.png"); // The Exit image
             if (doorImg == null) {
                 doorImg = createFallbackImage(new Color(0, 150, 0)); // Green for Exit
             }
             objectImages.put(Tile.EXIT_SYMBOL, doorImg); // Store by symbol for Exit
 
             // For other generic 1x1 deployed objects (like farm house, pond, shipping bin, generic furniture from Tile.java)
-            objectImages.put(Tile.FARM_HOUSE_SYMBOL, loadImage("/resources/asset/png/House_Player.png", "Farm House")); // Assuming this is player's farm house
-            objectImages.put(Tile.POND_SYMBOL, loadImage("/resources/asset/png/Kolam_air.png", "Farm Pond")); // Reusing Kolam_air for farm pond
-            objectImages.put(Tile.SHIPPING_BIN_SYMBOL, loadImage("/resources/asset/png/ShippingBin_Closed.png", "Shipping Bin"));
+            objectImages.put(Tile.FARM_HOUSE_SYMBOL, loadImage("resources/asset/png/House_Player.png", "Farm House")); // Assuming this is player's farm house
+            objectImages.put(Tile.POND_SYMBOL, loadImage("resources/asset/png/Kolam_air.png", "Farm Pond")); // Reusing Kolam_air for farm pond
+            objectImages.put(Tile.SHIPPING_BIN_SYMBOL, loadImage("resources/asset/png/ShippingBin_Closed.png", "Shipping Bin"));
             objectImages.put(Tile.GENERIC_FARM_FURNITURE_B, createFallbackImage(new Color(180, 100, 180))); // Fallback for generic B
             objectImages.put(Tile.GENERIC_FARM_FURNITURE_T, createFallbackImage(new Color(100, 180, 180))); // Fallback for generic T
 
@@ -116,16 +117,16 @@ public class CityMapPanel extends JPanel {
                     CityMap.Building b = (CityMap.Building) obj;
                     String bName = b.getBuildingName();
                     String imgPath = b.getImagePath();
-                    
                     if (imgPath != null && !imgPath.isEmpty()) {
-                        BufferedImage bimg = loadImage(imgPath, "Building: " + bName);
+                        String resolvedImgPath = imgPath.startsWith("/") ? imgPath.substring(1) : imgPath;
+                        BufferedImage bimg = loadImage(resolvedImgPath, "Building: " + bName);
                         if (bimg != null) {
                             buildingImages.put(bName, bimg);
                         } else {
                             buildingImages.put(bName, createFallbackImage(getFallbackColorForSymbol(obj.getSymbol()), b.getWidth() * BASE_ASSET_SIZE, b.getHeight() * BASE_ASSET_SIZE));
                         }
                     } else {
-                         buildingImages.put(bName, createFallbackImage(getFallbackColorForSymbol(obj.getSymbol()), b.getWidth() * BASE_ASSET_SIZE, b.getHeight() * BASE_ASSET_SIZE));
+                        buildingImages.put(bName, createFallbackImage(getFallbackColorForSymbol(obj.getSymbol()), b.getWidth() * BASE_ASSET_SIZE, b.getHeight() * BASE_ASSET_SIZE));
                     }
                 }
             }
@@ -159,15 +160,26 @@ public class CityMapPanel extends JPanel {
      * @return The loaded BufferedImage, or null if loading failed.
      */
     private BufferedImage loadImage(String path, String nameForLog) throws IOException {
-        InputStream is = getClass().getResourceAsStream(path);
+        // Try classpath first (for compatibility)
+        InputStream is = getClass().getResourceAsStream(path.startsWith("/") ? path : "/" + path);
         if (is == null) {
-            System.err.println("Warning: Image not found: " + nameForLog + " (Path: " + path + ")");
-            return null;
+            // Try loading from file system (relative to project root)
+            java.io.File file = new java.io.File(path);
+            if (!file.exists()) {
+                // Try with project root prefix if not found
+                file = new java.io.File("resources/" + path);
+            }
+            if (file.exists()) {
+                is = new java.io.FileInputStream(file);
+            } else {
+                System.err.println("Warning: Image not found: " + nameForLog + " (Path: " + path + ")");
+                return null;
+            }
         }
         try {
             return ImageIO.read(is);
         } finally {
-            try { is.close(); } catch (IOException e) { System.err.println("Error closing stream for " + nameForLog + ": " + e.getMessage()); }
+            try { is.close(); } catch (IOException e) { }
         }
     }
 

@@ -16,6 +16,9 @@ import npc.NPC;
  * Controller for CityMap: handles player movement and interactions (key presses).
  */
 public class CityMapController extends KeyAdapter {
+    // Movement cooldown in milliseconds
+    private static final long MOVE_COOLDOWN_MS = 200;
+    private long lastMoveTime = 0;
     private GameManager gameManager;
     private CityMapPanel cityMapPanel;
     private GameView gameView;
@@ -42,23 +45,28 @@ public class CityMapController extends KeyAdapter {
             return;
         }
 
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_W:
-                actionTaken = cityMap.movePlayer(player, 0, -1);
-                break;
-            case KeyEvent.VK_S:
-                actionTaken = cityMap.movePlayer(player, 0, 1);
-                break;
-            case KeyEvent.VK_A:
-                actionTaken = cityMap.movePlayer(player, -1, 0);
-                break;
-            case KeyEvent.VK_D:
-                actionTaken = cityMap.movePlayer(player, 1, 0);
-                break;
+        // Concise movement logic with diagonal support and cooldown
+        long now = System.currentTimeMillis();
+        int dx = 0, dy = 0;
+        boolean moveKey = false;
+        if (e.getKeyCode() == KeyEvent.VK_W) { dy -= 1; moveKey = true; }
+        if (e.getKeyCode() == KeyEvent.VK_S) { dy += 1; moveKey = true; }
+        if (e.getKeyCode() == KeyEvent.VK_A) { dx -= 1; moveKey = true; }
+        if (e.getKeyCode() == KeyEvent.VK_D) { dx += 1; moveKey = true; }
+
+        if (moveKey && (dx != 0 || dy != 0) && now - lastMoveTime >= MOVE_COOLDOWN_MS) {
+            actionTaken = cityMap.movePlayer(player, dx, dy);
+            lastMoveTime = now;
+        } else if (!moveKey) {
+            // Non-movement actions
+            switch (e.getKeyCode()) {
             case KeyEvent.VK_F1: // 'F1' for Help
                 gameView.showScreen("HelpScreen");
                 actionTaken = true;
                 e.consume();
+                break;
+            default:
+                // No action for other keys
                 break;
             case KeyEvent.VK_I: // 'I' for Inventory
                 gameView.showScreen("InventoryScreen");
@@ -252,7 +260,8 @@ public class CityMapController extends KeyAdapter {
                     );
                     actionTaken = false;
                 }
-                break;
+            }
+            // break; (dihapus, karena sudah di luar switch)
         }
 
         // --- Post-Action Processing ---
@@ -277,10 +286,8 @@ public class CityMapController extends KeyAdapter {
         }
     }
 
-    /**
-     * Helper method to check if the player is adjacent to any deployed object on the given map.
-     * Fences are explicitly filtered out.
-     */
+    // Helper method to check if the player is adjacent to any deployed object on the given map.
+    // Fences are explicitly filtered out.
     private DeployedObject getAdjacentDeployedObject(GameMap map, Player player) {
         int px = player.getX();
         int py = player.getY();

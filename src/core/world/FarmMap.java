@@ -41,8 +41,8 @@ public class FarmMap implements GameMap {
     private void placeHouseAndPond() {
         int hx, hy;
         while (true) {
-            hx = rng.nextInt(SIZE - 6);
-            hy = rng.nextInt(SIZE - 6);
+            hx = rng.nextInt(SIZE - 10);
+            hy = rng.nextInt(SIZE - 7);
             if (areaFree(hx, hy, 6, 6)) break;
         }
         House house = new House(hx, hy, 6, 6, 'h');
@@ -50,18 +50,13 @@ public class FarmMap implements GameMap {
 
         int px, py;
         while (true) {
-            px = rng.nextInt(SIZE / 2) + SIZE / 2 - 4;
-            py = rng.nextInt(SIZE / 2) + SIZE / 2 - 3;
+            px = rng.nextInt(SIZE - 4);
+            py = rng.nextInt(SIZE - 3);
 
             px = Math.max(0, Math.min(px, SIZE - 4));
             py = Math.max(0, Math.min(py, SIZE - 3));
 
-            if (areaFree(px, py, 4, 3)) break;
-            if (System.currentTimeMillis() % 100 == 0) {
-                 px = 25;
-                 py = 25;
-                 if (areaFree(px,py,4,3)) break;
-            }
+            if (areaFree(px, py, 4, 3) && py != hy + 6) break;
         }
         Pond pond = new Pond(px, py, 4, 3, 'o');
         deployObject(pond);

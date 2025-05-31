@@ -11,26 +11,31 @@ public class MainMenu extends JPanel {
     private GameView gameView;
     private Image backgroundImg;
 
+    // Store buttons as fields for dynamic layout
+    private final JButton newGameButton;
+    private final JButton helpButton;
+    private final JButton exitButton;
+    private final JButton creditsButton;
+
+    // Reference background image's original design size (for ratio)
+    private static final int BG_ORIG_WIDTH = 1000;
+    private static final int BG_ORIG_HEIGHT = 700;
+
     public MainMenu() {
-        // Load background image (try absolute path first, then resource)
         backgroundImg = loadImage("resources/asset/png/OpeningPage.png", "Main Menu Background");
-        setLayout(null); // We'll use absolute positioning to match the image
+        setLayout(null);
         setOpaque(false);
 
-        // Button style: transparent, no border, white text, large font, placed to match the image
         Font buttonFont = new Font("Arial", Font.BOLD, 32);
-        // Button positions and sizes are matched to the wooden sign graphics in the background image
-        // These values are visually estimated from the screenshot and may need fine-tuning
-        JButton newGameButton = new JButton();
-        newGameButton.setBounds(418, 330, 168, 127); // Center top sign
+
+        newGameButton = new JButton();
         styleWoodenButton(newGameButton, "");
         newGameButton.setFont(buttonFont);
         newGameButton.addActionListener(e -> {
             if (gameView != null) gameView.showScreen("PlayerCreationScreen");
         });
 
-        JButton helpButton = new JButton();
-        helpButton.setBounds(167, 514, 123, 73); // Left sign
+        helpButton = new JButton();
         styleWoodenButton(helpButton, "");
         helpButton.setFont(buttonFont);
         helpButton.addActionListener(e -> {
@@ -38,24 +43,46 @@ public class MainMenu extends JPanel {
             else JOptionPane.showMessageDialog(null, "Help: WASD to move, E to interact. More info in game (press H).", "Basic Help", JOptionPane.INFORMATION_MESSAGE);
         });
 
-        JButton exitButton = new JButton();
-        exitButton.setBounds(443, 514, 123, 73); // Center bottom sign
+        exitButton = new JButton();
         styleWoodenButton(exitButton, "");
         exitButton.setFont(buttonFont);
         exitButton.addActionListener(e -> System.exit(0));
 
-        JButton creditsButton = new JButton();
-        creditsButton.setBounds(715, 514, 123, 73); // Right sign
+        creditsButton = new JButton();
         styleWoodenButton(creditsButton, "");
         creditsButton.setFont(buttonFont);
         creditsButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Game by Spakbor Hills Team", "Credits", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Dibuat mati-matian oleh kelompok 8 oop K-2, aidan, huga, nathan, ella", "Credits", JOptionPane.INFORMATION_MESSAGE);
         });
 
         add(newGameButton);
         add(helpButton);
         add(exitButton);
         add(creditsButton);
+    }
+
+    @Override
+    public void doLayout() {
+        super.doLayout();
+        int w = getWidth();
+        int h = getHeight();
+        // Button positions and sizes as ratios of original background size
+        // newGameButton: x=418, y=330, w=168, h=127
+        setButtonBoundsByRatio(newGameButton, 417, 355, 170, 130, w, h);
+        // helpButton: x=167, y=514, w=123, h=73
+        setButtonBoundsByRatio(helpButton, 167, 539, 123, 73, w, h);
+        // exitButton: x=443, y=514, w=123, h=73
+        setButtonBoundsByRatio(exitButton, 443, 539, 123, 73, w, h);
+        // creditsButton: x=715, y=514, w=123, h=73
+        setButtonBoundsByRatio(creditsButton, 715, 539, 123, 73, w, h);
+    }
+
+    private void setButtonBoundsByRatio(JButton button, int origX, int origY, int origW, int origH, int panelW, int panelH) {
+        int x = (int) Math.round(origX * (panelW / (double) BG_ORIG_WIDTH));
+        int y = (int) Math.round(origY * (panelH / (double) BG_ORIG_HEIGHT));
+        int w = (int) Math.round(origW * (panelW / (double) BG_ORIG_WIDTH));
+        int h = (int) Math.round(origH * (panelH / (double) BG_ORIG_HEIGHT));
+        button.setBounds(x, y, w, h);
     }
     /**
      * Style a menu button to be transparent, white text, no border, and large.
@@ -76,6 +103,7 @@ public class MainMenu extends JPanel {
         button.setFont(new Font("Arial", Font.BOLD, 32));
         button.setBorder(null);
         button.setBackground(new Color(0,0,0,0));
+        button.setFocusable(false);
     }
 
     public void setGameView(GameView gameView) {

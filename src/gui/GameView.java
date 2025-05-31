@@ -96,7 +96,8 @@ public class GameView extends JFrame {
 
         setLayout(new BorderLayout());
         add(centerCardPanel, BorderLayout.CENTER);
-        add(topInfoBarPanel, BorderLayout.NORTH);
+        // REMOVE topInfoBarPanel from the layout entirely
+        // add(topInfoBarPanel, BorderLayout.NORTH); // <--- REMOVED
         showScreen("MainMenu");
     }
 
@@ -421,11 +422,12 @@ public class GameView extends JFrame {
         CardLayout cl = (CardLayout) (centerCardPanel.getLayout());
         cl.show(centerCardPanel, screenName);
 
-        boolean showTopBar = !screenName.equals("MainMenu") && !screenName.equals("PlayerCreationScreen");
-        topInfoBarPanel.setVisible(showTopBar);
-        if (showTopBar && topInfoBarPanel != null) {
-            topInfoBarPanel.refreshInfo();
-        }
+        // REMOVE all logic for showing/hiding topInfoBarPanel
+        // boolean showTopBar = !screenName.equals("MainMenu") && !screenName.equals("PlayerCreationScreen");
+        // topInfoBarPanel.setVisible(showTopBar);
+        // if (showTopBar && topInfoBarPanel != null) {
+        //     topInfoBarPanel.refreshInfo();
+        // }
 
         // Request focus for the specific panel that will receive key events.
         // Also, call refresh/onShow methods as appropriate.

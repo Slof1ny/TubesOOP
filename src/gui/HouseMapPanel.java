@@ -9,28 +9,34 @@ import core.player.Player;
 import system.GameManager;
 import core.world.HouseMap; // For static HouseMap.SIZE
 
+
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
+
 public class HouseMapPanel extends JPanel {
     private GameManager gameManager;
-
-    private static final Color FLOOR_COLOR = new Color(210, 180, 140); //
-    private static final Color WALL_COLOR = new Color(139, 69, 19);   //
-    private static final Color BED_COLOR = new Color(135, 206, 250); //
-    private static final Color TV_COLOR = new Color(105, 105, 105);    //
-    private static final Color STOVE_COLOR = new Color(128,128,128); // Example: Gray for stove
-    private static final Color EXIT_COLOR = new Color(0,100,0);       //
-    private static final Color PLAYER_COLOR = Color.RED; //
-
-    // REMOVE fixed TILE_SIZE
-    // private final int TILE_SIZE = 25;
+    private static final Color PLAYER_COLOR = Color.RED;
+    private Map<Character, BufferedImage> assetImages = new HashMap<>();
+    private BufferedImage floorImage;
+    private BufferedImage borderImage;
 
     public HouseMapPanel(GameManager gameManager, GameView gameView) {
         this.gameManager = gameManager;
-        // Remove setPreferredSize
-        // setPreferredSize(new Dimension(core.world.HouseMap.SIZE * TILE_SIZE, core.world.HouseMap.SIZE * TILE_SIZE));
-        setBackground(Color.LIGHT_GRAY); //
+        setBackground(Color.LIGHT_GRAY);
+        setFocusable(true);
+        addKeyListener(new HouseMapController(gameManager, this, gameView));
+        loadAssetImages();
+    }
 
-        setFocusable(true); //
-        addKeyListener(new HouseMapController(gameManager, this, gameView)); //
+    private void loadAssetImages() {
+        // Use absolute Windows paths as provided by user
+        floorImage = loadImage("resources/asset/png/WoodFloor.png", "Floor");
+        borderImage = loadImage("resources/asset/png/WoodFloor_type2.png", "Border");
+        assetImages.put('B', loadImage("resources/asset/png/Bed.png", "Bed"));
+        assetImages.put('S', loadImage("resources/asset/png/Stove.png", "Stove"));
+        assetImages.put('T', loadImage("resources/asset/png/TV.png", "TV"));
+        // You can add more assets here if needed
     }
 
     @Override
@@ -41,16 +47,15 @@ public class HouseMapPanel extends JPanel {
         GameMap currentHouseMap = gameManager.getHouseMap();
         Player currentPlayer = gameManager.getPlayer();
 
-        if (currentHouseMap == null || !currentPlayer.getLocation().equals(currentHouseMap.getName())) { //
-            g2d.setColor(Color.BLACK); //
-            g2d.drawString("Player is not currently in the house.", 50, 50); //
-            return; //
+        if (currentHouseMap == null || !currentPlayer.getLocation().equals(currentHouseMap.getName())) {
+            g2d.setColor(Color.BLACK);
+            g2d.drawString("Player is not currently in the house.", 50, 50);
+            return;
         }
-        
+
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        int mapSize = HouseMap.SIZE; // HouseMap.SIZE is static
-
+        int mapSize = HouseMap.SIZE;
         if (mapSize == 0) return;
 
         int tileW = panelWidth / mapSize;
@@ -63,92 +68,127 @@ public class HouseMapPanel extends JPanel {
         int offsetX = (panelWidth - totalMapRenderWidth) / 2;
         int offsetY = (panelHeight - totalMapRenderHeight) / 2;
 
+        // Draw floor and border first
         for (int y = 0; y < mapSize; y++) {
             for (int x = 0; x < mapSize; x++) {
-                Tile tile = currentHouseMap.getTileAt(x, y);
-                if (tile == null) continue; //
-
-                Color tileColor = FLOOR_COLOR; //
-                char displayChar = tile.displayChar(); //
-
-                if (tile.getType() == Tile.TileType.DEPLOYED) { //
-                    if (displayChar == 'B') tileColor = BED_COLOR; //
-                    else if (displayChar == 'T') tileColor = TV_COLOR; //
-                    else if (displayChar == 'S') tileColor = STOVE_COLOR; // 'S' for Stove
-                    else if (displayChar == 'X') tileColor = EXIT_COLOR; //
-                    else tileColor = WALL_COLOR; //
-                }
-                // Simple boundary walls (can be made more sophisticated)
-                else if (x == 0 || x == mapSize - 1 || y == 0 || y == mapSize - 1) {
-                    // Check if it's an exit tile first
-                    boolean isExitTile = (x == HouseMap.EXIT_LOCATION.x && y == HouseMap.EXIT_LOCATION.y);
-                    if (!isExitTile || displayChar != 'X') { // Don't draw wall over explicit exit
-                         tileColor = WALL_COLOR;
+                int drawX = offsetX + x * actualTileSize;
+                int drawY = offsetY + y * actualTileSize;
+                boolean isBorder = (x == 0 || x == mapSize - 1 || y == 0 || y == mapSize - 1);
+                boolean isExit = (x == HouseMap.EXIT_LOCATION.x && y == HouseMap.EXIT_LOCATION.y);
+                if (isBorder && !isExit) {
+                    if (borderImage != null) {
+                        g2d.drawImage(borderImage, drawX, drawY, actualTileSize, actualTileSize, null);
+                    } else {
+                        g2d.setColor(new Color(139, 69, 19));
+                        g2d.fillRect(drawX, drawY, actualTileSize, actualTileSize);
                     }
-                }
-
-
-                g2d.setColor(tileColor);
-                g2d.fillRect(offsetX + x * actualTileSize, offsetY + y * actualTileSize, actualTileSize, actualTileSize);
-
-                g2d.setColor(Color.DARK_GRAY); //
-                g2d.drawRect(offsetX + x * actualTileSize, offsetY + y * actualTileSize, actualTileSize, actualTileSize);
-
-                if (tile.getType() == Tile.TileType.DEPLOYED && displayChar != ' ') { //
-                     g2d.setColor(Color.BLACK); //
-                     int fontSize = Math.max(8, actualTileSize / 2);
-                     g2d.setFont(new Font(g2d.getFont().getName(), Font.BOLD, fontSize));
-                     FontMetrics fm = g2d.getFontMetrics(); //
-                     int textX = (offsetX + x * actualTileSize) + (actualTileSize - fm.stringWidth(String.valueOf(displayChar))) / 2; //
-                     int textY = (offsetY + y * actualTileSize) + ((actualTileSize - fm.getHeight()) / 2) + fm.getAscent(); //
-                     g2d.drawString(String.valueOf(displayChar), textX, textY); //
+                } else {
+                    if (floorImage != null) {
+                        g2d.drawImage(floorImage, drawX, drawY, actualTileSize, actualTileSize, null);
+                    } else {
+                        g2d.setColor(new Color(210, 180, 140));
+                        g2d.fillRect(drawX, drawY, actualTileSize, actualTileSize);
+                    }
                 }
             }
         }
 
-        if (currentPlayer.getLocation().equals(currentHouseMap.getName())) { //
-            g2d.setColor(PLAYER_COLOR); //
-            int playerOvalSize = actualTileSize * 3 / 4; 
+        // Draw assets (bed, stove, tv, exit, etc.)
+        for (int y = 0; y < mapSize; y++) {
+            for (int x = 0; x < mapSize; x++) {
+                Tile tile = currentHouseMap.getTileAt(x, y);
+                if (tile == null) continue;
+                char displayChar = tile.displayChar();
+                int drawX = offsetX + x * actualTileSize;
+                int drawY = offsetY + y * actualTileSize;
+
+                // Bed and Stove are 1x2 (draw only at origin tile)
+                if (displayChar == 'B') {
+                    // Only draw at the top tile of the bed (origin)
+                    if (y == HouseMap.BED_LOCATION.y && x == HouseMap.BED_LOCATION.x) {
+                        BufferedImage bedImg = assetImages.get('B');
+                        if (bedImg != null) {
+                            g2d.drawImage(bedImg, drawX, drawY, actualTileSize, actualTileSize * 2, null);
+                        } else {
+                            g2d.setColor(new Color(135, 206, 250));
+                            g2d.fillRect(drawX, drawY, actualTileSize, actualTileSize * 2);
+                        }
+                    }
+                } else if (displayChar == 'S') {
+                    // Only draw at the top tile of the stove (origin)
+                    if (y == HouseMap.STOVE_LOCATION.y && x == HouseMap.STOVE_LOCATION.x) {
+                        BufferedImage stoveImg = assetImages.get('S');
+                        if (stoveImg != null) {
+                            g2d.drawImage(stoveImg, drawX, drawY, actualTileSize, actualTileSize * 2, null);
+                        } else {
+                            g2d.setColor(new Color(128, 128, 128));
+                            g2d.fillRect(drawX, drawY, actualTileSize, actualTileSize * 2);
+                        }
+                    }
+                } else if (displayChar == 'T') {
+                    BufferedImage tvImg = assetImages.get('T');
+                    if (tvImg != null) {
+                        g2d.drawImage(tvImg, drawX, drawY, actualTileSize, actualTileSize, null);
+                    } else {
+                        g2d.setColor(new Color(105, 105, 105));
+                        g2d.fillRect(drawX, drawY, actualTileSize, actualTileSize);
+                    }
+                } else if (displayChar == 'X') {
+                    // Exit: just draw a green rectangle or a door image if you have one
+                    g2d.setColor(new Color(0, 100, 0));
+                    g2d.fillRect(drawX, drawY, actualTileSize, actualTileSize);
+                }
+
+                // Draw grid border for all tiles
+                g2d.setColor(Color.DARK_GRAY);
+                g2d.drawRect(drawX, drawY, actualTileSize, actualTileSize);
+            }
+        }
+
+        // Draw player
+        if (currentPlayer.getLocation().equals(currentHouseMap.getName())) {
+            g2d.setColor(PLAYER_COLOR);
+            int playerOvalSize = actualTileSize * 3 / 4;
             int playerOffsetX = (actualTileSize - playerOvalSize) / 2;
             int playerOffsetY = (actualTileSize - playerOvalSize) / 2;
-            g2d.fillOval(offsetX + currentPlayer.getX() * actualTileSize + playerOffsetX, 
-                         offsetY + currentPlayer.getY() * actualTileSize + playerOffsetY, 
-                         playerOvalSize, playerOvalSize); //
+            g2d.fillOval(offsetX + currentPlayer.getX() * actualTileSize + playerOffsetX,
+                         offsetY + currentPlayer.getY() * actualTileSize + playerOffsetY,
+                         playerOvalSize, playerOvalSize);
         }
     }
 
     public void refreshMap() {
         repaint(); //
     }
-    //     /**
-    //  * Helper to load a PNG from an absolute file path first, then fallback to classpath resource.
-    //  * @param path The file path or resource path (e.g., "resources/asset/png/image.png").
-    //  * @param nameForLog A descriptive name for logging purposes.
-    //  * @return The loaded BufferedImage, or null if loading failed.
-    //  */
-    // private BufferedImage loadImage(String path, String nameForLog) {
-    //     // Try to load from absolute file path first (outside rootpath, e.g. for development override)
-    //     java.io.File file = new java.io.File(path);
-    //     if (file.exists()) {
-    //         try {
-    //             return javax.imageio.ImageIO.read(file);
-    //         } catch (Exception e) {
-    //             System.err.println("Error loading image from file: " + path + " (" + nameForLog + "): " + e.getMessage());
-    //         }
-    //     }
-    //     // Fallback: try to load from classpath (inside jar/resources)
-    //     java.io.InputStream is = getClass().getResourceAsStream(path);
-    //     if (is == null) {
-    //         System.err.println("Warning: Image not found: " + nameForLog + " (Path: " + path + ")");
-    //         return null;
-    //     }
-    //     try {
-    //         return javax.imageio.ImageIO.read(is);
-    //     } catch (Exception e) {
-    //         System.err.println("Error loading image from resource: " + path + " (" + nameForLog + "): " + e.getMessage());
-    //         return null;
-    //     } finally {
-    //         try { is.close(); } catch (Exception e) { System.err.println("Error closing stream for " + nameForLog + ": " + e.getMessage()); }
-    //     }
-    // }
+        /**
+     * Helper to load a PNG from an absolute file path first, then fallback to classpath resource.
+     * @param path The file path or resource path (e.g., "resources/asset/png/image.png").
+     * @param nameForLog A descriptive name for logging purposes.
+     * @return The loaded BufferedImage, or null if loading failed.
+     */
+    private BufferedImage loadImage(String path, String nameForLog) {
+        // Try to load from absolute file path first (outside rootpath, e.g. for development override)
+        java.io.File file = new java.io.File(path);
+        if (file.exists()) {
+            try {
+                return javax.imageio.ImageIO.read(file);
+            } catch (Exception e) {
+                System.err.println("Error loading image from file: " + path + " (" + nameForLog + "): " + e.getMessage());
+            }
+        }
+        // Fallback: try to load from classpath (inside jar/resources)
+        java.io.InputStream is = getClass().getResourceAsStream(path);
+        if (is == null) {
+            System.err.println("Warning: Image not found: " + nameForLog + " (Path: " + path + ")");
+            return null;
+        }
+        try {
+            return javax.imageio.ImageIO.read(is);
+        } catch (Exception e) {
+            System.err.println("Error loading image from resource: " + path + " (" + nameForLog + "): " + e.getMessage());
+            return null;
+        } finally {
+            try { is.close(); } catch (Exception e) { System.err.println("Error closing stream for " + nameForLog + ": " + e.getMessage()); }
+        }
+    }
 }

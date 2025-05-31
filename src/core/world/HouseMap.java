@@ -37,10 +37,13 @@ public class HouseMap implements GameMap {
     private void initTiles() {
         for (int x = 0; x < SIZE; x++) {
             for (int y = 0; y < SIZE; y++) {
-                // For simplicity, make all house floor tiles walkable by default
                 grid[x][y] = new Tile(x, y);
-                // You can add wall logic here if desired by setting some tiles as non-walkable
-                // e.g., if (x == 0 || x == SIZE -1 || y == 0 || y == SIZE -1) grid[x][y].setType(Tile.TileType.DEPLOYED); // Basic walls
+                // Set border as non-walkable except exit
+                boolean isBorder = (x == 0 || x == SIZE - 1 || y == 0 || y == SIZE - 1);
+                boolean isExit = (x == EXIT_LOCATION.x && y == EXIT_LOCATION.y);
+                if (isBorder && !isExit) {
+                    grid[x][y].setType(Tile.TileType.DEPLOYED);
+                }
             }
         }
     }
